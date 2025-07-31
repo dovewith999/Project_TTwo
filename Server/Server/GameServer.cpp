@@ -56,7 +56,7 @@ void GameServer::Wait()
 void GameServer::Listen(int portNum)
 {
     this->portNum = portNum;
-    listenHandle = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, GameServer::ListenThread, this, 0, NULL));
+    listenHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::ListenThread, this, 0, NULL);
 
     if (!listenHandle)
     {
@@ -85,7 +85,7 @@ UINT __stdcall GameServer::ListenThread(LPVOID p)
     service.sin_port = htons(server->portNum);  
 
     // Correct the type casting and remove the undefined "serverAddr".  
-    if (bind(server->serverSocket, reinterpret_cast<SOCKADDR*>(&service), sizeof(service)) == SOCKET_ERROR)  
+    if (bind(server->serverSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
     {  
         closesocket(server->serverSocket);
         return -1;  
@@ -117,7 +117,7 @@ UINT __stdcall GameServer::ListenThread(LPVOID p)
                 iter->clientSocket = connectSocket;
                 server->lastSocket = connectSocket;
                 iter->isConnect = true;
-                iter->clientHandle = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, GameServer::ControlThread, server, 0, NULL));
+                iter->clientHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::ControlThread, server, 0, NULL);
             }
         }
     }
