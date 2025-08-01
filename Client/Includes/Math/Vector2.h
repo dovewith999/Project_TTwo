@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Core.h"
+#include <Windows.h>
 
 class Engine_API Vector2
 {
@@ -16,6 +17,10 @@ public:
 	Vector2 operator+(const Vector2& other) const;
 	Vector2 operator-(const Vector2& other) const;
 	bool operator==(const Vector2& other) const;
+
+	// 형변환 연산자 오버로딩
+	operator COORD();
+	operator COORD() const;
 
 	// 문자열로 출력
 	const char* ToString();

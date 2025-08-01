@@ -10,9 +10,11 @@ namespace Define
 		MAXCHANNEL,		// 채널의 수
 	};
 
-	// 최대 32 채널까지 동시 재생이 가능
-	//enum class ESoundChannelID
-	//{ 
-	//	SOUND_BGM, SOUND_PLAYER, SOUND_MONSTER, SOUND_EFFECT, SOUND_UI, MAXCHANNEL
-	//};
+	enum class EFileType
+	{
+		TITLE,
+		BLOCK,
+		// TODO : 필요에 따라 UI로 교체 가능성 있음
+		MAP,
+	};
 }

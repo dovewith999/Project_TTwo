@@ -1,22 +1,13 @@
 ﻿#pragma once
 #include "Math/Vector2.h"
 #include "RTTI.h"
+#include "Math/Color.h"
 
 // 물체가 뭘 해야할까? 를 정의
 // 위치 점령. 
 // 콘솔 창에 그리기(How? Whar?)
 // 엔진의 이벤트 함수 호출
 // BeginPlay/Tick/Draw
-
-//색상
-enum class Color 
-{
-	Blue		= 1,
-	Green		= 2,
-	Red			= 4,
-	White		= Red | Green | Blue, // 7
-	Intensity	= 8,
-};
 
 class Level;
 class Engine_API Actor : public RTTI

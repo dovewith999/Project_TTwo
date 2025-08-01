@@ -188,8 +188,12 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\RTTI.h" />
-    <ClInclude Include="Core\SoundManager.h" />
+    <ClInclude Include="Manager\FileManager.h" />
+    <ClInclude Include="Manager\SoundManager.h" />
+    <ClInclude Include="Etc\GameInstance.h" />
+    <ClInclude Include="Etc\Singleton.h" />
     <ClInclude Include="Level\Level.h" />
+    <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Utils\Define.h" />
     <ClInclude Include="Utils\Utils.h" />
@@ -198,7 +202,8 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
     <ClCompile Include="Actor\Actor.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Input.cpp" />
-    <ClCompile Include="Core\SoundManager.cpp" />
+    <ClCompile Include="Manager\FileManager.cpp" />
+    <ClCompile Include="Manager\SoundManager.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
   </ItemGroup>

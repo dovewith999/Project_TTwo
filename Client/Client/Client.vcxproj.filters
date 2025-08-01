@@ -13,12 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Actor">
+      <UniqueIdentifier>{5cdebbbb-c6b0-4fe8-8178-885073e61be6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Demo\DemoLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Demo\TestActor.cpp">
@@ -46,6 +46,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Level\MenuLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\TitleLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Demo\DemoLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\GameManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,6 +90,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Level\MenuLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\TitleLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\GameManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

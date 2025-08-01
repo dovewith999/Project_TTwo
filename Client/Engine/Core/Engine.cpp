@@ -190,7 +190,7 @@ void Engine::LoadEngineSettings()
 	if (file == nullptr)
 	{
 		std::cout << "Failed to load engine settings\n";
-		__debugbreak;
+		__debugbreak();
 		return;
 	}
 

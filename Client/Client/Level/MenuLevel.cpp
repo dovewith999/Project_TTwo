@@ -60,7 +60,7 @@ void MenuLevel::Render()
 	super::Render();
 
 	// 색상 & 과표 정리
-	Utils::SetConsoleCursorPosition({ 0,0 });
+	Utils::SetConsoleCursorPosition(Vector2{ 0,0 });
 	Utils::SetConsoleTextColor(static_cast<WORD>(unselectedColor));
 
 	std::cout << "SokobanGame\n\n";

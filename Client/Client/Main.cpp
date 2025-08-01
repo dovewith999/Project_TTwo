@@ -219,18 +219,17 @@
 #include "Level/SokobanLevel.h"
 #include "Level/MenuLevel.h"
 #include "SoundManager.h"
+#include "Manager/FileManager.h"
+
+#include <cstdlib>
 
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//Game sokobanGame;
-	//sokobanGame.Run();
+	Game game;
+	game.Run();
 
-	SoundManager smgr;
-
-	smgr.PlaySoundW(L"BGM-Tetris_Nintendo-music.wav", Define::ESoundChannelID::BGM, 10.f);
-
-	std::cin.get();
+	//FileManager::GetInstance()->ReadFile("Title", Define::EFileType::TITLE);
 	return 0;
 }
