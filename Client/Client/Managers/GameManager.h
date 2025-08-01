@@ -15,7 +15,7 @@ class GameManager : public SafeSingleton<GameManager>
 
 public:
 	explicit GameManager(Level* level);
-	~GameManager() = default;
+	virtual ~GameManager() = default;
 
 public:
 	void GameStart();
