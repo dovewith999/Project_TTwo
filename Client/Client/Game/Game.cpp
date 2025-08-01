@@ -1,5 +1,5 @@
 ﻿#include "Game.h"
-#include "Level/MenuLevel.h"
+#include "Level/TitleLevel.h"
 #include "Level/SokobanLevel.h"
 
 Game* Game::instance = nullptr;
@@ -12,7 +12,7 @@ Game::Game()
 	AddLevel(new SokobanLevel());
 
 	// 메뉴 레벨 생성
-	menuLevel = new MenuLevel();
+	menuLevel = new TitleLevel();
 }
 
 Game::~Game()
@@ -47,9 +47,6 @@ void Game::CleanUp()
 		SafeDelete(backLevel);
 		mainLevel = nullptr;
 	}
-	//else // mainLevel == SokobanLevel, 이 때는 하던대로 정리하면 됨
-	//{
-	//}
 
 	SafeDelete(menuLevel);
 
