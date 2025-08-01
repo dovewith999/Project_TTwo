@@ -11,7 +11,7 @@ class Engine_API FileManager : public SafeSingleton<FileManager>
 
 public:
 	explicit FileManager();
-	~FileManager();
+	virtual ~FileManager();
 
 public:
 	void ReadFile(const char* fileName, EFileType fileType);

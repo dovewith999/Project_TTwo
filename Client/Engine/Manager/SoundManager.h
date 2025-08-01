@@ -2,11 +2,6 @@
 
 #pragma region FMOD
 #include "../../Lib/inc/fmod.hpp"
-//#include "../../Lib/inc/fmod_codec.h"
-//#include "../../Lib/inc/fmod_dsp.h"
-//#include "../../Lib/inc/fmod_errors.h"
-//#include "../../Lib/inc/fmod_output.h"
-//#include "playsoundapi.h"
 #include "io.h"
 #pragma comment (lib, "../../Lib/inc/fmod_vc.lib")
 #pragma endregion
@@ -27,6 +22,11 @@
 
 constexpr size_t SOUND_CHANNEL_COUNT = static_cast<size_t>(Define::ESoundChannelID::MAXCHANNEL);
 
+/// <summary>
+/// 사운드 파일 관리 및 재생을 전반적으로 관리할 클래스
+/// 작성자 : 임희섭
+/// 작성일 : 2025/08/01
+/// </summary>
 class Engine_API SoundManager  : public SafeSingleton<SoundManager>
 {
 	friend class SafeSingleton<SoundManager>;
@@ -42,8 +42,8 @@ public:
 	};
 
 public:
-	SoundManager();
-	~SoundManager();
+	explicit SoundManager();
+	virtual ~SoundManager();
 
 public:
 	void Initialize();
