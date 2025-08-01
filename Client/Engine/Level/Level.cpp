@@ -1,7 +1,5 @@
 ﻿#include "Level.h"
 #include "Actor/Actor.h"
-#include "Utils/Utils.h"
-#include <iostream>
 
 Level::Level()
 {
@@ -23,30 +21,22 @@ void Level::AddActor(Actor* newActor)
 	{
 		return;
 	}
+	//오너쉽 설정
+	newActor->SetOwner(this);
 
-	addRequestedActors.emplace_back(newActor);
-}
-
-void Level::DestroyActor(Actor* destroyedActor)
-{
-	if (destroyedActor == nullptr)
-	{
-		return;
-	}
-
-	destroyRequestedActors.emplace_back(destroyedActor);
+	//배열 맨 뒤에 새로운 항목을 추가하는 함수
+	// emplace는 이동 - move 시멘틱
+	// push_back은 참조 
+	// 그래서 emplace_back이 성능이 더 좋음. 그러나 현재는 push_back도 발전해서 차이가 없음
+	actors.emplace_back(newActor);
+	//actors.push_back(newActor);
+		
 }
 
 void Level::BeginPlay()
 {
-	
 	for (Actor* const actor : actors)
 	{
-		if (actor->GetExpired() || !actor->GetIsActive())
-		{
-			continue;
-		}
-
 		if (actor->HasBeganPlay())
 		{
 			continue;
@@ -61,11 +51,6 @@ void Level::Tick(float deltaTime)
 {
 	for (Actor* const actor : actors)
 	{
-		if (actor->GetExpired() || !actor->GetIsActive())
-		{
-			continue;
-		}
-
 		actor->Tick(deltaTime);
 	}
 }
@@ -78,11 +63,6 @@ void Level::Render()
 	// Render Pass
 	for (Actor* const actor : actors)
 	{
-		if (actor->GetExpired() || !actor->GetIsActive())
-		{
-			continue;
-		}
-
 		Actor* searchedActor = nullptr;
 
 		// 검사 (같은 위치에 정렬 순서 높은 액터가 있는 지 판단.)
@@ -111,45 +91,6 @@ void Level::Render()
 		}
 		actor->Render();
 	}
-}
-
-void Level::ProcessAddAndDestroyActors()
-{
-	for (auto iter = actors.begin(); iter != actors.end();)
-	{
-		if ((*iter)->GetExpired())
-		{
-			iter = actors.erase(iter);
-			continue;
-		}
-
-		++iter;
-	}
-
-	for (auto* actor : destroyRequestedActors)
-	{
-		// 액터가 그려졌던 곳 지우기
-		Utils::SetConsoleCursorPosition(actor->GetPosition());
-
-		//콘솔에 빈 문자 출력해서 지우기
-		for (int i = 0; i < actor->GetWidth(); ++i)
-		{
-			std::cout <<  " ";
-		}
-
-		SafeDelete(actor);
-	}
-
-	destroyRequestedActors.clear();
-
-	for (auto& actor : addRequestedActors)
-	{
-		//오너쉽 설정
-		actor->SetOwner(this);
-		actors.emplace_back(actor);
-	}
-
-	addRequestedActors.clear();
 }
 
 void Level::SortActorsBySortingOrder()

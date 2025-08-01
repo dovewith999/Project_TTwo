@@ -38,9 +38,6 @@ Engine::Engine()
 	SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
 
 	LoadEngineSettings();
-	
-	// 랜덤 종자값(seed) 설정.
-	srand(static_cast<unsigned int>(time(nullptr)));
 }
 
 Engine::~Engine()
@@ -100,12 +97,6 @@ void Engine::Run()
 			previousTime = currentTime;
 
 			input.SavePreviouseKeyStates();
-
-			// 이 전 프레임에 추가 및 삭제 요청된 액터 처리
-			if (mainLevel)
-			{
-				mainLevel->ProcessAddAndDestroyActors();
-			}
 		}
 	}
 
@@ -135,16 +126,6 @@ void Engine::AddLevel(Level* newLevel)
 void Engine::Quit()
 {
 	isQuit = true;
-}
-
-int Engine::GetWidth() const
-{
-	return settings.width;
-}
-
-int Engine::GetHeight() const
-{
-	return settings.height;
 }
 
 void Engine::BeginPlay()

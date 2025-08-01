@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Math/Vector2.h"
-#include "Math/Color.h"
 #include "RTTI.h"
 
 // 물체가 뭘 해야할까? 를 정의
@@ -9,13 +8,23 @@
 // 엔진의 이벤트 함수 호출
 // BeginPlay/Tick/Draw
 
+//색상
+enum class Color 
+{
+	Blue		= 1,
+	Green		= 2,
+	Red			= 4,
+	White		= Red | Green | Blue, // 7
+	Intensity	= 8,
+};
+
 class Level;
 class Engine_API Actor : public RTTI
 {
 	RTTI_DECLARATIONS(Actor, RTTI)
 
 public:
-	Actor(const char* image = "", Color color = Color::White, const Vector2& position = Vector2::Zero);
+	Actor(const char image = ' ', Color color = Color::White, const Vector2& position = Vector2::Zero);
 	virtual ~Actor();
 	
 public:
@@ -29,13 +38,6 @@ public:
 
 	FORCEINLINE const bool HasBeganPlay() const { return hasBeganPlay; }
 
-	// 충돌 확인 요청 함수 (간단한 AABB 로직)
-	bool TestIntersect(const Actor* const other);
-
-	// 객체 삭제 함수
-	void Destroy();
-
-	// 게임 종료 요청 함수
 	void QuitGame() const;
 
 public:/*Getter & Setter*/
@@ -49,20 +51,12 @@ public:/*Getter & Setter*/
 	FORCEINLINE void SetOwner(Level* newOwner);
 	FORCEINLINE Level* GetOwner() const;
 
-	FORCEINLINE int GetWidth() const;
-
-	FORCEINLINE bool GetExpired() const;
-	FORCEINLINE bool GetIsActive() const;
-
 private:
 	// 개체의 위치
 	Vector2 position;
 
 	// 그려질 이미지 값
-	char* image = nullptr;
-
-	// 문자열 길이
-	int width = 0;
+	char image = ' ';
 
 	// 텍스트 색상 값
 	Color color = Color::White;
@@ -72,12 +66,6 @@ private:
 
 	// 정렬 순서
 	unsigned int sortingOrder = 0;
-
-	// 액터가 활성 상태인지 알려주는 변수
-	bool isActive = true;
-
-	// 삭제 요청 됐는지 알려주는 변수
-	bool isExpired = false;
 
 	//소유 레벨.(OwnerShip)
 	Level* owner = nullptr;

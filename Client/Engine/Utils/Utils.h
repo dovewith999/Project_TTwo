@@ -1,8 +1,5 @@
 ﻿#pragma once
-#include "Math/Vector2.h"
-#include "Math/Color.h"
-#include <iostream>
-#include <Windows.h>
+#include "Windows.h"
 
 // 프로젝트에서 다양하게 사용할 유틸리티 함수 모음
 namespace Utils
@@ -34,34 +31,10 @@ namespace Utils
 		SetConsoleCursorPosition(handle, coord);
 	}
 
-	__forceinline void SetConsoleCursorPosition(const Vector2& position)
-	{
-		SetConsoleCursorPosition(static_cast<COORD>(position));
-	}
-
 	// 콘솔 텍스트 색상 설정 함수
 	__forceinline void SetConsoleTextColor(WORD color)
 	{
 		static HANDLE handle = GetConsoleHandle();
 		SetConsoleTextAttribute(handle, color);
-	}
-	
-	__forceinline void SetConsoleTextColor(Color color)
-	{
-		SetConsoleTextColor(static_cast<WORD>(color));
-	}
-
-	// 랜덤 생성 함수
-	__forceinline int Random(int min, int max)
-	{
-		// max와 min의 차이 구하기
-		int diff = (max - min) + 1;
-		return ((diff * rand()) / (RAND_MAX + 1)) + min;
-	}
-
-	__forceinline float RandomFloat(float min, float max)
-	{
-		float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-		return random * (max - min) + min;
 	}
 }

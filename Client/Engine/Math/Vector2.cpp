@@ -32,24 +32,6 @@ bool Vector2::operator==(const Vector2& other) const
     return (this->x == other.x) && (this->y == other.y);
 }
 
-Vector2::operator COORD()
-{
-    COORD coord;
-    coord.X = static_cast<short>(x);
-    coord.Y = static_cast<short>(y);
-
-    return coord;
-}
-
-Vector2::operator COORD() const
-{
-    COORD coord;
-    coord.X = static_cast<short>(x);
-    coord.Y = static_cast<short>(y);
-
-    return coord;
-}
-
 const char* Vector2::ToString()
 {
     // 좌표를 문자열로 출력하고 싶음 "(20, 30)"

@@ -38,9 +38,6 @@ public:
 	// 엔진 종료함수
 	void Quit();
 
-	FORCEINLINE int GetWidth() const;
-	FORCEINLINE int GetHeight() const;
-
 private: /*Function*/
 	void BeginPlay();
 	void Tick(float deltaTime = 0.0f);
