@@ -7,6 +7,7 @@
 #include "Actor/Box.h"
 #include "Actor/Target.h"
 #include "Utils/Utils.h"
+#include "Manager/FileManager.h"
 
 SokobanLevel::SokobanLevel()
 {
@@ -23,7 +24,7 @@ void SokobanLevel::Render()
 
 	if (isGameClear)
 	{
-		Utils::SetConsoleCursorPosition({ 30, 0 });
+		Utils::SetConsoleCursorPosition(Vector2{ 30, 0 });
 		Utils::SetConsoleTextColor(static_cast<WORD>(Color::White));
 
 		std::cout << "Game Clear!\n";
@@ -119,93 +120,96 @@ bool SokobanLevel::CanPlayerMove(const Vector2& position, const Vector2& newPosi
 	return false;
 }
 
+
 void SokobanLevel::ReadMapFile(const char* fileName)
 {
-	// 최종 에셋 경로 완성.
-	char filePath[256] = {};
-	sprintf_s(filePath, 256, "../Assets/%s.txt", fileName);
+	FileManager::GetInstance()->ReadFile(fileName, Define::EFileType::MAP);
 
-	FILE* file = nullptr;
-	fopen_s(&file, filePath, "rt");
+	//// 최종 에셋 경로 완성.
+	//char filePath[256] = {};
+	//sprintf_s(filePath, 256, "../Resources/Files/%s.txt", fileName);
 
-	if (file == nullptr)
-	{
-		std::cout << "맵 파일 읽기 실패 : " << fileName << '\n';
-		__debugbreak;
-		return;
-	}
+	//FILE* file = nullptr;
+	//fopen_s(&file, filePath, "rt");
 
-	// 파싱(Parcing, 해석)
-	fseek(file, 0, SEEK_END);
-	size_t fileSize = ftell(file);
-	rewind(file);
-
-	char* buffer = new char[fileSize + 1];
-	buffer[fileSize] = '\0';
-	memset(buffer, 0, fileSize + 1);
-	size_t readSize = fread(buffer, sizeof(char), fileSize, file);
-
-	//if (readSize != fileSize)
+	//if (file == nullptr)
 	//{
-	//	std::cout << "fileSize is not matched with readSize\n";
+	//	std::cout << "맵 파일 읽기 실패 : " << fileName << '\n';
+	//	__debugbreak;
+	//	return;
 	//}
 
-	int index = 0;
-	int size = static_cast<int>(readSize);
+	//// 파싱(Parcing, 해석)
+	//fseek(file, 0, SEEK_END);
+	//size_t fileSize = ftell(file);
+	//rewind(file);
 
-	Vector2 position(0, 0);
+	//char* buffer = new char[fileSize + 1];
+	//buffer[fileSize] = '\0';
+	//memset(buffer, 0, fileSize + 1);
+	//size_t readSize = fread(buffer, sizeof(char), fileSize, file);
 
-	while (index < size)
-	{
-		char mapCharacter = buffer[index++];
+	////if (readSize != fileSize)
+	////{
+	////	std::cout << "fileSize is not matched with readSize\n";
+	////}
 
-		// 개행 문자 처리
-		if (mapCharacter == '\n')
-		{
-			position.x = 0;
-			++position.y;
+	//int index = 0;
+	//int size = static_cast<int>(readSize);
 
-			//std::cout << "\n";
-			continue;
-		}
+	//Vector2 position(0, 0);
 
-		// 각 문자 별로 처리
-		switch (mapCharacter)
-		{
-		case '#':
-		case '1':
-			AddActor(new Wall(position));
-			break;
-		case '.':
-			AddActor(new Ground(position));
-			break;
-		case 'p':
-			// Player Actor 생성
-			// Player는 움직이기 때문에 땅도 같이 생성해야함
-			AddActor(new Ground(position));
-			AddActor(new Player(position));
-			break;
-		case 'b':
-			AddActor(new Ground(position));
-			AddActor(new Box(position));
-			break;
-		case 't':
-			AddActor(new Target(position));
-			++targetScore;
-			break;
-		default:
-			break;
-		}
+	//while (index < size)
+	//{
+	//	char mapCharacter = buffer[index++];
 
-		// x좌표 증가 처리
-		++position.x;
-	}
+	//	// 개행 문자 처리
+	//	if (mapCharacter == '\n')
+	//	{
+	//		position.x = 0;
+	//		++position.y;
 
-	// 버퍼 해제
-	delete[] buffer;
+	//		//std::cout << "\n";
+	//		continue;
+	//	}
 
-	// 파일 닫기
-	fclose(file);
+	//	// 각 문자 별로 처리
+	//	switch (mapCharacter)
+	//	{
+	//	case '#':
+	//	case '1':
+	//		AddActor(new Wall(position));
+	//		break;
+	//	case '.':
+	//		AddActor(new Ground(position));
+	//		break;
+	//	case 'p':
+	//		// Player Actor 생성
+	//		// Player는 움직이기 때문에 땅도 같이 생성해야함
+	//		AddActor(new Ground(position));
+	//		AddActor(new Player(position));
+	//		break;
+	//	case 'b':
+	//		AddActor(new Ground(position));
+	//		AddActor(new Box(position));
+	//		break;
+	//	case 't':
+	//		AddActor(new Target(position));
+	//		++targetScore;
+	//		break;
+	//	default:
+	//		break;
+	//	}
+
+	//	// x좌표 증가 처리
+	//	++position.x;
+	//}
+
+	//// 버퍼 해제
+	//delete[] buffer;
+
+	//// 파일 닫기
+	//fclose(file);
 }
 
 bool SokobanLevel::CheckGameClear()
