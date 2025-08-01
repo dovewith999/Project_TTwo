@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Level/Level.h"
-#include "Actor/Actor.h"
+#include "Math/Color.h"
 
 struct TitleItem
 {
@@ -23,10 +23,10 @@ public:
 	}
 
 public:
-	// 메뉴 텍스트
+	// Title 선택지 텍스트
 	char* itemText = nullptr;
 
-	// 메뉴 선택 시 실행할 동작
+	// 선택지 선택 시 실행할 동작
 	OnSelected onSelected = nullptr;
 
 };

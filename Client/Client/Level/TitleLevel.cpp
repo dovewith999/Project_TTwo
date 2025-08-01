@@ -5,6 +5,7 @@
 #include "Input.h"
 
 #include <iostream>
+
 TitleLevel::TitleLevel()
 {	
 	// 메뉴 아이템 추가  
@@ -61,13 +62,11 @@ void TitleLevel::Render()
 {
 	super::Render();
 
-	super::Render();
-
-	// 색상 & 과표 정리
+	// 색상 & 좌표 정리
 	Utils::SetConsoleCursorPosition(Vector2{ 0,0 });
 	Utils::SetConsoleTextColor(static_cast<WORD>(unselectedColor));
 
-	std::cout << "SokobanGame\n\n";
+	std::cout << "TETRIS\n\n";
 
 	for (int i = 0; i < length; ++i)
 	{
@@ -75,8 +74,4 @@ void TitleLevel::Render()
 		Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
 		std::cout << items[i]->itemText << '\n';
 	}
-}
-
-void TitleLevel::ReadTitleFile()
-{
 }
