@@ -18,7 +18,7 @@ Game::~Game()
 
 void Game::StartSinglePlayer()
 {
-    LevelManager::GetInstance()->ChangeLevel("TetrisLevel");
+    LevelManager::GetInstance()->ChangeLevel("Tetris");
 }
 
 void Game::StartMultiPlayer()

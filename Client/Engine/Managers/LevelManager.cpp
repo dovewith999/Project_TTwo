@@ -7,7 +7,14 @@ LevelManager::LevelManager()
 
 void LevelManager::ChangeLevel(const char* nameOfLevel)
 {
-	currentLevel = cachedLevels[nameOfLevel];
+	Level* nextLevel = cachedLevels[nameOfLevel];
+	if (nextLevel == nullptr)
+	{
+		return;
+	}
+
+	currentLevel = nextLevel;
+	currentLevel->BeginPlay();
 }
 
 void LevelManager::PushLevel(Level* overlayLevel)
