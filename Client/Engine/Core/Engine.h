@@ -37,7 +37,7 @@ public:
 	void Quit();
 
 private: /*Function*/
-	//void BeginPlay(); BeginPlay는 레벨이 바뀔 때 한 번 호출하는 것으로 변경
+	void BeginPlay();
 	void Tick(float deltaTime = 0.0f);
 	void Render();
 

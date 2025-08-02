@@ -13,6 +13,13 @@ TetrisLevel::~TetrisLevel()
 void TetrisLevel::BeginPlay()
 {
 	super::BeginPlay();
+
+	if (calledBeginPlay == true)
+	{
+		return;
+	}
+
+	calledBeginPlay = true;
 	system("cls");
 	SoundManager::GetInstance()->PlaySoundW(L"BGM Tetris_Nintendo music.mp3", Define::ESoundChannelID::BGM, 10.f);
 }

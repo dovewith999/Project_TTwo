@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Level/Level.h"
+
 class TetrisLevel final : public Level
 {
 	RTTI_DECLARATIONS(TetrisLevel, Level)

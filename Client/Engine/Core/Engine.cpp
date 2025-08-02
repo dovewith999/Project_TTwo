@@ -85,7 +85,7 @@ void Engine::Run()
 
 		if (oneFrameTime <= deltaTime)
 		{
-			//BeginPlay();
+			BeginPlay();
 			Tick(deltaTime); // deltaTime can be calculated based on frame time
 			Render();
 
@@ -111,15 +111,15 @@ void Engine::Quit()
 	isQuit = true;
 }
 
-//void Engine::BeginPlay()
-//{
-//	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
-//	{
-//		return;
-//	}
-//
-//	LevelManager::GetInstance()->GetCurrentLevel()->BeginPlay();
-//}
+void Engine::BeginPlay()
+{
+	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
+	{
+		return;
+	}
+
+	LevelManager::GetInstance()->GetCurrentLevel()->BeginPlay();
+}
 
 void Engine::Tick(float deltaTime)
 {

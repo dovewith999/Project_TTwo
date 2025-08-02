@@ -25,5 +25,8 @@ private:
 protected:
 	// 자식에서는 접근할 수 있어야 하기 때문에 protected
 	std::vector<Actor*> actors;
+
+	//레벨 자체의 BeginPlay가 호출되어야 할 때 필요한 변수
+	bool calledBeginPlay = false;
 };
 
