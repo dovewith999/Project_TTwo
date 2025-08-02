@@ -1,6 +1,7 @@
 ﻿#include "Game.h"
 #include "Managers/LevelManager.h"
 #include "Level/TitleLevel.h"
+#include "Level/TetrisLevel.h"
 
 Game* Game::instance = nullptr;
 
@@ -17,6 +18,7 @@ Game::~Game()
 
 void Game::StartSinglePlayer()
 {
+    LevelManager::GetInstance()->ChangeLevel("TetrisLevel");
 }
 
 void Game::StartMultiPlayer()
@@ -47,8 +49,8 @@ void Game::InitializeLevels()
 
     // 레벨들을 미리 생성하고 등록
     levelManager->RegisterLevel("Title", new TitleLevel());
+    levelManager->RegisterLevel("Tetris", new TetrisLevel());
     //levelManager.RegisterLevel("Lobby", new LobbyLevel());
-    //levelManager.RegisterLevel("Tetris", new TetrisLevel());
     //levelManager.RegisterLevel("Result", new ResultLevel());
     //levelManager.RegisterLevel("Settings", new SettingsLevel());
 

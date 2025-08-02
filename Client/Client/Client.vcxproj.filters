@@ -54,7 +54,7 @@
     <ClCompile Include="Managers\GameManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TetrisLevel.cpp">
+    <ClCompile Include="Level\TetrisLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,7 +95,7 @@
     <ClInclude Include="Managers\GameManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TetrisLevel.h">
+    <ClInclude Include="Level\TetrisLevel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,7 +15,7 @@ TitleLevel::TitleLevel()
 	length = static_cast<int>(items.size());
 
 	// 음악 재생
-	SoundManager::GetInstance()->PlaySoundW(L"BGM Tetris_Nintendo music.mp3", Define::ESoundChannelID::BGM, 10.f);
+	//SoundManager::GetInstance()->PlaySoundW(L"BGM Tetris_Nintendo music.mp3", Define::ESoundChannelID::BGM, 10.f);
 }
 
 TitleLevel::~TitleLevel()
