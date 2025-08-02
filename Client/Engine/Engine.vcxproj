@@ -144,7 +144,7 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BuildEngineDLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions); BuildEngineDLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\; $(ProjectDir)\Core\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\; $(ProjectDir)\Core\; $(ProjectDir)..\Client\;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,7 +167,7 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BuildEngineDLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions); BuildEngineDLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\; $(ProjectDir)\Core\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\; $(ProjectDir)\Core\; $(ProjectDir)..\Client\;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,8 +188,9 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\RTTI.h" />
-    <ClInclude Include="Manager\FileManager.h" />
-    <ClInclude Include="Manager\SoundManager.h" />
+    <ClInclude Include="Managers\FileManager.h" />
+    <ClInclude Include="Managers\LevelManager.h" />
+    <ClInclude Include="Managers\SoundManager.h" />
     <ClInclude Include="Etc\GameInstance.h" />
     <ClInclude Include="Etc\Singleton.h" />
     <ClInclude Include="Level\Level.h" />
@@ -202,8 +203,9 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
     <ClCompile Include="Actor\Actor.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Input.cpp" />
-    <ClCompile Include="Manager\FileManager.cpp" />
-    <ClCompile Include="Manager\SoundManager.cpp" />
+    <ClCompile Include="Managers\FileManager.cpp" />
+    <ClCompile Include="Managers\LevelManager.cpp" />
+    <ClCompile Include="Managers\SoundManager.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
   </ItemGroup>

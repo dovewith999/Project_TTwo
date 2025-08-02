@@ -4,27 +4,26 @@
 class Level;
 class Game : public Engine
 {
-public:
-	Game();
-	virtual ~Game();
+private:
+    static Game* instance;
 
 public:
-	void ToggleMenu();
-
-	virtual void CleanUp() override;
+    explicit Game();
+    virtual ~Game();
 
 public:
-	static Game& GetInstance();
+    // 게임 특화 기능만 남김
+    void StartSinglePlayer();
+    void StartMultiPlayer();
+    void ShowSettings();
+    void QuitGame();
+
+    // 엔진 오버라이드
+    virtual void CleanUp() override;
+
+    static Game& GetInstance();
 
 private:
-	// 메뉴 레벨
-	Level* menuLevel = nullptr;
-
-	// 화면에 안보이는 레벨
-	Level* backLevel = nullptr;
-
-	bool showMenu = false;
-
-private:
-	static Game* instance;
+    // 레벨 관리는 LevelManager에게 위임
+    void InitializeLevels();  // 시작시 모든 레벨 등록
 };

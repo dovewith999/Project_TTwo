@@ -39,7 +39,7 @@
     <ClInclude Include="Core\Input.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Manager\SoundManager.h">
+    <ClInclude Include="Managers\SoundManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Define.h">
@@ -54,7 +54,10 @@
     <ClInclude Include="Etc\GameInstance.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Manager\FileManager.h">
+    <ClInclude Include="Managers\FileManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\LevelManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,10 +77,13 @@
     <ClCompile Include="Core\Input.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Manager\SoundManager.cpp">
+    <ClCompile Include="Managers\SoundManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Manager\FileManager.cpp">
+    <ClCompile Include="Managers\FileManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\LevelManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

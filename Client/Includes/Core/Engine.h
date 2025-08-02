@@ -31,8 +31,6 @@ public:
 	// 엔진 실행함수
 	void Run();
 
-	void AddLevel(Level* newLevel);
-
 	virtual void CleanUp();
 
 	// 엔진 종료함수
@@ -49,9 +47,6 @@ protected:
 	// 엔진 종료 플래그
 	bool isQuit = false; 
 	
-	// 메인 레벨
-	Level* mainLevel = nullptr;
-
 	// 입력 관리자
 	Input input;
 

@@ -1,18 +1,13 @@
 ﻿#include "Game.h"
+#include "Managers/LevelManager.h"
 #include "Level/TitleLevel.h"
-#include "Level/SokobanLevel.h"
 
 Game* Game::instance = nullptr;
 
 Game::Game()
 {
 	instance = this;
-	
-	// 메인 레벨 추가
-	AddLevel(new SokobanLevel());
-
-	// 메뉴 레벨 생성
-	menuLevel = new TitleLevel();
+	InitializeLevels();
 }
 
 Game::~Game()
@@ -20,40 +15,43 @@ Game::~Game()
 	CleanUp();
 }
 
-void Game::ToggleMenu()
+void Game::StartSinglePlayer()
 {
-	// 화면 정리
-	system("cls");
+}
 
-	showMenu = !showMenu;
+void Game::StartMultiPlayer()
+{
+}
 
-	if (showMenu)
-	{
-		// 게임 레벨을 뒤로 밀기
-		backLevel = mainLevel;
-		mainLevel = menuLevel;
-	}
+void Game::ShowSettings()
+{
+}
 
-	else
-	{
-		mainLevel = backLevel;
-	}
+void Game::QuitGame()
+{
 }
 
 void Game::CleanUp()
 {
-	if (showMenu) // 이 때는 Engine의 mainLevel == menuLevel
-	{
-		SafeDelete(backLevel);
-		mainLevel = nullptr;
-	}
-
-	SafeDelete(menuLevel);
-
 	Engine::CleanUp();
 }
 
 Game& Game::GetInstance()
 {
 	return *instance;
+}
+
+void Game::InitializeLevels()
+{
+    auto levelManager = LevelManager::GetInstance();
+
+    // 레벨들을 미리 생성하고 등록
+    levelManager->RegisterLevel("Title", new TitleLevel());
+    //levelManager.RegisterLevel("Lobby", new LobbyLevel());
+    //levelManager.RegisterLevel("Tetris", new TetrisLevel());
+    //levelManager.RegisterLevel("Result", new ResultLevel());
+    //levelManager.RegisterLevel("Settings", new SettingsLevel());
+
+    // 시작 레벨 설정
+    levelManager->ChangeLevel("Title");
 }

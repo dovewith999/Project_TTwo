@@ -14,7 +14,7 @@ DemoLevel::DemoLevel()
 	if (file == nullptr)
 	{
 		std::cout << "Failed to open Map.txt file \n";
-		__debugbreak;
+		__debugbreak();
 		return;
 	}
 

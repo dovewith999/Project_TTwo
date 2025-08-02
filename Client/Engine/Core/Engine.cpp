@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "Utils/Utils.h"
 #include "Input.h"
+#include "Managers/LevelManager.h"
 
 Engine* Engine::instance = nullptr;
 
@@ -105,24 +106,6 @@ void Engine::Run()
 	Utils::SetConsoleTextColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED); // 흰 색으로 설정
 }
 
-void Engine::AddLevel(Level* newLevel)
-{
-	if (newLevel == nullptr)
-	{
-		return;
-	}
-
-	// 기존에 있던 레벨 제거
-
-	if (mainLevel != nullptr)
-	{
-		delete mainLevel;
-		mainLevel = nullptr;
-	}
-
-	mainLevel = newLevel;
-}
-
 void Engine::Quit()
 {
 	isQuit = true;
@@ -130,17 +113,17 @@ void Engine::Quit()
 
 void Engine::BeginPlay()
 {
-	if (mainLevel == nullptr)
+	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
 	{
 		return;
 	}
 
-	mainLevel->BeginPlay();
+	LevelManager::GetInstance()->GetCurrentLevel()->BeginPlay();
 }
 
 void Engine::Tick(float deltaTime)
 {
-	if (mainLevel == nullptr)
+	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
 	{
 		return;
 	}
@@ -162,7 +145,8 @@ void Engine::Tick(float deltaTime)
 	//}
 
 	//레벨 업데이트
-	mainLevel->Tick(deltaTime);
+	//mainLevel->Tick(deltaTime);
+	LevelManager::GetInstance()->GetCurrentLevel()->Tick(deltaTime);
 
 	//if (GetKeyDown(VK_ESCAPE))
 	//{
@@ -172,14 +156,16 @@ void Engine::Tick(float deltaTime)
 
 void Engine::Render()
 {
-	if (mainLevel == nullptr)
+	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
 	{
 		return;
 	}
 
 	Utils::SetConsoleTextColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 
-	mainLevel->Render();
+	//mainLevel->Render();
+	LevelManager::GetInstance()->GetCurrentLevel()->Render();
+
 }
 
 void Engine::LoadEngineSettings()
@@ -251,5 +237,4 @@ void Engine::LoadEngineSettings()
 
 void Engine::CleanUp()
 {
-	SafeDelete(mainLevel);
 }

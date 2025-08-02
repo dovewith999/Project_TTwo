@@ -217,19 +217,15 @@
 #include "Engine.h"
 #include "Game/Game.h"
 #include "Level/SokobanLevel.h"
-#include "Level/MenuLevel.h"
 #include "SoundManager.h"
 #include "Manager/FileManager.h"
 
-#include <cstdlib>
-
 int main()
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	Game game;
-	game.Run();
+    Game game;
+    game.Run();
 
-	//FileManager::GetInstance()->ReadFile("Title", Define::EFileType::TITLE);
-	return 0;
+    return 0;
 }

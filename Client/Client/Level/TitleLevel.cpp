@@ -9,11 +9,12 @@
 TitleLevel::TitleLevel()
 {	
 	// 메뉴 아이템 추가  
-	items.emplace_back(new TitleItem("  Start Game", []() {Game::GetInstance().ToggleMenu(); }));
-	items.emplace_back(new TitleItem("  Quit Game", []() { Game::GetInstance().Quit(); }));
+	items.emplace_back(new TitleItem("- Start Game", []() {Game::GetInstance().StartSinglePlayer(); }));
+	items.emplace_back(new TitleItem("- Quit Game", []() { Game::GetInstance().Quit(); }));
 
 	length = static_cast<int>(items.size());
 
+	// 음악 재생
 	SoundManager::GetInstance()->PlaySoundW(L"BGM Tetris_Nintendo music.mp3", Define::ESoundChannelID::BGM, 10.f);
 }
 
@@ -48,13 +49,6 @@ void TitleLevel::Tick(float deltaTime)
 		// 메뉴 아이템이 저장하고 있는 함수 호출
 		items[currentIndex]->onSelected();
 	}
-
-	else if (Input::GetInstance().GetKeyDown(VK_ESCAPE))
-	{
-		// Game에 토글 메뉴 기능 추가 후 호출해야 함
-		Game::GetInstance().ToggleMenu();
-		currentIndex = 0;
-	}
 #pragma endregion
 }
 
@@ -71,7 +65,8 @@ void TitleLevel::Render()
 	for (int i = 0; i < length; ++i)
 	{
 		Color textColor = i == currentIndex ? selectedColor : unselectedColor;
+		items[i]->itemText[0] = i == currentIndex ? selectImage : '-';
 		Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
-		std::cout << items[i]->itemText << '\n';
+		std::wcout << items[i]->itemText << '\n';
 	}
 }
