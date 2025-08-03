@@ -182,6 +182,7 @@ xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
     <ClCompile Include="Demo\TestActor.cpp" />
     <ClCompile Include="Managers\GameManager.cpp" />
     <ClCompile Include="Level\TetrisLevel.cpp" />
+    <ClCompile Include="TetrisBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Box.h" />
@@ -197,6 +198,7 @@ xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
     <ClInclude Include="Level\SokobanLevel.h" />
     <ClInclude Include="Managers\GameManager.h" />
     <ClInclude Include="Level\TetrisLevel.h" />
+    <ClInclude Include="TetrisBlock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

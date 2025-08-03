@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Level/Level.h"
 
-class TetrisLevel final : public Level
+class TetrisLevel : public Level
 {
 	RTTI_DECLARATIONS(TetrisLevel, Level)
 
@@ -14,6 +14,9 @@ public:
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
 
+private:
+	bool isGamePaused;
+	bool isGameOver;
 
+	float gameTimer;
 };
-
