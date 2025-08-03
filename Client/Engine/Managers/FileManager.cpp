@@ -86,50 +86,6 @@ void FileManager::ReadTitleFile(FILE* file)
 		case '~':
 			std::cout << '~';
 			break;
-		case '!':
-			std::cout << '!';
-			break;
-		case '*':
-			std::cout << '*';
-			break;
-		case ';':
-			std::cout << ';';
-			break;
-		case ' ':
-			std::cout << ' ';
-			break;
-		case '=':
-			std::cout << '=';
-			break;
-		case '$':
-			std::cout << '$';
-			break;
-		case ':':
-			std::cout << ':';
-			break;
-		case '.':
-			std::cout << '.';
-			break;
-		case '`':
-			std::cout << '`';
-			break;
-		case ',':
-			std::cout << ',';
-			break;
-		case '-':
-			std::cout << '-';
-			break;
-		case '+':
-			std::cout << '+';
-			break;
-		case '/':
-			std::cout << '/';
-			break;
-		case '_':
-			std::cout << '_';
-			break;
-		case '\\':
-			std::cout << '\\';
 		default:
 			break;
 		}
@@ -162,7 +118,45 @@ void FileManager::ReadMapFile(FILE* file)
 	int index = 0;
 	int size = static_cast<int>(readSize);
 
-	Vector2 position(0, 0);
+	Vector2 position(3, 3);
+
+	while (index < size)
+	{
+		char mapCharacter = buffer[index++];
+
+		// 개행 문자 처리
+		if (mapCharacter == ',')
+		{
+			std::cout << '\n'; // 콘솔에 개행 출력
+			position.x = 3;
+			++position.y;
+			continue;
+		}
+
+		// 실제 개행 문자들 무시 (이미 콤마로 처리했으므로)
+		if (mapCharacter == '\n' || mapCharacter == '\r')
+		{
+			continue;
+		}
+
+		// 각 문자 별로 처리
+		switch (mapCharacter)
+		{
+		case '1':
+			std::cout << Block_Types[1];
+			break;
+		case '0' : 
+			std::cout << Block_Types[0];
+			break;
+		}
+
+		// x좌표 증가 처리
+		++position.x;
+	}
+
+	// 버퍼 해제
+	delete[] buffer;
+
 }
 
 void FileManager::ReadBlockFile(FILE* file)
