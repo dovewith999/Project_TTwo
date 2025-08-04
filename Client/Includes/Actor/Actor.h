@@ -42,6 +42,13 @@ public:/*Getter & Setter*/
 	FORCEINLINE void SetOwner(Level* newOwner);
 	FORCEINLINE Level* GetOwner() const;
 
+	FORCEINLINE void SetActive(bool isActive);
+	FORCEINLINE bool GetActive() const;
+
+	FORCEINLINE void SetExpired(bool isExpired);
+	FORCEINLINE bool GetExpired() const;
+
+
 private:
 	// 개체의 위치
 	Vector2 position;
@@ -55,6 +62,18 @@ private:
 	// BeginPlay 호출이 되었는지 확인.
 	bool hasBeganPlay = false;
 
+	// 액터가 활성 상태인지 알려주는 변수.
+	bool isActive = true;
+
+	// 삭제 요청됐는지 알려주는 변수.
+	bool isExpired = false;
+
+	// 수명 주기 (단위: 초).
+	float lifetime = 0.0f;
+
+	// 이 플래그를 true로 설정하면 수명 주기를 사용해 자동 제거.
+	bool autoDestroy = false;
+	
 	// 정렬 순서
 	unsigned int sortingOrder = 0;
 

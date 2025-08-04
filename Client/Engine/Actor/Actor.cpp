@@ -6,7 +6,7 @@
 #include <iostream>
 
 Actor::Actor(const char image, Color color, const Vector2& position)
-	: image(image), color(color), position(position)
+	: color(color), position(position)
 {
 }
 
@@ -37,12 +37,9 @@ void Actor::Render()
 	coord.Y = static_cast<short>(position.y);
 
 	Utils::SetConsoleCursorPosition(coord);
-	
+
 	// 색상 설정
 	Utils::SetConsoleTextColor(static_cast<WORD>(color));
-
-	//그리기
-	std::cout << image;
 }
 
 void Actor::QuitGame() const
@@ -91,4 +88,24 @@ void Actor::SetOwner(Level* newOwner)
 Level* Actor::GetOwner() const
 {
 	return owner;
+}
+
+void Actor::SetActive(bool isActive)
+{
+	this->isActive = isActive;
+}
+
+bool Actor::GetActive() const
+{
+	return isActive;
+}
+
+void Actor::SetExpired(bool isExpired)
+{
+	this->isExpired = isExpired;
+}
+
+bool Actor::GetExpired() const
+{
+	return isExpired;
 }
