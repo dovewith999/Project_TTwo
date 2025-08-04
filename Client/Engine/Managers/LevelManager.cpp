@@ -14,7 +14,6 @@ void LevelManager::ChangeLevel(const char* nameOfLevel)
 	}
 
 	currentLevel = nextLevel;
-	//currentLevel->BeginPlay();
 }
 
 void LevelManager::PushLevel(Level* overlayLevel)
@@ -43,6 +42,3 @@ void LevelManager::UpdateCurrentLevel(float deltaTime)
 {
 }
 
-void LevelManager::RenderCurrentLevel()
-{
-}

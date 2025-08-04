@@ -141,9 +141,8 @@ xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
       <AdditionalLibraryDirectories>..\Lib\Engine\;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\Lib\Engine\Engine.dll $(OutDir)\ /y
-xcopy ..\Lib\inc\*.dll $(OutDir)\ /y
-xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
+      <Command>xcopy ..\Lib\inc\*.dll $(OutDir) /y
+xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,9 +162,8 @@ xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
       <AdditionalLibraryDirectories>..\Lib\Engine\;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\Lib\Engine\Engine.dll $(OutDir)\ /y
-xcopy ..\Lib\inc\*.dll $(OutDir)\ /y
-xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
+      <Command>xcopy ..\Lib\inc\*.dll $(OutDir) /y
+xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -183,6 +181,7 @@ xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
     <ClCompile Include="Level\TetrisLevel.cpp" />
     <ClCompile Include="Managers\NetworkManager.cpp" />
     <ClCompile Include="Protocol\TMCP.cpp" />
+    <ClCompile Include="TetrisBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Box.h" />
@@ -199,6 +198,7 @@ xcopy $(SolutionDir)\Assets $(OutDir)..\Assets\ /y</Command>
     <ClInclude Include="Level\TetrisLevel.h" />
     <ClInclude Include="Managers\NetworkManager.h" />
     <ClInclude Include="Protocol\TMCP.h" />
+    <ClInclude Include="TetrisBlock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

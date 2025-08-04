@@ -5,7 +5,7 @@
 class NetworkManager : public SafeSingleton<NetworkManager>
 {
 	friend class SafeSingleton<NetworkManager>;
-	friend UINT WINAPI ReceiveThread(LPVOID param); // __beginthreadex에서 넘기려면 멤버 함수면 안됨..
+	friend UINT WINAPI ReceiveThread(LPVOID param);
 
 public:
 	explicit NetworkManager() = default;
@@ -22,4 +22,4 @@ private:
 	char clientName[32] = "OwnerClient";
 };
 
-UINT WINAPI ReceiveThread(LPVOID param); // 서버로부터 데이터를 받을 함수
+UINT WINAPI ReceiveThread(LPVOID param); // 서버로부터 데이터를 받을 함수, __beginthreadex에서 넘기려면 멤버 함수면 안되기 때문에 전역 함수로 생성 후 friend 처리

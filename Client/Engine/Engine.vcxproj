@@ -155,8 +155,8 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
       <Command>xcopy *.h ..\Includes /e /y </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)\*.lib ..\Lib\Engine\ /y
-xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
+      <Command>xcopy $(OutDir)\*.lib ..\Lib\Engine\ /y;
+ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -178,8 +178,8 @@ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
       <Command>xcopy *.h ..\Includes /e /y </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)\*.lib ..\Lib\Engine\ /y
-xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
+      <Command>xcopy $(OutDir)\*.lib ..\Lib\Engine\ /y;
+ xcopy $(OutDir)\*.dll ..\Lib\Engine\ /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

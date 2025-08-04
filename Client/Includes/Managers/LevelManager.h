@@ -32,7 +32,6 @@ public:
     // Engine과의 연동
     FORCEINLINE Level* GetCurrentLevel() const { return currentLevel; }
     void UpdateCurrentLevel(float deltaTime);
-    void RenderCurrentLevel();
 
 private:
     std::stack<Level*> levelStack;     // 레벨 스택 (메뉴 오버레이용)
