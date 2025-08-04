@@ -1,9 +1,5 @@
 ﻿#include "NetworkManager.h"
 
-NetworkManager::NetworkManager()
-{
-}
-
 UINT WINAPI ReceiveThread(LPVOID param)
 {
 	u_char cmd;
@@ -73,6 +69,46 @@ UINT WINAPI ReceiveThread(LPVOID param)
 
 void NetworkManager::SendInput(int input)
 {
+	TMCPBlockData blockData;
+
+	// 방향에 따라 블록 데이터 설정
+	blockData.blockType = 3;  // T-블록으로 고정
+	blockData.rotation = 0;
+	blockData.action = 0;     // 이동
+	blockData.direction = input;
+
+	// 방향에 따른 좌표 설정 (테스트용)
+	static u_short testX = 5, testY = 10;
+
+	switch (input) {
+	case 1: // 왼쪽
+		if (testX > 0) testX--;
+		printf("왼쪽 이동 전송 (X=%d)\n", testX);
+		break;
+	case 2: // 오른쪽  
+		if (testX < 9) testX++;
+		printf("오른쪽 이동 전송 (X=%d)\n", testX);
+		break;
+	case 3: // 아래
+		if (testY < 19) testY++;
+		printf("아래 이동 전송 (Y=%d)\n", testY);
+		break;
+	case 0: // 위 (회전으로 처리)
+	default:
+		blockData.rotation = (blockData.rotation + 1) % 4;
+		printf("회전 전송 (회전=%d)\n", blockData.rotation);
+		break;
+	}
+
+	blockData.posX = testX;
+	blockData.posY = testY;
+	blockData.timestamp = (u_int)time(NULL);
+
+	// 서버로 패킷 전송
+	int result = sendTMCP((unsigned int)clientSocket, TMCP_BLOCK_MOVE, &blockData, sizeof(blockData));
+	if (result < 0) {
+		printf("❌ 패킷 전송 실패!\n");
+	}
 }
 
 UINT NetworkManager::AcceptServer()
@@ -83,7 +119,6 @@ UINT NetworkManager::AcceptServer()
 		std::cout << "WSADATA 생성 실패\n";
 		return -1;
 	}
-
 	// 서버 연결 정보 입력
 	char serverIP[32] = "127.0.0.1"; // 기본은 로컬 IP로
 	int serverPort = 5004;
@@ -140,11 +175,12 @@ UINT NetworkManager::AcceptServer()
 		return -1;
 	}
 
-	// === 메인 입력 루프 ===
-	printf("조작법:\n");
-	printf("방향키: 블록 이동 테스트\n");
-	printf("ESC: 종료\n");
-	printf("다른 클라이언트도 실행해서 서로 패킷을 주고받는지 확인하세요!\n\n");
+	#pragma region 메인 입력 루프 (블럭 별로 처리하던가 Player를 만들어서 처리해야함) 
+	// TODO : 메인 입력 루프 -> 블럭 별로 처리하던가 Player를 만들어서 처리해야함.
+	//printf("조작법:\n");
+	//printf("방향키: 블록 이동 테스트\n");
+	//printf("ESC: 종료\n");
+	//printf("다른 클라이언트도 실행해서 서로 패킷을 주고받는지 확인하세요!\n\n");
 
 	//while (isConnected) {
 	//	if (_kbhit()) {
@@ -186,6 +222,8 @@ UINT NetworkManager::AcceptServer()
 
 	//	Sleep(10);  // CPU 사용률 조절
 	//}
+
+#pragma endregion
 
 	// === 정리 ===
 	isConnected = false;
