@@ -301,11 +301,120 @@
 //}
 
 #include "GameServer.h"
+#include <iostream>
+#include <conio.h>
 
 int main()
 {
-	GameServer server;
-	server.Listen(5004);
-	server.Wait();
-	return 0;
+    // === 간단한 타이틀 ===
+    std::cout << "========================================\n";
+    std::cout << "테트리스 Non-blocking 중계 서버 v3.1\n";
+    std::cout << "========================================\n";
+    std::cout << "작동 방식 (Non-blocking):\n";
+    std::cout << "   1️⃣ 클라이언트 A 접속 → 대기\n";
+    std::cout << "   2️⃣ 클라이언트 B 접속 → 즉시 중계 시작\n";
+    std::cout << "   3️⃣ Select로 패킷 감지 (1ms 간격)\n";
+    std::cout << "   4️⃣ A가 보낸 패킷 → B로 즉시 전달\n";
+    std::cout << "   5️⃣ B가 보낸 패킷 → A로 즉시 전달\n";
+    std::cout << "   6️⃣ 한쪽 연결 끊김 → 게임 종료\n";
+    std::cout << "========================================\n";
+    std::cout << "기술적 특징:\n";
+    std::cout << "   • I/O 방식: Non-blocking (Select 기반)\n";
+    std::cout << "   • 타임아웃: 1ms (거의 실시간)\n";
+    std::cout << "   • 장점: 확장성, 부가 기능 추가 용이\n";
+    std::cout << "   • 성능: Blocking과 동일한 즉시성\n";
+    std::cout << "========================================\n\n";
+
+    // === 포트 설정 (기존과 동일) ===
+    int serverPort = 5004;
+    std::cout << "서버 포트: " << serverPort << "\n";
+    std::cout << "다른 포트를 사용하시겠습니까? (y/N): ";
+
+    char changePort;
+    std::cin >> changePort;
+
+    if (changePort == 'y' || changePort == 'Y') {
+        std::cout << "포트 번호 입력: ";
+        std::cin >> serverPort;
+    }
+
+    // === 서버 시작 ===
+    std::cout << "\nNon-blocking 서버 시작 중...\n";
+
+    GameServer server;
+    server.Listen(serverPort);
+
+    std::cout << "Non-blocking 서버 준비 완료!\n";
+    std::cout << "포트: " << serverPort << "\n";
+    std::cout << "I/O 방식: Non-blocking (Select)\n";
+    std::cout << "타임아웃: 1ms (거의 실시간)\n";
+    std::cout << "클라이언트 2개 접속을 기다리는 중...\n\n";
+
+    // === 실행 모드 선택 (기존과 동일) ===
+    std::cout << "실행 모드를 선택하세요:\n";
+    std::cout << "1. 자동 모드 (Non-blocking 로그만 출력)\n";
+    std::cout << "2. 관리 모드 (키 입력으로 상태 확인)\n";
+    std::cout << "선택 (1/2): ";
+
+    char mode;
+    std::cin >> mode;
+
+    if (mode == '2') {
+        // === 관리 모드 ===
+        std::cout << "\nNon-blocking 관리 모드 시작\n";
+        std::cout << "사용 방법:\n";
+        std::cout << "   - 아무 키: Non-blocking 서버 상태 확인\n";
+        std::cout << "   - ESC: 서버 종료\n\n";
+
+        // 서버를 별도 스레드에서 실행
+        HANDLE serverThread = (HANDLE)_beginthreadex(NULL, 0, [](void* param) -> unsigned {
+            GameServer* srv = (GameServer*)param;
+            srv->Wait();
+            return 0;
+            }, &server, 0, NULL);
+
+        // 키 입력 처리 루프
+        while (true) {
+            char key = _getch();
+
+            if (key == 27) {  // ESC 키
+                std::cout << "\nNon-blocking 서버 종료 요청...\n";
+                break;
+            }
+            else {
+                // 서버 상태 출력
+                server.PrintStatus();
+            }
+        }
+
+        CloseHandle(serverThread);
+
+    }
+    else {
+        // === 자동 모드 ===
+        std::cout << "\nNon-blocking 자동 모드 시작\n";
+        std::cout << "Non-blocking 실시간 로그가 출력됩니다.\n";
+        std::cout << "Ctrl+C로 종료하세요.\n";
+        std::cout << "========================================\n\n";
+
+        // 클라이언트 접속 안내
+        std::cout << "테트리스 클라이언트를 2개 실행해보세요!\n";
+        std::cout << "서버 주소: 127.0.0.1:" << serverPort << "\n";
+        std::cout << "Non-blocking 방식으로 즉시 중계됩니다!\n\n";
+
+        // 메인 스레드에서 서버 실행
+        server.Wait();
+    }
+
+    // === 종료 메시지 ===
+    std::cout << "\n========================================\n";
+    std::cout << "테트리스 Non-blocking 중계 서버 종료\n";
+    std::cout << "I/O 방식: Non-blocking (Select 기반)\n";
+    std::cout << "이용해 주셔서 감사합니다!\n";
+    std::cout << "========================================\n";
+
+    std::cout << "\n아무 키나 누르세요...";
+    _getch();
+
+    return 0;
 }

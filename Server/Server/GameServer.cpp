@@ -1,232 +1,285 @@
 ﻿#include "GameServer.h"
-#include <sys\types.h>
-#include <sys\stat.h>
-#include <mmsystem.h>
 
 GameServer::GameServer()
-    : portNum(0), isRun(true)
+	: portNumber(0), isRunning(true), serverSocket(INVALID_SOCKET), waitingSocket(INVALID_SOCKET), serverStartTime(time(NULL))
 {
-    InitSocketLayer(); // WSA 소켓 초기화 작업을 여기서 진행
-
-    for (int i = 0; i < 100; ++i)
-    {
-        ClientInfo info;
-        clientList.emplace_back(info);
-    }
-
-    ClientIterator iter;
-    iter = clientList.begin();
-    while (iter != clientList.end())
-    {
-        clientPool.push(iter);
-        ++iter;
-    }
+	if (InitSocketLayer() != 0)
+	{
+		std::cout << "[Error] : 소켓 초기화 실패\n";
+	}
 }
 
 GameServer::~GameServer()
 {
-    // 데이터 정리
-    isRun = false;
+	isRunning = false;
+	EndGame();
+	if (waitingSocket != INVALID_SOCKET)
+	{
+		closesocket(waitingSocket);
+	}
 
-    while (!clientPool.empty())
-    {
-        clientPool.pop();
-    }
+	if (serverSocket != INVALID_SOCKET)
+	{
+		closesocket(serverSocket);
+	}
 
-    ClientIterator iter;
-    iter = clientList.begin();
-    while (iter != clientList.end()) 
-    {
-        if (iter->isConnect == true) // 아직 client와 연결된 상태라면 연결을 종료시킴
-        {
-            WaitForSingleObject(iter->clientHandle, INFINITE);
-            CloseHandle(iter->clientHandle);
-            closesocket(iter->clientSocket);
-            ++iter;
-        }
-    }
+	CloseSocketLayer();
 
+	// 실행 시간 계산 및 출력
+	time_t runTime = time(NULL) - serverStartTime;
+	std::cout << "실행시간: " << runTime;
+}
+
+void GameServer::Listen(int portNumber)
+{
+	this->portNumber = portNumber;
+
+	HANDLE acceptHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::AcceptThread, this, 0, NULL);
+	if (!acceptHandle)
+	{
+		return;
+	}
+
+	CloseHandle(acceptHandle);
+	std::cout << "클라이언트 대기 시작\n";
 }
 
 void GameServer::Wait()
 {
-    WaitForSingleObject(listenHandle, INFINITE);
+	while (isRunning)
+	{
+		Sleep(1000);
+	}
 }
 
-void GameServer::Listen(int portNum)
+void GameServer::PrintStatus()
 {
-    this->portNum = portNum;
-    listenHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::ListenThread, this, 0, NULL);
-
-    if (!listenHandle)
-    {
-        std::cout << "Error : [Listen()] listenHandle == 0\m";
-        return;
-    }
 }
 
-UINT __stdcall GameServer::ListenThread(LPVOID p)  
-{  
-    GameServer* server;  
-    server = static_cast<GameServer*>(p);  
-    server->serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  
-
-    if (server->serverSocket == INVALID_SOCKET)  
-    {  
-        WSACleanup();  
-        return -1;  
-    }  
-
-    sockaddr_in service;  
-    memset(&service, 0, sizeof(service));  
-
-    service.sin_family = AF_INET;  
-    service.sin_addr.s_addr = htonl(INADDR_ANY);  
-    service.sin_port = htons(server->portNum);  
-
-    // Correct the type casting and remove the undefined "serverAddr".  
-    if (bind(server->serverSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
-    {  
-        closesocket(server->serverSocket);
-        return -1;  
-    }  
-
-    if (listen(server->serverSocket, 5) == SOCKET_ERROR)  
-    {  
-        closesocket(server->serverSocket);
-        return -1;  
-    }  
-
-    while (server->isRun)
-    {
-        SOCKET connectSocket;
-        connectSocket = accept(server->serverSocket, NULL, NULL);
-        if (connectSocket > 0)
-        {
-            if (server->clientPool.empty())
-            {
-                closesocket(connectSocket);
-                continue;
-            }
-
-            else
-            {
-                ClientIterator iter;
-                iter = server->clientPool.top(); // socket pooling
-                server->clientPool.pop();         
-                iter->clientSocket = connectSocket;
-                server->lastSocket = connectSocket;
-                iter->isConnect = true;
-                iter->clientHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::ControlThread, server, 0, NULL);
-            }
-        }
-        Sleep(50);
-    }
-
-    return 0;  
-}
-
-UINT __stdcall GameServer::ControlThread(LPVOID p)
+// 연결 수락 쓰레드
+UINT __stdcall GameServer::AcceptThread(LPVOID param)
 {
-    GameServer* server = nullptr;
-    server = (GameServer*)p;
-    SOCKET connectSocket = server->lastSocket;
-    char recvMessage[100];
-    int len = 0;
-    bool bFound = false;
+	GameServer* server = (GameServer*)param;
+	server->serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (server->serverSocket == INVALID_SOCKET)
+	{
+		std::cout << "서버 소켓 생성 실패\n";
+		return -1;
+	}
 
-    //소켓 정보를 가지고 어떤 클라이언트인지 알아야 함
-    ClientIterator iter;
-    iter = server->clientList.begin();
+	sockaddr_in serverAddr;
+	memset(&serverAddr, 0, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_addr.s_addr = INADDR_ANY;
+	serverAddr.sin_port = htons(server->portNumber);
 
-    while (iter != server->clientList.end())
-    {
-        if (((ClientInfo)(*iter)).clientSocket == connectSocket)
-        {
-            bFound = true;
-            char message[] = "Server Connect";
-            send(connectSocket, message, sizeof(message), 0);
-            std::cout << "매칭 성공! 클라이언트 연결 소켓: " << iter->clientSocket << "내부 관리 번호: " << iter->id << '\n';
-            break;
-        }
+	if (bind(server->serverSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
+	{
+		return -1;
+	}
 
-        ++iter;
-    }
 
-    //논 블록킹 서버를 위한 Select 설정들
-    fd_set fdReadSet, fdErrorSet, fdMaster;
-    struct timeval tvs;
+	if (listen(server->serverSocket, 2) == SOCKET_ERROR)
+	{
+		return -1;
+	}
 
-    FD_ZERO(&fdMaster);
-    FD_SET(connectSocket, &fdMaster);
-    tvs.tv_sec = 0;
-    tvs.tv_usec = 100;
+	std::cout << "포트 " << server->portNumber << "에서 대기중\n";
 
-    while (iter->isConnect && bFound)
-    {
-        fdReadSet = fdMaster;
-        fdErrorSet = fdMaster;
-        select((int)connectSocket + 1, &fdReadSet, NULL, &fdErrorSet, &tvs);
+	while (server->isRunning)
+	{
+		SOCKET clientSocket = accept(server->serverSocket, NULL, NULL);
 
-        if (FD_ISSET(connectSocket, &fdReadSet))
-        {
-            memset(recvMessage, 0, sizeof(recvMessage));
-            len = recv(connectSocket, recvMessage, sizeof(recvMessage) - 1, 0);
-            if (len == SOCKET_ERROR)
-            {
-                std::cout << "recv Error" << '\n';
-                break;
-            }
+		if (clientSocket == INVALID_SOCKET)
+		{
+			if (server->isRunning)
+			{
+				std::cout << "accept 실패\n";
+			}
+			continue;
+		}
 
-            recvMessage[len] = '\0';
+		// === 첫 번째 클라이언트인지 확인 ===
+		std::lock_guard<std::mutex> waitingLock(server->waitingMutex);
 
-            if (strcmp(recvMessage, "exit") == 0)
-            {
-                std::cout << "소켓 연결을 종료합니다.\n";
-                iter->isConnect = false;
-                break;
-            }
+		if (server->waitingSocket == INVALID_SOCKET)
+		{
+			server->waitingSocket = clientSocket;
+			SendTMCPPacket(clientSocket, TMCP_MATCH_WAIT);
+		}
 
-            std::cout << "클라이언트에서 받은 메시지 : " << recvMessage;
+		else
+		{
+			SOCKET player1 = server->waitingSocket;
+			SOCKET player2 = clientSocket;
 
-            //여기서 접속한 모든 클라이언트들에게 메세지를 보냄
-            ClientIterator clientIter;
-            clientIter = server->clientList.begin();
-            while (clientIter != server->clientList.end())
-            {
-                if (clientIter->isConnect)
-                {
-                    std::cout << "메세지 재전송 : 클라이언트 연결 소켓: " << clientIter->clientSocket << "내부 관리 번호: " << clientIter->id << '\n';
-                    send(clientIter->clientSocket, recvMessage, static_cast<int>(strlen(recvMessage)), 0);
-                }
+			server->waitingSocket = INVALID_SOCKET;
 
-                ++clientIter;
-            }
-        }
-    }
+			server->StartGame(player1, player2);
+		}
+	}
 
-    closesocket(iter->clientSocket);
-    server->clientPool.push(iter);
-    std::cout << "클라이언트 연결 종료\n";
+	return 0;
+}
 
-    return 0;
+UINT __stdcall GameServer::PlayerThread(LPVOID param)
+{
+	PlayerParam* playerParam = (PlayerParam*)param;
+	GameServer* server = playerParam->server;
+	SOCKET mySocket = playerParam->playerSocket;
+	SOCKET opponentSocket = playerParam->opponentSocket;
+	int playerId = playerParam->playerId;
+
+	delete playerParam;
+
+	fd_set fdRead, fdError, fdMaster;
+	struct timeval timeOut;
+	u_char command;
+	char payload[TMCP_MAX_PAYLOAD_SIZE];
+
+	FD_ZERO(&fdMaster);
+	FD_SET(mySocket, &fdMaster);
+
+	while (server->isRunning && server->currentSession.isActive)
+	{
+		fdRead = fdMaster;
+		fdError = fdMaster;
+		// 타임아웃 시간을 매우 짧게 : 거의 실시간
+		timeOut.tv_sec = 0;
+		timeOut.tv_usec = 1000; // 1 ms
+
+		int result = select(static_cast<int>(mySocket + 1), &fdRead, NULL, &fdError, &timeOut);
+
+		if (result < 0)
+		{
+			std::cout << "Select 오휴\n";
+			break;
+		}
+
+		if (FD_ISSET(mySocket, &fdError))
+		{
+			std::cout << "소켓 에러 fdError\n";
+			break;
+		}
+
+		if (FD_ISSET(mySocket, &fdRead))
+		{
+			memset(payload, 0, sizeof(payload));
+			int payloadSize = recvTMCP((u_int)mySocket, &command, payload, sizeof(payload));
+
+			if (payloadSize < 0) {
+				printf("[Non-blocking 스레드] Player%d 연결 끊김\n", playerId + 1);
+				break;
+			}
+
+
+			// === 특별 처리가 필요한 명령어들 ===
+			if (command == TMCP_DISCONNECT_REQ || command == TMCP_GAME_OVER) {
+				printf("[게임 종료] Player%d가 게임을 종료했습니다.\n", playerId + 1);
+
+				// 상대방에게 게임 종료 알림
+				SendTMCPPacket(opponentSocket, TMCP_GAME_OVER);
+				break;
+			}
+
+			server->RelayPacket(mySocket, opponentSocket, command, payload, payloadSize);
+		}
+	}
+
+	server->EndGame();
+
+	return 0;
 }
 
 int GameServer::InitSocketLayer()
 {
-    int retval = 0;
-    WORD verRequest = MAKEWORD(2, 2);
-    WSADATA wsaData;
-    if (WSAStartup(verRequest, &wsaData))
-    {
-        printf("WSAStartup Error\n");
-        return -1;
-    }
+	// Winsock 초기화
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		return -1;
+	}
 
-    return 0;
+	return 0;
 }
 
 void GameServer::CloseSocketLayer()
 {
-    WSACleanup();
+	WSACleanup();
+}
+
+void GameServer::StartGame(SOCKET player1, SOCKET player2)
+{
+	std::lock_guard<std::mutex> sessionLeck(sessionMutex);
+
+	// 이미 게임이 진행 중이면 거부
+	if (currentSession.isActive)
+	{
+		closesocket(player1);
+		closesocket(player2);
+		return;
+	}
+
+	currentSession.player1Socket = player1;
+	currentSession.player2Socket = player2;
+	currentSession.isActive = true;
+	currentSession.startTime = time(NULL);
+	strcpy_s(currentSession.player1Name, "Player1");
+	strcpy_s(currentSession.player2Name, "Player2");
+
+	SendTMCPPacket(player1, TMCP_MATCH_FOUND);
+	SendTMCPPacket(player2, TMCP_MATCH_FOUND);
+
+	SendTMCPPacket(player1, TMCP_GAME_START);
+	SendTMCPPacket(player2, TMCP_GAME_START);
+
+	PlayerParam* param1 = new PlayerParam(this, player1, player2, 0);
+	PlayerParam* param2 = new PlayerParam(this, player2, player1, 1);
+
+	currentSession.player1Handle = (HANDLE)_beginthreadex(NULL, 0, GameServer::PlayerThread, param1, 0, NULL);
+	currentSession.player2Handle = (HANDLE)_beginthreadex(NULL, 0, GameServer::PlayerThread, param2, 0, NULL);
+
+	if (!currentSession.player1Handle || !currentSession.player2Handle)
+	{
+		std::cout << "플레이어 스레드 생성 실패\n";
+		EndGame();
+		return;
+	}
+}
+
+void GameServer::EndGame()
+{
+	std::lock_guard<std::mutex> sessionLock(sessionMutex);
+
+	if (!currentSession.isActive)
+	{
+		return;
+	}
+	time_t gametiem = time(NULL) - serverStartTime;
+	currentSession.Reset();
+}
+
+void GameServer::RelayPacket(SOCKET from, SOCKET to, u_char cmd, void* payload, int size)
+{
+	int result = sendTMCP((u_int)to, cmd, payload, size);
+
+	if (result < 0)
+	{
+		std::cout << "패킷 전송 실패\n";
+	}
+}
+
+void SendTMCPPacket(SOCKET socket, u_char cmd, void* payload, u_short len)
+{
+	sendTMCP((u_int)socket, cmd, payload, len);
+}
+
+void PrintGameStart(const char* player1, const char* player2)
+{
+	printf("\n🎮 Non-blocking 게임 시작: %s vs %s\n", player1, player2);
+}
+
+void PrintGameEnd(const char* winner)
+{
+	printf("🏆 Non-blocking 게임 종료! 승자: %s\n\n", winner);
 }
