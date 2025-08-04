@@ -167,11 +167,7 @@ xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor\Box.cpp" />
-    <ClCompile Include="Actor\Ground.cpp" />
     <ClCompile Include="Actor\Player.cpp" />
-    <ClCompile Include="Actor\Target.cpp" />
-    <ClCompile Include="Actor\Wall.cpp" />
     <ClCompile Include="Level\TitleLevel.cpp" />
     <ClCompile Include="Demo\DemoLevel.cpp" />
     <ClCompile Include="Game\Game.cpp" />
@@ -181,14 +177,10 @@ xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
     <ClCompile Include="Level\TetrisLevel.cpp" />
     <ClCompile Include="Managers\NetworkManager.cpp" />
     <ClCompile Include="Protocol\TMCP.cpp" />
-    <ClCompile Include="TetrisBlock.cpp" />
+    <ClCompile Include="Actor\TetrisBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor\Box.h" />
-    <ClInclude Include="Actor\Ground.h" />
     <ClInclude Include="Actor\Player.h" />
-    <ClInclude Include="Actor\Target.h" />
-    <ClInclude Include="Actor\Wall.h" />
     <ClInclude Include="Level\TitleLevel.h" />
     <ClInclude Include="Demo\DemoLevel.h" />
     <ClInclude Include="Demo\TestActor.h" />
@@ -198,7 +190,7 @@ xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
     <ClInclude Include="Level\TetrisLevel.h" />
     <ClInclude Include="Managers\NetworkManager.h" />
     <ClInclude Include="Protocol\TMCP.h" />
-    <ClInclude Include="TetrisBlock.h" />
+    <ClInclude Include="Actor\TetrisBlock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

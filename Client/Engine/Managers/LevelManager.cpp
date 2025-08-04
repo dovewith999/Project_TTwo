@@ -5,6 +5,17 @@ LevelManager::LevelManager()
 {
 }
 
+LevelManager::~LevelManager()
+{
+	SafeDelete(currentLevel);
+	SafeDelete(nextLevel);
+	
+	for (auto& iter : cachedLevels)
+	{
+		SafeDelete(iter.second);
+	}
+}
+
 void LevelManager::ChangeLevel(const char* nameOfLevel)
 {
 	Level* nextLevel = cachedLevels[nameOfLevel];
@@ -14,14 +25,6 @@ void LevelManager::ChangeLevel(const char* nameOfLevel)
 	}
 
 	currentLevel = nextLevel;
-}
-
-void LevelManager::PushLevel(Level* overlayLevel)
-{
-}
-
-void LevelManager::PopLevel()
-{
 }
 
 void LevelManager::RegisterLevel(const std::string& name, Level* level)
@@ -38,7 +41,34 @@ void LevelManager::UnregisterLevel(const std::string& name)
 {
 }
 
-void LevelManager::UpdateCurrentLevel(float deltaTime)
+void LevelManager::BeginPlayCurrentLevel()
 {
+	if (currentLevel == nullptr)
+	{
+		return;
+	}
+
+	currentLevel->BeginPlay();
+
+}
+
+void LevelManager::TickCurrentLevel(float deltaTime)
+{
+	if (currentLevel == nullptr)
+	{
+		return;
+	}
+
+	currentLevel->Tick(deltaTime);
+}
+
+void LevelManager::RenderCurrentLevel()
+{
+	if (currentLevel == nullptr)
+	{
+		return;
+	}
+
+	currentLevel->Render();
 }
 

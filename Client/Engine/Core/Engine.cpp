@@ -113,21 +113,11 @@ void Engine::Quit()
 
 void Engine::BeginPlay()
 {
-	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
-	{
-		return;
-	}
-
-	LevelManager::GetInstance()->GetCurrentLevel()->BeginPlay();
+	LevelManager::GetInstance()->BeginPlayCurrentLevel();
 }
 
 void Engine::Tick(float deltaTime)
 {
-	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
-	{
-		return;
-	}
-
 	//std::cout << "DeltaTime: " << deltaTime << " FPS: " << (1.0f / deltaTime) << '\n';
 	
 	// 알파벳은 소문자는 입력이 안됨. 그냥 대문자로 체크해야 함
@@ -145,8 +135,7 @@ void Engine::Tick(float deltaTime)
 	//}
 
 	//레벨 업데이트
-	//mainLevel->Tick(deltaTime);
-	LevelManager::GetInstance()->GetCurrentLevel()->Tick(deltaTime);
+	LevelManager::GetInstance()->TickCurrentLevel(deltaTime);
 
 	//if (GetKeyDown(VK_ESCAPE))
 	//{
@@ -156,15 +145,8 @@ void Engine::Tick(float deltaTime)
 
 void Engine::Render()
 {
-	if (LevelManager::GetInstance()->GetCurrentLevel() == nullptr)
-	{
-		return;
-	}
-
 	Utils::SetConsoleTextColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-
-	//mainLevel->Render();
-	LevelManager::GetInstance()->GetCurrentLevel()->Render();
+	LevelManager::GetInstance()->RenderCurrentLevel();
 
 }
 

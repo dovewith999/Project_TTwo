@@ -17,13 +17,11 @@ class Engine_API LevelManager : public SafeSingleton<LevelManager>
 
 public:
     explicit LevelManager();
-    virtual ~LevelManager() = default;
+    virtual ~LevelManager();
 
 public:
     // 레벨 전환
     void ChangeLevel(const char* nameOfLevel);
-    void PushLevel(Level* overlayLevel);    // 메뉴 오버레이
-    void PopLevel();                        // 메뉴 닫기
 
     // 레벨 생명주기 관리
     void RegisterLevel(const std::string& name, Level* level);
@@ -31,10 +29,11 @@ public:
 
     // Engine과의 연동
     FORCEINLINE Level* GetCurrentLevel() const { return currentLevel; }
-    void UpdateCurrentLevel(float deltaTime);
+    void BeginPlayCurrentLevel();
+    void TickCurrentLevel(float deltaTime);
+    void RenderCurrentLevel();
 
 private:
-    std::stack<Level*> levelStack;     // 레벨 스택 (메뉴 오버레이용)
     Level* currentLevel = nullptr;      // 현재 활성 레벨
     Level* nextLevel = nullptr;         // 전환 대기 레벨
 
