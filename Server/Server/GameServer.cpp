@@ -120,6 +120,7 @@ UINT __stdcall GameServer::ListenThread(LPVOID p)
                 iter->clientHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::ControlThread, server, 0, NULL);
             }
         }
+        Sleep(50);
     }
 
     return 0;  
@@ -127,6 +128,87 @@ UINT __stdcall GameServer::ListenThread(LPVOID p)
 
 UINT __stdcall GameServer::ControlThread(LPVOID p)
 {
+    GameServer* server = nullptr;
+    server = (GameServer*)p;
+    SOCKET connectSocket = server->lastSocket;
+    char recvMessage[100];
+    int len = 0;
+    bool bFound = false;
+
+    //소켓 정보를 가지고 어떤 클라이언트인지 알아야 함
+    ClientIterator iter;
+    iter = server->clientList.begin();
+
+    while (iter != server->clientList.end())
+    {
+        if (((ClientInfo)(*iter)).clientSocket == connectSocket)
+        {
+            bFound = true;
+            char message[] = "Server Connect";
+            send(connectSocket, message, sizeof(message), 0);
+            std::cout << "매칭 성공! 클라이언트 연결 소켓: " << iter->clientSocket << "내부 관리 번호: " << iter->id << '\n';
+            break;
+        }
+
+        ++iter;
+    }
+
+    //논 블록킹 서버를 위한 Select 설정들
+    fd_set fdReadSet, fdErrorSet, fdMaster;
+    struct timeval tvs;
+
+    FD_ZERO(&fdMaster);
+    FD_SET(connectSocket, &fdMaster);
+    tvs.tv_sec = 0;
+    tvs.tv_usec = 100;
+
+    while (iter->isConnect && bFound)
+    {
+        fdReadSet = fdMaster;
+        fdErrorSet = fdMaster;
+        select((int)connectSocket + 1, &fdReadSet, NULL, &fdErrorSet, &tvs);
+
+        if (FD_ISSET(connectSocket, &fdReadSet))
+        {
+            memset(recvMessage, 0, sizeof(recvMessage));
+            len = recv(connectSocket, recvMessage, sizeof(recvMessage) - 1, 0);
+            if (len == SOCKET_ERROR)
+            {
+                std::cout << "recv Error" << '\n';
+                break;
+            }
+
+            recvMessage[len] = '\0';
+
+            if (strcmp(recvMessage, "exit") == 0)
+            {
+                std::cout << "소켓 연결을 종료합니다.\n";
+                iter->isConnect = false;
+                break;
+            }
+
+            std::cout << "클라이언트에서 받은 메시지 : " << recvMessage;
+
+            //여기서 접속한 모든 클라이언트들에게 메세지를 보냄
+            ClientIterator clientIter;
+            clientIter = server->clientList.begin();
+            while (clientIter != server->clientList.end())
+            {
+                if (clientIter->isConnect)
+                {
+                    std::cout << "메세지 재전송 : 클라이언트 연결 소켓: " << clientIter->clientSocket << "내부 관리 번호: " << clientIter->id << '\n';
+                    send(clientIter->clientSocket, recvMessage, static_cast<int>(strlen(recvMessage)), 0);
+                }
+
+                ++clientIter;
+            }
+        }
+    }
+
+    closesocket(iter->clientSocket);
+    server->clientPool.push(iter);
+    std::cout << "클라이언트 연결 종료\n";
+
     return 0;
 }
 
