@@ -17,4 +17,11 @@ namespace Define
 		// TODO : 필요에 따라 UI로 교체 가능성 있음
 		MAP,
 	};
+
+	enum class ELevel
+	{
+		TITLE,
+		TETRIS_SINGLE,
+		TETRIS_MULTI,
+	};
 }
