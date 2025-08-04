@@ -198,6 +198,7 @@ xcopy /y "$(OutDir)\*.dll" "..\Lib\Engine\"</Command>
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Managers\ResourceManager.h" />
     <ClInclude Include="Utils\Define.h" />
     <ClInclude Include="Utils\Utils.h" />
   </ItemGroup>
@@ -210,6 +211,7 @@ xcopy /y "$(OutDir)\*.dll" "..\Lib\Engine\"</Command>
     <ClCompile Include="Managers\SoundManager.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Managers\ResourceManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

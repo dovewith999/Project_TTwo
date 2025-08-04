@@ -1,6 +1,6 @@
 ﻿#include "FileManager.h"
 #include "Math/Vector2.h"
-
+#include "ResourceManager.h"
 #include <iostream>
 
 FileManager::FileManager()
@@ -161,4 +161,40 @@ void FileManager::ReadMapFile(FILE* file)
 
 void FileManager::ReadBlockFile(FILE* file)
 {
+	// 파일을 닫고 ResourceManager에서 다시 로드
+	// (ResourceManager는 C++ 표준 라이브러리를 사용하므로)
+	if (file)
+	{
+		fclose(file);
+	}
+
+	// ResourceManager를 통해 블록 모양 로드
+	ResourceManager::GetInstance()->LoadBlockShapes("BlockShapes");
+
+	// 로드 결과 확인 및 테스트 출력
+	std::cout << "[FileManager] 블록 모양 로드 테스트:\n";
+
+	const char* blockNames[] = { "I", "O", "T", "S", "Z", "J", "L" };
+
+	for (int blockType = 0; blockType < 7; ++blockType)
+	{
+		std::cout << "\n=== " << blockNames[blockType] << " 블록 ===\n";
+
+		for (int rotation = 0; rotation < 4; ++rotation)
+		{
+			const BlockShapeData* shape = ResourceManager::GetInstance()->GetBlockShape(blockType, rotation);
+			if (shape)
+			{
+				std::cout << "회전 " << rotation << ":\n";
+				for (int y = 0; y < 4; ++y)
+				{
+					for (int x = 0; x < 4; ++x)
+					{
+						std::cout << (shape->GetPixel(x, y) ? "█" : "·");
+					}
+					std::cout << "\n";
+				}
+			}
+		}
+	}
 }
