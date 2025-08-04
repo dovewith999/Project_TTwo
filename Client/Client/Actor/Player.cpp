@@ -20,20 +20,6 @@ void Player::BeginPlay()
 {
 	super::BeginPlay();
 	
-	// 인터페이스 얻어오기
-	if(GetOwner() == nullptr)
-	{
-		std::cout << "Error : Owner is null\n";
-		return;
-	}
-
-	canPlayerMoveInterface = dynamic_cast<ICanPlayerMove*>(GetOwner());
-
-	if (canPlayerMoveInterface == nullptr)
-	{
-		std::cout << "Error : canPlayerMoveInterface is null\n";
-		return;
-	}
 }
 
 void Player::Tick(float deltaTime)

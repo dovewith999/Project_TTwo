@@ -9,7 +9,7 @@
 /// 작성일 : 2025/08/01
 /// </summary>
 class Level;
-class GameManager : public SafeSingleton<GameManager>
+class GameManager final : public SafeSingleton<GameManager>
 {
 	friend class SafeSingleton<GameManager>;
 
@@ -20,9 +20,4 @@ public:
 public:
 	void GameStart();
 	void GameExit();
-
-private:
-	// TODO : 레벨 매니저로 빼야하나.
-	Level* currentLevel = nullptr; // 현재 레벨
-	Level* nextLevel = nullptr; // 다음에 넘어갈 레벨
 };

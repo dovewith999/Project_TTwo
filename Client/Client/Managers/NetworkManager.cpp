@@ -1,6 +1,6 @@
 ﻿#include "NetworkManager.h"
 
-UINT WINAPI ReceiveThread(LPVOID param)
+UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 {
 	u_char cmd;
 	char payload[1024];
@@ -164,10 +164,10 @@ UINT NetworkManager::AcceptServer()
 	isConnected = true;
 
 	// 연결 성공 REQ 보내기
-	sendTMCP((unsigned int)clientSocket, TMCP_CONNECT_REQ, clientName, strlen(clientName));
+	sendTMCP((unsigned int)clientSocket, TMCP_CONNECT_REQ, clientName, static_cast<u_short>(strlen(clientName)));
 
 	// 수신 스레드 생성
-	HANDLE receiveHandle = (HANDLE)_beginthreadex(NULL, 0, ReceiveThread, NULL, 0, NULL);
+	HANDLE receiveHandle = (HANDLE)_beginthreadex(NULL, 0, &NetworkManager::ReceiveThread, NULL, 0, NULL);
 	if (!receiveHandle) {
 		std::cout << "수신 스레드 생성 실패\n";
 		closesocket(clientSocket);
@@ -238,4 +238,6 @@ UINT NetworkManager::AcceptServer()
 	}
 
 	WSACleanup();
+
+	return 0;
 }

@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "Etc/Singleton.h"
 #include <stack>
 #include <unordered_map>
+#include "Etc/Singleton.h"
 #include "Core.h"
+#include "Utils/Define.h"
 
 /// <summary>
 /// 레벨의 전환 등의 상태를 관리할 클래스
@@ -21,10 +22,10 @@ public:
 
 public:
     // 레벨 전환
-    void ChangeLevel(const char* nameOfLevel);
+    void ChangeLevel(Define::ELevel nameOfLevel);
 
     // 레벨 생명주기 관리
-    void RegisterLevel(const std::string& name, Level* level);
+    void RegisterLevel(Define::ELevel nameOfLevel, Level* level);
     void UnregisterLevel(const std::string& name);
 
     // Engine과의 연동
@@ -38,6 +39,6 @@ private:
     Level* nextLevel = nullptr;         // 전환 대기 레벨
 
     // 미리 생성된 레벨들 (메모리 풀링)
-    std::unordered_map<std::string, Level*> cachedLevels;
+    std::unordered_map<Define::ELevel, Level*> cachedLevels;
 };
 

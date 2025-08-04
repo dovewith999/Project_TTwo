@@ -1,7 +1,10 @@
 ﻿#include "Game.h"
-#include "Managers/LevelManager.h"
+#include "Level/Level.h"
 #include "Level/TitleLevel.h"
 #include "Level/TetrisLevel.h"
+#include "Level/TetrisMultiLevel.h"
+#include "Managers/LevelManager.h"
+//#include "Utils/Define.h"
 
 Game* Game::instance = nullptr;
 
@@ -18,11 +21,12 @@ Game::~Game()
 
 void Game::StartSinglePlayer()
 {
-    LevelManager::GetInstance()->ChangeLevel("Tetris");
+    LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TETRIS_SINGLE);
 }
 
 void Game::StartMultiPlayer()
 {
+    LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TETRIS_MULTI);
 }
 
 void Game::ShowSettings()
@@ -31,6 +35,7 @@ void Game::ShowSettings()
 
 void Game::QuitGame()
 {
+    
 }
 
 void Game::CleanUp()
@@ -45,15 +50,15 @@ Game& Game::GetInstance()
 
 void Game::InitializeLevels()
 {
-    auto levelManager = LevelManager::GetInstance();
+    //auto levelManager = LevelManager::GetInstance();
 
     // 레벨들을 미리 생성하고 등록
-    levelManager->RegisterLevel("Title", new TitleLevel());
-    levelManager->RegisterLevel("Tetris", new TetrisLevel());
-    //levelManager.RegisterLevel("Lobby", new LobbyLevel());
+    LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TITLE, new TitleLevel());
+    LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TETRIS_SINGLE, new TetrisLevel());
+    LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TETRIS_MULTI, new TetrisMultiLevel());
     //levelManager.RegisterLevel("Result", new ResultLevel());
     //levelManager.RegisterLevel("Settings", new SettingsLevel());
 
     // 시작 레벨 설정
-    levelManager->ChangeLevel("Title");
+    LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 }
