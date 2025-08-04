@@ -38,7 +38,6 @@ public:
 	// 유틸리티 함수
 	bool GetBlockPixel(int x, int y) const;                    // 특정 위치의 픽셀 확인
 	bool CanMoveTo(const Vector2& position, int testRotation) const;  // 이동 가능 여부 확인
-	Vector2 GetShadowPosition() const;                         // 그림자 위치 계산
 	void SetDropSpeed(float speed);                            // 낙하 속도 설정
 
 	// 정적 함수

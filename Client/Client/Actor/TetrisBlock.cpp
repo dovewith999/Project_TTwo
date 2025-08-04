@@ -225,25 +225,6 @@ bool TetrisBlock::CanMoveTo(const Vector2& position, int testRotation) const
 	return true;
 } 
 
-Vector2 TetrisBlock::GetShadowPosition() const
-{
-	if (state == EBlockState::Fixed)
-		return gridPosition;
-
-	Vector2 shadowPos = gridPosition;
-
-	// 바닥까지 떨어뜨린 위치 계산
-	while (true)
-	{
-		Vector2 testPos = { shadowPos.x, shadowPos.y + 1 };
-		if (!CanMoveTo(testPos, rotation))
-			break;
-		shadowPos = testPos;
-	}
-
-	return shadowPos;
-}
-
 void TetrisBlock::SetDropSpeed(float speed)
 {
 	dropSpeed = (speed < 0.1f) ? 0.1f : speed;

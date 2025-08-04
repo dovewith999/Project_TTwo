@@ -96,13 +96,28 @@ void TetrisLevel::Render()
 
 	RenderBoard();
 
-	// UI 정보 출력
-	Utils::SetConsoleCursorPosition(Vector2{ 25, 5 });
-	std::cout << "Score: " << score;
-	Utils::SetConsoleCursorPosition(Vector2{ 25, 6 });
-	std::cout << "Lines: " << linesCleared;
-	Utils::SetConsoleCursorPosition(Vector2{ 25, 7 });
-	std::cout << "Level: " << level;
+	// UI 정보 출력 (기존 테트리스와 동일한 위치)
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 3 });
+	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
+
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 5 });
+	std::cout << "Score :  " << score;
+
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 6 });
+	std::cout << "Level :  " << level;
+
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 8 });
+	std::cout << "Lines :  " << linesCleared;
+
+	// 조작법 안내
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 12 });
+	std::cout << "조작법:";
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 13 });
+	std::cout << "←→: 이동  ↑: 회전";
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 14 });
+	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 15 });
+	std::cout << "P: 일시정지";
 
 	if (isGamePaused)
 	{
@@ -137,9 +152,6 @@ void TetrisLevel::StartGame()
 
 	InitializeBoard();
 	SpawnNewBlock();
-
-	std::cout << "[TetrisLevel] 게임 시작!\n";
-	std::cout << "조작법: ←→ 이동, ↑ 회전, ↓ 소프트드롭, SPACE 하드드롭, P 일시정지\n";
 }
 
 void TetrisLevel::PauseGame()
@@ -190,10 +202,6 @@ void TetrisLevel::SpawnNewBlock()
 	{
 		isGameOver = true;
 		std::cout << "[TetrisLevel] 게임 오버! 새 블록을 생성할 공간이 없습니다.\n";
-	}
-	else
-	{
-		std::cout << "[TetrisLevel] 새 블록 생성: " << static_cast<int>(newBlockType) << "\n";
 	}
 }
 
@@ -401,10 +409,6 @@ void TetrisLevel::RenderBoard()
 	// 화면 지우기 (깜빡임 방지를 위해 필요한 부분만)
 	Utils::SetConsoleCursorPosition(Vector2{ 0, 0 });
 
-	// 제목 출력
-	Utils::SetConsoleCursorPosition(Vector2{ 15, 1 });
-	std::cout << "TETRIS MULTI-PLAYER";
-
 	// 게임 보드 출력 (기존 테트리스와 동일한 위치 - gotoxy(6, i + 3))
 	for (int y = 0; y < BOARD_HEIGHT; ++y)
 	{
@@ -494,29 +498,6 @@ void TetrisLevel::RenderBoard()
 			}
 		}
 	}
-
-	// UI 정보 출력 (기존 테트리스와 동일한 위치)
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 3 });
-	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
-
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 5 });
-	std::cout << "Score :  " << score;
-
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 6 });
-	std::cout << "Level :  " << level;
-
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 8 });
-	std::cout << "Lines :  " << linesCleared;
-
-	// 조작법 안내
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 12 });
-	std::cout << "조작법:";
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 13 });
-	std::cout << "←→: 이동  ↑: 회전";
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 14 });
-	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 15 });
-	std::cout << "P: 일시정지";
 }
 
 void TetrisLevel::LoadMapFromFile(const char* fileName)
@@ -534,8 +515,6 @@ void TetrisLevel::LoadMapFromFile(const char* fileName)
 		InitializeBoard(); // 기본 보드로 초기화
 		return;
 	}
-
-	std::cout << "[TetrisLevel] 맵 파일 로드: " << fileName << "\n";
 
 	// 파일에서 한 줄씩 읽어서 보드에 저장
 	char buffer[256];
@@ -585,7 +564,6 @@ void TetrisLevel::LoadMapFromFile(const char* fileName)
 	}
 
 	fclose(file);
-	std::cout << "[TetrisLevel] 맵 로드 완료 - " << row << "행 읽음\n";
 }
 
 void TetrisLevel::InitializeBoard()
@@ -621,8 +599,9 @@ void TetrisLevel::UpdateShadowBlock()
 	shadowBlock->SetBlockType(currentBlock->GetBlockType());
 	shadowBlock->SetRotation(currentBlock->GetRotation());
 
-	// 그림자 위치 계산 (현재 블록이 떨어질 위치)
-	Vector2 shadowPos = currentBlock->GetShadowPosition();
+	// 그림자 위치 계산 (TetrisLevel에서 직접 계산)
+	Vector2 currentPos = currentBlock->GetGridPosition();
+	Vector2 shadowPos = CalculateShadowPosition(currentPos, currentBlock->GetBlockType(), currentBlock->GetRotation());
 	shadowBlock->SetGridPosition(shadowPos);
 }
 
@@ -663,6 +642,28 @@ Vector2 TetrisLevel::GetSpawnPosition() const
 {
 	// 테트리스 표준 스폰 위치 (보드 중앙 상단, 벽 고려)
 	return Vector2{ BOARD_WIDTH / 2 - 2, 1 }; // Y=1 (맨 위 벽 바로 아래)
+}
+
+Vector2 TetrisLevel::CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const
+{
+	Vector2 shadowPos = currentPos;
+
+	// 현재 위치에서 한 칸씩 아래로 내려가면서 충돌 검사
+	while (true)
+	{
+		Vector2 testPos = { shadowPos.x, shadowPos.y + 1 };
+
+		// 한 칸 더 아래로 이동할 수 있는지 검사
+		if (!CanBlockMoveTo(testPos, blockType, rotation))
+		{
+			// 더 이상 내려갈 수 없으면 현재 위치가 그림자 위치
+			break;
+		}
+
+		shadowPos = testPos;
+	}
+
+	return shadowPos;
 }
 
 void TetrisLevel::GenerateNextBag()

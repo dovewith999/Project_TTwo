@@ -1,17 +1,17 @@
-#include "ResourceManager.h"
+ï»¿#include "ResourceManager.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 
-// ºí·Ï Å¸ÀÔ ÀÌ¸§ ¸ÅÇÎ
+// ë¸”ë¡ íƒ€ì… ì´ë¦„ ë§¤í•‘
 const std::unordered_map<std::string, int> ResourceManager::blockTypeMap = {
 	{"I", 0}, {"O", 1}, {"T", 2}, {"S", 3}, {"Z", 4}, {"J", 5}, {"L", 6}
 };
 
 ResourceManager::ResourceManager()
 {
-	// ºí·Ï ¸ğ¾ç ¹è¿­ ÃÊ±âÈ­
+	// ë¸”ë¡ ëª¨ì–‘ ë°°ì—´ ì´ˆê¸°í™”
 	memset(blockShapes, 0, sizeof(blockShapes));
 }
 
@@ -22,30 +22,30 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::Initialize()
 {
-	std::cout << "[ResourceManager] ÃÊ±âÈ­ ½ÃÀÛ\n";
+	//std::cout << "[ResourceManager] ì´ˆê¸°í™” ì‹œì‘\n";
 	LoadAllResources();
-	std::cout << "[ResourceManager] ÃÊ±âÈ­ ¿Ï·á\n";
+	//std::cout << "[ResourceManager] ì´ˆê¸°í™” ì™„ë£Œ\n";
 }
 
 void ResourceManager::LoadAllResources()
 {
-	// ºí·Ï ¸ğ¾ç µ¥ÀÌÅÍ ·Îµå
+	// ë¸”ë¡ ëª¨ì–‘ ë°ì´í„° ë¡œë“œ
 	LoadBlockShapes("BlockShapes");
 
-	// ±âº» ¸Ê µ¥ÀÌÅÍ ·Îµå (ÇÊ¿ä½Ã)
+	// ê¸°ë³¸ ë§µ ë°ì´í„° ë¡œë“œ (í•„ìš”ì‹œ)
 	// LoadMapData("DefaultMap");
 }
 
 void ResourceManager::ClearAllResources()
 {
-	// ¸Ê µ¥ÀÌÅÍ Å¬¸®¾î
+	// ë§µ ë°ì´í„° í´ë¦¬ì–´
 	mapDataContainer.clear();
 
-	// ºí·Ï ¸ğ¾ç µ¥ÀÌÅÍ Å¬¸®¾î
+	// ë¸”ë¡ ëª¨ì–‘ ë°ì´í„° í´ë¦¬ì–´
 	memset(blockShapes, 0, sizeof(blockShapes));
 	blockShapesLoaded = false;
 
-	std::cout << "[ResourceManager] ¸ğµç ¸®¼Ò½º ÇØÁ¦ ¿Ï·á\n";
+	//std::cout << "[ResourceManager] ëª¨ë“  ë¦¬ì†ŒìŠ¤ í•´ì œ ì™„ë£Œ\n";
 }
 
 void ResourceManager::LoadBlockShapes(const char* fileName)
@@ -55,7 +55,6 @@ void ResourceManager::LoadBlockShapes(const char* fileName)
 
 	if (!file.is_open())
 	{
-		std::cout << "[ResourceManager] ºí·Ï ¸ğ¾ç ÆÄÀÏ ¿­±â ½ÇÆĞ: " << filePath << "\n";
 		__debugbreak();
 		return;
 	}
@@ -63,11 +62,10 @@ void ResourceManager::LoadBlockShapes(const char* fileName)
 	std::string line;
 	int loadedShapes = 0;
 
-	std::cout << "[ResourceManager] ºí·Ï ¸ğ¾ç ·Îµå ½ÃÀÛ: " << filePath << "\n";
 
 	while (std::getline(file, line))
 	{
-		// ÁÖ¼®ÀÌ³ª ºó ÁÙ °Ç³Ê¶Ù±â
+		// ì£¼ì„ì´ë‚˜ ë¹ˆ ì¤„ ê±´ë„ˆë›°ê¸°
 		line = TrimString(line);
 		if (line.empty() || line[0] == '#')
 			continue;
@@ -81,20 +79,17 @@ void ResourceManager::LoadBlockShapes(const char* fileName)
 	file.close();
 	blockShapesLoaded = true;
 
-	std::cout << "[ResourceManager] ºí·Ï ¸ğ¾ç ·Îµå ¿Ï·á: " << loadedShapes << "°³ ·ÎµåµÊ\n";
 }
 
 const BlockShapeData* ResourceManager::GetBlockShape(int blockType, int rotation) const
 {
 	if (!blockShapesLoaded)
 	{
-		std::cout << "[ResourceManager] °æ°í: ºí·Ï ¸ğ¾çÀÌ ·ÎµåµÇÁö ¾ÊÀ½\n";
 		return nullptr;
 	}
 
 	if (blockType < 0 || blockType >= 7 || rotation < 0 || rotation >= 4)
 	{
-		std::cout << "[ResourceManager] Àß¸øµÈ ºí·Ï Å¸ÀÔ ¶Ç´Â È¸Àü°ª: " << blockType << ", " << rotation << "\n";
 		return nullptr;
 	}
 
@@ -113,11 +108,9 @@ void ResourceManager::LoadMapData(const char* fileName)
 
 	if (ParseMapFile(filePath.c_str(), mapName))
 	{
-		std::cout << "[ResourceManager] ¸Ê µ¥ÀÌÅÍ ·Îµå ¿Ï·á: " << mapName << "\n";
 	}
 	else
 	{
-		std::cout << "[ResourceManager] ¸Ê µ¥ÀÌÅÍ ·Îµå ½ÇÆĞ: " << mapName << "\n";
 	}
 }
 
@@ -129,7 +122,6 @@ const MapData* ResourceManager::GetMapData(const std::string& mapName) const
 		return &it->second;
 	}
 
-	std::cout << "[ResourceManager] ¸Ê µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾øÀ½: " << mapName << "\n";
 	return nullptr;
 }
 
@@ -140,43 +132,39 @@ std::string ResourceManager::GetResourcePath(const char* fileName, const char* e
 
 bool ResourceManager::ParseBlockShapeLine(const std::string& line)
 {
-	// Çü½Ä: BlockType:Rotation:Row0,Row1,Row2,Row3
-	// ¿¹: I:0:0000,1111,0000,0000
+	// í˜•ì‹: BlockType:Rotation:Row0,Row1,Row2,Row3
+	// ì˜ˆ: I:0:0000,1111,0000,0000
 
 	std::vector<std::string> parts = SplitString(line, ':');
 	if (parts.size() != 3)
 	{
-		std::cout << "[ResourceManager] Àß¸øµÈ ºí·Ï Çü½Ä: " << line << "\n";
 		return false;
 	}
 
-	// ºí·Ï Å¸ÀÔ ÆÄ½Ì
+	// ë¸”ë¡ íƒ€ì… íŒŒì‹±
 	std::string blockTypeStr = TrimString(parts[0]);
 	auto typeIt = blockTypeMap.find(blockTypeStr);
 	if (typeIt == blockTypeMap.end())
 	{
-		std::cout << "[ResourceManager] ¾Ë ¼ö ¾ø´Â ºí·Ï Å¸ÀÔ: " << blockTypeStr << "\n";
 		return false;
 	}
 	int blockType = typeIt->second;
 
-	// È¸Àü°ª ÆÄ½Ì
+	// íšŒì „ê°’ íŒŒì‹±
 	int rotation = std::stoi(TrimString(parts[1]));
 	if (rotation < 0 || rotation >= 4)
 	{
-		std::cout << "[ResourceManager] Àß¸øµÈ È¸Àü°ª: " << rotation << "\n";
 		return false;
 	}
 
-	// Çà µ¥ÀÌÅÍ ÆÄ½Ì
+	// í–‰ ë°ì´í„° íŒŒì‹±
 	std::vector<std::string> rows = SplitString(parts[2], ',');
 	if (rows.size() != 4)
 	{
-		std::cout << "[ResourceManager] Àß¸øµÈ Çà °³¼ö: " << rows.size() << "\n";
 		return false;
 	}
 
-	// 4x4 °İÀÚ¿¡ µ¥ÀÌÅÍ ÀúÀå
+	// 4x4 ê²©ìì— ë°ì´í„° ì €ì¥
 	BlockShapeData& shapeData = blockShapes[blockType][rotation];
 
 	for (int y = 0; y < 4; ++y)
@@ -184,7 +172,7 @@ bool ResourceManager::ParseBlockShapeLine(const std::string& line)
 		std::string row = TrimString(rows[y]);
 		if (row.length() != 4)
 		{
-			std::cout << "[ResourceManager] Àß¸øµÈ Çà ±æÀÌ: " << row << "\n";
+			//std::cout << "[ResourceManager] ì˜ëª»ëœ í–‰ ê¸¸ì´: " << row << "\n";
 			return false;
 		}
 
@@ -203,14 +191,13 @@ bool ResourceManager::ParseMapFile(const char* filePath, const std::string& mapN
 	std::ifstream file(filePath);
 	if (!file.is_open())
 	{
-		std::cout << "[ResourceManager] ¸Ê ÆÄÀÏ ¿­±â ½ÇÆĞ: " << filePath << "\n";
 		return false;
 	}
 
 	MapData mapData;
 	std::string line;
 
-	// ÆÄÀÏÀ» ÇÑ ÁÙ¾¿ ÀĞ¾î¼­ ¸Ê µ¥ÀÌÅÍ »ı¼º
+	// íŒŒì¼ì„ í•œ ì¤„ì”© ì½ì–´ì„œ ë§µ ë°ì´í„° ìƒì„±
 	while (std::getline(file, line))
 	{
 		line = TrimString(line);
@@ -219,7 +206,7 @@ bool ResourceManager::ParseMapFile(const char* filePath, const std::string& mapN
 
 		std::vector<int> row;
 
-		// ÄŞ¸¶·Î ±¸ºĞµÈ µ¥ÀÌÅÍ ÆÄ½Ì
+		// ì½¤ë§ˆë¡œ êµ¬ë¶„ëœ ë°ì´í„° íŒŒì‹±
 		std::vector<std::string> tokens = SplitString(line, ',');
 		for (const std::string& token : tokens)
 		{
@@ -238,18 +225,17 @@ bool ResourceManager::ParseMapFile(const char* filePath, const std::string& mapN
 
 	file.close();
 
-	// ¸Ê Å©±â ¼³Á¤
+	// ë§µ í¬ê¸° ì„¤ì •
 	if (!mapData.tiles.empty())
 	{
 		mapData.height = static_cast<int>(mapData.tiles.size());
 		mapData.width = static_cast<int>(mapData.tiles[0].size());
 
-		// ¸ğµç ÇàÀÇ ±æÀÌ°¡ µ¿ÀÏÇÑÁö È®ÀÎ
+		// ëª¨ë“  í–‰ì˜ ê¸¸ì´ê°€ ë™ì¼í•œì§€ í™•ì¸
 		for (const auto& row : mapData.tiles)
 		{
 			if (static_cast<int>(row.size()) != mapData.width)
 			{
-				std::cout << "[ResourceManager] ¸Ê µ¥ÀÌÅÍ Çà ±æÀÌ ºÒÀÏÄ¡\n";
 				return false;
 			}
 		}

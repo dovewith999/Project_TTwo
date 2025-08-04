@@ -41,6 +41,21 @@ public:
 	void RenderBoard();
 
 private:
+	// 다음 블록 (7-bag 시스템용)
+	std::vector<EBlockType> nextBlocks;
+	void GenerateNextBag();
+	EBlockType GetNextBlockType();
+
+	// 유틸리티
+	void InitializeBoard();
+	void LoadMapFromFile(const char* fileName);
+	void UpdateShadowBlock();
+	void ProcessCompletedLines();
+	Vector2 GetSpawnPosition() const;
+
+	Vector2 CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const;
+
+private:
 	// 게임 상태
 	bool isGameStarted = false;
 	bool isGamePaused = false;
@@ -51,7 +66,7 @@ private:
 	TetrisBlock* shadowBlock = nullptr;  // 그림자 블록
 
 	// 게임 보드 (10x21 크기 - Map.txt와 맞춤)
-	static const int BOARD_WIDTH = 10;
+	static const int BOARD_WIDTH = 12;
 	static const int BOARD_HEIGHT = 21;
 	int gameBoard[BOARD_HEIGHT][BOARD_WIDTH];
 
@@ -71,16 +86,4 @@ private:
 	int score = 0;
 	int linesCleared = 0;
 	int level = 1;
-
-	// 다음 블록 (7-bag 시스템용)
-	std::vector<EBlockType> nextBlocks;
-	void GenerateNextBag();
-	EBlockType GetNextBlockType();
-
-	// 유틸리티
-	void InitializeBoard();
-	void LoadMapFromFile(const char* fileName);
-	void UpdateShadowBlock();
-	void ProcessCompletedLines();
-	Vector2 GetSpawnPosition() const;
 };
