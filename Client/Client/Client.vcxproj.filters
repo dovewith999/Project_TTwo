@@ -24,9 +24,6 @@
     <ClCompile Include="Demo\TestActor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Level\SokobanLevel.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Actor\Player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -57,7 +54,10 @@
     <ClCompile Include="Level\TetrisLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TetrisBlock.cpp">
+    <ClCompile Include="Managers\NetworkManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Protocol\TMCP.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,9 +66,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Demo\TestActor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Level\SokobanLevel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Player.h">
@@ -101,7 +98,10 @@
     <ClInclude Include="Level\TetrisLevel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TetrisBlock.h">
+    <ClInclude Include="Managers\NetworkManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol\TMCP.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
