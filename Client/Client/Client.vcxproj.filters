@@ -21,16 +21,10 @@
     <ClCompile Include="Main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Demo\TestActor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Game.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Level\TitleLevel.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Demo\DemoLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Managers\GameManager.cpp">
@@ -48,9 +42,6 @@
     <ClCompile Include="Actor\TetrisBlock.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Managers\ObjectManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Level\TetrisMultiLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -59,12 +50,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Demo\DemoLevel.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Demo\TestActor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -84,9 +69,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\TetrisBlock.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Managers\ObjectManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Level\TetrisMultiLevel.h">

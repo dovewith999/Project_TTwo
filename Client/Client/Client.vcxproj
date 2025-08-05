@@ -170,14 +170,11 @@ xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Level\TitleLevel.cpp" />
-    <ClCompile Include="Demo\DemoLevel.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Demo\TestActor.cpp" />
     <ClCompile Include="Managers\GameManager.cpp" />
     <ClCompile Include="Level\TetrisLevel.cpp" />
     <ClCompile Include="Managers\NetworkManager.cpp" />
-    <ClCompile Include="Managers\ObjectManager.cpp" />
     <ClCompile Include="Protocol\TMCP.cpp" />
     <ClCompile Include="Actor\TetrisBlock.cpp" />
     <ClCompile Include="Level\TetrisMultiLevel.cpp" />
@@ -186,13 +183,10 @@ xcopy $(SolutionDir)\Resources $(OutDir)..\Resources\ /y</Command>
   <ItemGroup>
     <ClInclude Include="Interface\ITetrisGameLogic.h" />
     <ClInclude Include="Level\TitleLevel.h" />
-    <ClInclude Include="Demo\DemoLevel.h" />
-    <ClInclude Include="Demo\TestActor.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Managers\GameManager.h" />
     <ClInclude Include="Level\TetrisLevel.h" />
     <ClInclude Include="Managers\NetworkManager.h" />
-    <ClInclude Include="Managers\ObjectManager.h" />
     <ClInclude Include="Protocol\TMCP.h" />
     <ClInclude Include="Actor\TetrisBlock.h" />
     <ClInclude Include="Level\TetrisMultiLevel.h" />

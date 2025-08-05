@@ -1,7 +1,6 @@
 ﻿#include "TetrisController.h"
 #include "Input.h"
 #include "Actor/TetrisBlock.h"
-#include "Managers/ObjectManager.h"
 
 TetrisController::TetrisController(ITetrisGameLogic* gameLogic)
 	: gameLogic(gameLogic)

@@ -97,7 +97,7 @@ private:
 
 private:
 	// 블록 모양 데이터 [blockType][rotation]
-	// blockType을 편의상 I = 2로 시작하게 해놨기 때문에 Get할 때 -2해줌
+	// blockType을 편의상 I = 2로 시작하게 해놨기 때문에 배열에 인덱스로 이용할 때는 -2해줌
 	BlockShapeData blockShapes[7][4];
 	bool blockShapesLoaded = false;
 
