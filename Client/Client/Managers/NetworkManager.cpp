@@ -114,7 +114,7 @@ void NetworkManager::SendInput(int input)
 UINT NetworkManager::AcceptServer()
 {
 	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == 0)
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		std::cout << "WSADATA 생성 실패\n";
 		return -1;
@@ -122,19 +122,20 @@ UINT NetworkManager::AcceptServer()
 	// 서버 연결 정보 입력
 	char serverIP[32] = "127.0.0.1"; // 기본은 로컬 IP로
 	int serverPort = 5004;
-
+	std::cout << "서버 연결 시도: " << serverIP << ":" << serverPort << "\n";
 	// 다른 IP 및 port를 이용할 것이라면 입력 받기
-	char inputIP[32];
-	std::cin >> inputIP;
-	if (strlen(inputIP) > 0)
-	{
-		strcpy_s(serverIP, sizeof(serverIP), inputIP);
-	}
-	char inputPort[16];
-	gets_s(inputPort, sizeof(inputPort));
-	if (strlen(inputPort) > 0) {
-		serverPort = atoi(inputPort);
-	}
+	//char inputIP[32];
+	//std::cin >> inputIP;
+	//if (strlen(inputIP) > 0)
+	//{
+	//	strcpy_s(serverIP, sizeof(serverIP), inputIP);
+	//}
+	//char inputPort[16];
+	//gets_s(inputPort, sizeof(inputPort));
+	//if (strlen(inputPort) > 0) 
+	//{
+	//	serverPort = atoi(inputPort);
+	//}
 
 	// TCP 소켓 생성
 	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);

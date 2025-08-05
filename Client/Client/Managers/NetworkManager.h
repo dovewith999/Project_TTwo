@@ -21,6 +21,9 @@ public:
 	UINT AcceptServer(); // 서버와 연결을 시도하는 함수
 	static UINT WINAPI ReceiveThread(LPVOID param);
 
+public:
+	FORCEINLINE bool GetIsConnected() const { return isConnected; }
+
 private:
 	SOCKET clientSocket = INVALID_SOCKET;
 	bool isConnected = false;

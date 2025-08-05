@@ -152,7 +152,7 @@ UINT __stdcall GameServer::PlayerThread(LPVOID param)
 
 		if (result < 0)
 		{
-			std::cout << "Select 오휴\n";
+			std::cout << "Select 오류\n";
 			break;
 		}
 

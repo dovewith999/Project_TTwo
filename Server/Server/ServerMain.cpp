@@ -311,18 +311,18 @@ int main()
     std::cout << "테트리스 Non-blocking 중계 서버 v3.1\n";
     std::cout << "========================================\n";
     std::cout << "작동 방식 (Non-blocking):\n";
-    std::cout << "   1️⃣ 클라이언트 A 접속 → 대기\n";
-    std::cout << "   2️⃣ 클라이언트 B 접속 → 즉시 중계 시작\n";
-    std::cout << "   3️⃣ Select로 패킷 감지 (1ms 간격)\n";
-    std::cout << "   4️⃣ A가 보낸 패킷 → B로 즉시 전달\n";
-    std::cout << "   5️⃣ B가 보낸 패킷 → A로 즉시 전달\n";
-    std::cout << "   6️⃣ 한쪽 연결 끊김 → 게임 종료\n";
+    std::cout << "1.클라이언트 A 접속 → 대기\n";
+    std::cout << "2.클라이언트 B 접속 → 즉시 중계 시작\n";
+    std::cout << "3.Select로 패킷 감지 (1ms 간격)\n";
+    std::cout << "4.A가 보낸 패킷 → B로 즉시 전달\n";
+    std::cout << "5.B가 보낸 패킷 → A로 즉시 전달\n";
+    std::cout << "6.한쪽 연결 끊김 → 게임 종료\n";
     std::cout << "========================================\n";
     std::cout << "기술적 특징:\n";
-    std::cout << "   • I/O 방식: Non-blocking (Select 기반)\n";
-    std::cout << "   • 타임아웃: 1ms (거의 실시간)\n";
-    std::cout << "   • 장점: 확장성, 부가 기능 추가 용이\n";
-    std::cout << "   • 성능: Blocking과 동일한 즉시성\n";
+    std::cout << "  I/O 방식: Non-blocking (Select 기반)\n";
+    std::cout << "  타임아웃: 1ms (거의 실시간)\n";
+    std::cout << "  장점: 확장성, 부가 기능 추가 용이\n";
+    std::cout << "  성능: Blocking과 동일한 즉시성\n";
     std::cout << "========================================\n\n";
 
     // === 포트 설정 (기존과 동일) ===

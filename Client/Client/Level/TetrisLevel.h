@@ -47,7 +47,7 @@ public:
 	void RenderBoard();
 	void RenderUI();
 
-private:
+protected:
 	// 다음 블록 (7-bag 시스템용)
 	std::vector<EBlockType> nextBlocks;
 	void GenerateNextBag();
@@ -61,7 +61,7 @@ private:
 
 	Vector2 CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const;
 
-private:
+protected:
 	// 게임 상태
 	bool isGameStarted = false;
 	bool isGamePaused = false;
