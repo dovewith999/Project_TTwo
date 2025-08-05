@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Level/Level.h"
+#include "TetrisLevel.h"
 
-class TetrisMultiLevel final : public Level
+class TetrisMultiLevel final : public TetrisLevel
 {
-	RTTI_DECLARATIONS(TetrisMultiLevel, Level)
+	RTTI_DECLARATIONS(TetrisMultiLevel, TetrisLevel)
 
 public:
 	explicit TetrisMultiLevel() = default;

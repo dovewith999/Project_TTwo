@@ -13,7 +13,7 @@
 /// </summary>
 /// 
 class TetrisController;
-class TetrisLevel final : public Level, public ITetrisGameLogic
+class TetrisLevel : public Level, public ITetrisGameLogic
 {
 	RTTI_DECLARATIONS(TetrisLevel, Level)
 
