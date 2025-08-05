@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Level/Level.h"
 #include "Actor/TetrisBlock.h"
+#include "Interface/ITetrisGameLogic.h"
+
 #include <vector>
 
 /// <summary>
@@ -9,7 +11,9 @@
 /// 작성자 : 임희섭
 /// 작성일 : 25/08/04
 /// </summary>
-class TetrisLevel final : public Level
+/// 
+class TetrisController;
+class TetrisLevel final : public Level, public ITetrisGameLogic
 {
 	RTTI_DECLARATIONS(TetrisLevel, Level)
 
@@ -34,11 +38,14 @@ public:
 	void HandleInput();
 	bool IsGameOver() const;
 
-	// 게임 보드 관리
-	bool CanBlockMoveTo(const Vector2& position, EBlockType blockType, int rotation) const;
-	void PlaceBlockOnBoard(TetrisBlock* block);
-	int ClearCompletedLines();
+	// 게임 로직 관리 - 인터페이스 오버라이딩
+	virtual bool CanBlockMoveTo(const Vector2& position, EBlockType blockType, int rotation) const override;
+	virtual void PlaceBlockOnBoard(TetrisBlock* block) override;
+	virtual int ClearCompletedLines() override;
+	virtual void ProcessCompletedLines() override;
+
 	void RenderBoard();
+	void RenderUI();
 
 private:
 	// 다음 블록 (7-bag 시스템용)
@@ -50,7 +57,6 @@ private:
 	void InitializeBoard();
 	void LoadMapFromFile(const char* fileName);
 	void UpdateShadowBlock();
-	void ProcessCompletedLines();
 	Vector2 GetSpawnPosition() const;
 
 	Vector2 CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const;
@@ -61,11 +67,13 @@ private:
 	bool isGamePaused = false;
 	bool isGameOver = false;
 
+	TetrisController* controller = nullptr;
+
 	// 현재 조작 중인 블록
 	TetrisBlock* currentBlock = nullptr;
 	TetrisBlock* shadowBlock = nullptr;  // 그림자 블록
 
-	// 게임 보드 (10x21 크기 - Map.txt와 맞춤)
+	// 게임 보드 (12x21 크기 - Map.txt와 맞춤)
 	static const int BOARD_WIDTH = 12;
 	static const int BOARD_HEIGHT = 21;
 	int gameBoard[BOARD_HEIGHT][BOARD_WIDTH];

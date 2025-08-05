@@ -22,18 +22,13 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::Initialize()
 {
-	//std::cout << "[ResourceManager] 초기화 시작\n";
 	LoadAllResources();
-	//std::cout << "[ResourceManager] 초기화 완료\n";
 }
 
 void ResourceManager::LoadAllResources()
 {
 	// 블록 모양 데이터 로드
 	LoadBlockShapes("BlockShapes");
-
-	// 기본 맵 데이터 로드 (필요시)
-	// LoadMapData("DefaultMap");
 }
 
 void ResourceManager::ClearAllResources()
@@ -44,8 +39,6 @@ void ResourceManager::ClearAllResources()
 	// 블록 모양 데이터 클리어
 	memset(blockShapes, 0, sizeof(blockShapes));
 	blockShapesLoaded = false;
-
-	//std::cout << "[ResourceManager] 모든 리소스 해제 완료\n";
 }
 
 void ResourceManager::LoadBlockShapes(const char* fileName)

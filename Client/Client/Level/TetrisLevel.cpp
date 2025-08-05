@@ -5,6 +5,8 @@
 #include "Managers/SoundManager.h"
 #include "Managers/FileManager.h"
 #include "Managers/ResourceManager.h"
+#include "Controller/TetrisController.h"
+
 #include <iostream>
 #include <algorithm>
 #include <random>
@@ -39,6 +41,9 @@ void TetrisLevel::BeginPlay()
 	// 맵 파일 읽어서 게임 보드 초기화
 	LoadMapFromFile("Map");
 
+	// 블럭을 컨트롤 할 컨트롤러 생성
+	controller = new TetrisController(this);
+
 	// 게임 시작
 	StartGame();
 }
@@ -51,7 +56,8 @@ void TetrisLevel::Tick(float deltaTime)
 		return;
 
 	// 입력 처리
-	HandleInput();
+	//HandleInput();
+	controller->ControllBlock();
 
 	// 블록 자동 낙하
 	blockDropTimer += deltaTime;
@@ -94,42 +100,10 @@ void TetrisLevel::Render()
 	if (!isGameStarted)
 		return;
 
+	// 보드 출력
 	RenderBoard();
 
-	// UI 정보 출력 (기존 테트리스와 동일한 위치)
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 3 });
-	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
-
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 5 });
-	std::cout << "Score :  " << score;
-
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 6 });
-	std::cout << "Level :  " << level;
-
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 8 });
-	std::cout << "Lines :  " << linesCleared;
-
-	// 조작법 안내
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 12 });
-	std::cout << "조작법:";
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 13 });
-	std::cout << "←→: 이동  ↑: 회전";
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 14 });
-	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 15 });
-	std::cout << "P: 일시정지";
-
-	if (isGamePaused)
-	{
-		Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
-		std::cout << "PAUSED - Press P to resume";
-	}
-
-	if (isGameOver)
-	{
-		Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
-		std::cout << "GAME OVER - Press R to restart";
-	}
+	RenderUI();
 }
 
 void TetrisLevel::EndPlay()
@@ -189,6 +163,8 @@ void TetrisLevel::SpawnNewBlock()
 	currentBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Falling);
 	shadowBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Shadow);
 
+	controller->SetCurrentBlock(currentBlock);
+
 	// 레벨에 액터로 추가
 	AddActor(currentBlock);
 	AddActor(shadowBlock);
@@ -209,69 +185,6 @@ void TetrisLevel::HandleInput()
 {
 	if (!currentBlock || currentBlock->GetBlockState() != EBlockState::Falling)
 		return;
-
-	Vector2 currentPos = currentBlock->GetGridPosition();
-
-	// 좌우 이동
-	if (Input::GetInstance().GetKeyDown(VK_LEFT))
-	{
-		Vector2 newPos = { currentPos.x - 1, currentPos.y };
-		if (CanBlockMoveTo(newPos, currentBlock->GetBlockType(), currentBlock->GetRotation()))
-		{
-			currentBlock->SetGridPosition(newPos);
-		}
-	}
-	else if (Input::GetInstance().GetKeyDown(VK_RIGHT))
-	{
-		Vector2 newPos = { currentPos.x + 1, currentPos.y };
-		if (CanBlockMoveTo(newPos, currentBlock->GetBlockType(), currentBlock->GetRotation()))
-		{
-			currentBlock->SetGridPosition(newPos);
-		}
-	}
-
-	// 회전
-	else if (Input::GetInstance().GetKeyDown(VK_UP))
-	{
-		int newRotation = (currentBlock->GetRotation() + 1) % 4;
-		if (CanBlockMoveTo(currentPos, currentBlock->GetBlockType(), newRotation))
-		{
-			currentBlock->SetRotation(newRotation);
-		}
-	}
-
-	// 소프트 드롭
-	else if (Input::GetInstance().GetKey(VK_DOWN))
-	{
-		Vector2 newPos = { currentPos.x, currentPos.y + 1 };
-		if (CanBlockMoveTo(newPos, currentBlock->GetBlockType(), currentBlock->GetRotation()))
-		{
-			currentBlock->SetGridPosition(newPos);
-		}
-		else
-		{
-			// 더 이상 떨어질 수 없으면 고정
-			PlaceBlockOnBoard(currentBlock);
-			ProcessCompletedLines();
-			SpawnNewBlock();
-		}
-	}
-
-	// 하드 드롭
-	else if (Input::GetInstance().GetKeyDown(VK_SPACE))
-	{
-		// 바닥까지 떨어뜨리기
-		Vector2 dropPos = currentPos;
-		while (CanBlockMoveTo(Vector2{ dropPos.x, dropPos.y + 1 }, currentBlock->GetBlockType(), currentBlock->GetRotation()))
-		{
-			dropPos.y++;
-		}
-		currentBlock->SetGridPosition(dropPos);
-
-		PlaceBlockOnBoard(currentBlock);
-		ProcessCompletedLines();
-		SpawnNewBlock();
-	}
 
 	// 일시정지
 	else if (Input::GetInstance().GetKeyDown('P'))
@@ -500,6 +413,44 @@ void TetrisLevel::RenderBoard()
 	}
 }
 
+void TetrisLevel::RenderUI()
+{
+	// UI 정보 출력 (기존 테트리스와 동일한 위치)
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 3 });
+	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
+
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 5 });
+	std::cout << "Score :  " << score;
+
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 6 });
+	std::cout << "Level :  " << level;
+
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 8 });
+	std::cout << "Lines :  " << linesCleared;
+
+	// 조작법 안내
+	Utils::SetConsoleCursorPosition(Vector2{ 5, 25 });
+	std::cout << "조작법:";						
+	Utils::SetConsoleCursorPosition(Vector2{ 5, 26 });
+	std::cout << "←→: 이동  ↑: 회전";			   
+	Utils::SetConsoleCursorPosition(Vector2{ 5, 27 });
+	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";	
+	Utils::SetConsoleCursorPosition(Vector2{ 5, 28 });
+	std::cout << "P: 일시정지";
+
+	if (isGamePaused)
+	{
+		Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
+		std::cout << "PAUSED - Press P to resume";
+	}
+
+	if (isGameOver)
+	{
+		Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
+		std::cout << "GAME OVER - Press R to restart";
+	}
+}
+
 void TetrisLevel::LoadMapFromFile(const char* fileName)
 {
 	// 맵 파일 경로 생성
@@ -631,17 +582,14 @@ void TetrisLevel::ProcessCompletedLines()
 		{
 			level = newLevel;
 			blockDropInterval = 0.1f >  1.0f - (level * 0.1f) ? 0.1f : 1.0f - (level * 0.1f); // 레벨이 올라갈수록 빨라짐
-			std::cout << "[TetrisLevel] 레벨 업! 현재 레벨: " << level << "\n";
 		}
-
-		std::cout << "[TetrisLevel] " << cleared << "라인 클리어! 점수: +" << lineScore * level << "\n";
 	}
 }
 
 Vector2 TetrisLevel::GetSpawnPosition() const
 {
 	// 테트리스 표준 스폰 위치 (보드 중앙 상단, 벽 고려)
-	return Vector2{ BOARD_WIDTH / 2 - 2, 1 }; // Y=1 (맨 위 벽 바로 아래)
+	return Vector2{ BOARD_WIDTH / 2 - 2, 0 }; // Y=1 (맨 위 벽 바로 아래)
 }
 
 Vector2 TetrisLevel::CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const

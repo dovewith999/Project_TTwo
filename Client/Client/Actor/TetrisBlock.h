@@ -56,11 +56,10 @@ public: /* Getter & Setter */
 
 private:
 	EBlockType type = EBlockType::None;
-	EBlockState state = EBlockState::Falling;   // 기존 stste 오타 수정
+	EBlockState state = EBlockState::Falling;
 	Vector2 gridPosition;
 	int rotation = 0;
 	float dropTimer = 0.0f;
 	float dropSpeed = 1.0f;
 
-	// 주의: 블록 모양 데이터는 이제 ResourceManager에서 관리됨
 };
