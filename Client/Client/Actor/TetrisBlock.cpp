@@ -11,6 +11,7 @@ TetrisBlock::TetrisBlock(EBlockType type, const Vector2& position, EBlockState s
 	dropSpeed = 1.0f; // 1초마다 한 칸씩 떨어짐
 
 	super::color = color;
+	boardMarker = static_cast<int>(type);
 }
 
 TetrisBlock::~TetrisBlock()

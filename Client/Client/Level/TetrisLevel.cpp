@@ -199,10 +199,10 @@ void TetrisLevel::SpawnNewBlock()
 	controller->SetCurrentBlock(currentBlock);
 
 	// 레벨에 액터로 추가
-	AddActor(currentBlock);
-	AddActor(shadowBlock);
+	//AddActor(currentBlock);
+	//AddActor(shadowBlock);
 
-	// 블록 시작
+	//// 블록 시작
 	currentBlock->BeginPlay();
 	shadowBlock->BeginPlay();
 
@@ -284,7 +284,7 @@ void TetrisLevel::PlaceBlockOnBoard(TetrisBlock* block)
 	if (!shapeData)
 		return;
 
-	// 보드에 블록 고정 (2로 저장 - 고정된 블록)
+	// 보드에 블록 고정
 	for (int y = 0; y < 4; ++y)
 	{
 		for (int x = 0; x < 4; ++x)
@@ -296,7 +296,8 @@ void TetrisLevel::PlaceBlockOnBoard(TetrisBlock* block)
 
 				if (boardX >= 0 && boardX < BOARD_WIDTH && boardY >= 0 && boardY < BOARD_HEIGHT)
 				{
-					gameBoard[boardY][boardX] = 2; // 고정된 블록으로 저장
+					// 색을 차이내기 위한 Marker값으로 저장
+					gameBoard[boardY][boardX] = block->GetBoardMarker(); // 고정된 블록으로 저장
 				}
 			}
 		}
@@ -310,7 +311,7 @@ int TetrisLevel::ClearCompletedLines()
 {
 	int clearedLines = 0;
 
-	// 아래에서 위로 라인 체크 (벽 제외하고 1~8열만)
+	// 아래에서 위로 라인 체크 (벽 제외하고 1~11열만)
 	for (int y = BOARD_HEIGHT - 2; y >= 1; --y) // 바닥(20행)과 맨 위(0행) 제외
 	{
 		bool isLineFull = true;
@@ -438,13 +439,39 @@ void TetrisLevel::RenderBoard()
 				switch (cellValue)
 				{
 				case 0: std::cout << "  "; break; // 빈 공간
-				case 1:
-					Utils::SetConsoleTextColor(Color::White);
-					std::cout << "□";
-					break; // 벽 (Map.txt의 1)
-				case 2: std::cout << "■"; break; // 고정된 블록 (쌓인 블록)
+				case 1: std::cout << "□"; break; // 벽 (Map.txt의 1)
+				case 2:  // I
+					Utils::SetConsoleTextColor(Color::LightBlue);
+					std::cout << "■"; 
+					break; // 고정된 블록 (쌓인 블록)
+				case 3: // O
+					Utils::SetConsoleTextColor(Color::Yellow);
+					std::cout << "■";
+					break; // 고정된 블록 (쌓인 블록)
+				case 4: // T
+					Utils::SetConsoleTextColor(Color::Purple);
+					std::cout << "■"; 
+					break; // 고정된 블록 (쌓인 블록)
+				case 5: // S
+					Utils::SetConsoleTextColor(Color::Red);
+					std::cout << "■"; 
+					break; // 고정된 블록 (쌓인 블록)
+				case 6: // Z
+					Utils::SetConsoleTextColor(Color::LightGreen);
+					std::cout << "■"; 
+					break; // 고정된 블록 (쌓인 블록)
+				case 7: // J
+					Utils::SetConsoleTextColor(Color::Blue);
+					std::cout << "■"; 
+					break; // 고정된 블록 (쌓인 블록)
+				case 8: // L
+					Utils::SetConsoleTextColor(Color::Cyan);
+					std::cout << "■"; 
+					break; // 고정된 블록 (쌓인 블록)
 				default: std::cout << "  "; break;
 				}
+
+				Utils::SetConsoleTextColor(Color::White);
 			}
 		}
 	}
@@ -656,7 +683,7 @@ void TetrisLevel::GenerateNextBag()
 	// 7-bag 시스템: 7개 블록을 모두 한 번씩 나오게 한 후 섞기
 	nextBlocks.clear();
 
-	for (int i = 0; i < 7; ++i)
+	for (int i = 2; i < 9; ++i)
 	{
 		nextBlocks.emplace_back(static_cast<EBlockType>(i));
 	}

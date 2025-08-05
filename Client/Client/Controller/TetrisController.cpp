@@ -60,7 +60,7 @@ void TetrisController::ControllBlock()
 			// 더 이상 떨어질 수 없으면 고정
 			gameLogic->PlaceBlockOnBoard(currentControlBlock);
 			gameLogic->ProcessCompletedLines();
-			//SpawnNewBlock();
+			gameLogic->SpawnNewBlock();
 		}
 	}
 
@@ -77,9 +77,7 @@ void TetrisController::ControllBlock()
 
 		gameLogic->PlaceBlockOnBoard(currentControlBlock);
 		gameLogic->ProcessCompletedLines();
-		//SpawnNewBlock();
-		//ObjectManager::GetInstance()->SpawnActor();
-
+		gameLogic->SpawnNewBlock();
 	}
 
 }

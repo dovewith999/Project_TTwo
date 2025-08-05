@@ -34,7 +34,7 @@ public:
 	void EndGame();
 
 	// 블록 관리
-	void SpawnNewBlock();
+	virtual void SpawnNewBlock() override;
 	void HandleInput();
 	bool IsGameOver() const;
 

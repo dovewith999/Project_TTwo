@@ -19,4 +19,5 @@ public:
 	virtual void PlaceBlockOnBoard(TetrisBlock* block) PURE;
 	virtual int ClearCompletedLines() PURE;
 	virtual void ProcessCompletedLines() PURE;
+	virtual void SpawnNewBlock() PURE;
 };

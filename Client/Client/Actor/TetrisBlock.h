@@ -4,7 +4,7 @@
 
 enum class EBlockType
 {
-	I, O, T, S, Z, J, L, None
+	I = 2, O, T, S, Z, J, L, None
 };
 
 enum class EBlockState
@@ -50,6 +50,7 @@ public: /* Getter & Setter */
 	FORCEINLINE Vector2 GetGridPosition() const { return gridPosition; }
 	FORCEINLINE int GetRotation() const { return rotation; }
 	FORCEINLINE float GetDropSpeed() const { return dropSpeed; }
+	FORCEINLINE int GetBoardMarker() const { return boardMarker; }
 
 	FORCEINLINE void SetGridPosition(const Vector2& pos) { gridPosition = pos; }
 	FORCEINLINE void SetRotation(int rot) { rotation = rot % 4; }
@@ -62,5 +63,7 @@ private:
 	int rotation = 0;
 	float dropTimer = 0.0f;
 	float dropSpeed = 1.0f;
+
+	int boardMarker = 0;
 
 };

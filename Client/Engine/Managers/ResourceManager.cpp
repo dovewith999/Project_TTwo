@@ -6,7 +6,7 @@
 
 // 블록 타입 이름 매핑
 const std::unordered_map<std::string, int> ResourceManager::blockTypeMap = {
-	{"I", 0}, {"O", 1}, {"T", 2}, {"S", 3}, {"Z", 4}, {"J", 5}, {"L", 6}
+	{"I", 2}, {"O", 3}, {"T", 4}, {"S", 5}, {"Z", 6}, {"J", 7}, {"L", 8}
 };
 
 ResourceManager::ResourceManager()
@@ -81,7 +81,7 @@ const BlockShapeData* ResourceManager::GetBlockShape(int blockType, int rotation
 		return nullptr;
 	}
 
-	if (blockType < 0 || blockType >= 7 || rotation < 0 || rotation >= 4)
+	if (blockType < 2 || blockType >= 9 || rotation < 0 || rotation >= 4)
 	{
 		return nullptr;
 	}
