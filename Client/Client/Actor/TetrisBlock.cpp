@@ -26,7 +26,7 @@ void TetrisBlock::BeginPlay()
 	if (gridPosition.x == 0 && gridPosition.y == 0)
 	{
 		gridPosition.x = 4; // 보드 중앙 (10칸 기준)
-		gridPosition.y = 0; // 맨 위
+		gridPosition.y = 1; // 맨 위
 	}
 }
 

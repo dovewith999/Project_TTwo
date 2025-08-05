@@ -67,6 +67,7 @@ private:
 	bool isGamePaused = false;
 	bool isGameOver = false;
 
+	// 입력을 제어하기 위한 컨트롤러
 	TetrisController* controller = nullptr;
 
 	// 현재 조작 중인 블록

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Engine.h"
 #include "Etc/Singleton.h"
 #include "Utils/Define.h"
@@ -9,16 +9,16 @@
 using namespace Define;
 
 /// <summary>
-/// °ÔÀÓ¿¡¼­ »ç¿ëÇÏ´Â ¸ğµç ¸®¼Ò½º¸¦ °ü¸®ÇÏ´Â ¸Å´ÏÀú
-/// ºí·Ï ¸ğ¾ç, ¸Ê µ¥ÀÌÅÍ, »ç¿îµå, ÅØ½ºÃ³ µîÀ» ·ÎµåÇÏ°í Ä³½Ì
-/// ÀÛ¼ºÀÚ : ÀÓÈñ¼·
-/// ÀÛ¼ºÀÏ : 25/08/04
+/// ê²Œì„ì—ì„œ ì‚¬ìš©í•˜ëŠ” ëª¨ë“  ë¦¬ì†ŒìŠ¤ë¥¼ ê´€ë¦¬í•˜ëŠ” ë§¤ë‹ˆì €
+/// ë¸”ë¡ ëª¨ì–‘, ë§µ ë°ì´í„°, ì‚¬ìš´ë“œ, í…ìŠ¤ì²˜ ë“±ì„ ë¡œë“œí•˜ê³  ìºì‹±
+/// ì‘ì„±ì : ì„í¬ì„­
+/// ì‘ì„±ì¼ : 25/08/04
 /// </summary>
 
-// ºí·Ï ¸ğ¾ç µ¥ÀÌÅÍ ±¸Á¶Ã¼
+// ë¸”ë¡ ëª¨ì–‘ ë°ì´í„° êµ¬ì¡°ì²´
 struct BlockShapeData
 {
-	bool shape[4][4];  // 4x4 °İÀÚ
+	bool shape[4][4];  // 4x4 ê²©ì
 
 	BlockShapeData()
 	{
@@ -39,7 +39,7 @@ struct BlockShapeData
 	}
 };
 
-// ¸Ê µ¥ÀÌÅÍ ±¸Á¶Ã¼
+// ë§µ ë°ì´í„° êµ¬ì¡°ì²´
 struct MapData
 {
 	std::vector<std::vector<int>> tiles;
@@ -71,41 +71,42 @@ public:
 	virtual ~ResourceManager();
 
 public:
-	// ÃÊ±âÈ­ ¹× ¸®¼Ò½º ·Îµå
+	// ì´ˆê¸°í™” ë° ë¦¬ì†ŒìŠ¤ ë¡œë“œ
 	void Initialize();
 	void LoadAllResources();
 	void ClearAllResources();
 
-	// ºí·Ï ¸ğ¾ç °ü¸®
+	// ë¸”ë¡ ëª¨ì–‘ ê´€ë¦¬
 	void LoadBlockShapes(const char* fileName);
 	const BlockShapeData* GetBlockShape(int blockType, int rotation) const;
 	bool IsValidBlockType(int blockType) const;
 
-	// ¸Ê µ¥ÀÌÅÍ °ü¸®
+	// ë§µ ë°ì´í„° ê´€ë¦¬
 	void LoadMapData(const char* fileName);
 	const MapData* GetMapData(const std::string& mapName) const;
 
-	// À¯Æ¿¸®Æ¼ ÇÔ¼ö
+	// ìœ í‹¸ë¦¬í‹° í•¨ìˆ˜
 	std::string GetResourcePath(const char* fileName, const char* extension = ".txt") const;
 
 private:
-	// ÆÄÀÏ ÆÄ½Ì ÇÔ¼öµé
+	// íŒŒì¼ íŒŒì‹± í•¨ìˆ˜ë“¤
 	bool ParseBlockShapeLine(const std::string& line);
 	bool ParseMapFile(const char* filePath, const std::string& mapName);
 	std::vector<std::string> SplitString(const std::string& str, char delimiter) const;
 	std::string TrimString(const std::string& str) const;
 
 private:
-	// ºí·Ï ¸ğ¾ç µ¥ÀÌÅÍ [blockType][rotation]
+	// ë¸”ë¡ ëª¨ì–‘ ë°ì´í„° [blockType][rotation]
+	// blockTypeì„ í¸ì˜ìƒ I = 2ë¡œ ì‹œì‘í•˜ê²Œ í•´ë†¨ê¸° ë•Œë¬¸ì— ë°°ì—´ì— ì¸ë±ìŠ¤ë¡œ ì´ìš©í•  ë•ŒëŠ” -2í•´ì¤Œ
 	BlockShapeData blockShapes[7][4];
 	bool blockShapesLoaded = false;
 
-	// ¸Ê µ¥ÀÌÅÍ ÄÁÅ×ÀÌ³Ê
+	// ë§µ ë°ì´í„° ì»¨í…Œì´ë„ˆ
 	std::unordered_map<std::string, MapData> mapDataContainer;
 
-	// ¸®¼Ò½º °æ·Î
+	// ë¦¬ì†ŒìŠ¤ ê²½ë¡œ
 	std::string resourcePath = "../Resources/";
 
-	// ºí·Ï Å¸ÀÔ ÀÌ¸§ ¸ÅÇÎ
+	// ë¸”ë¡ íƒ€ì… ì´ë¦„ ë§¤í•‘
 	static const std::unordered_map<std::string, int> blockTypeMap;
 };

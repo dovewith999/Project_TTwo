@@ -185,7 +185,7 @@ void TetrisLevel::SpawnNewBlock()
 		color = Color::Blue;
 		break;
 	case EBlockType::L:
-		color = Color::Cyan;
+		color = Color::Orange;
 		break;
 	case EBlockType::None:
 		break;
@@ -294,7 +294,7 @@ void TetrisLevel::PlaceBlockOnBoard(TetrisBlock* block)
 				int boardX = pos.x + x;
 				int boardY = pos.y + y;
 
-				if (boardX >= 0 && boardX < BOARD_WIDTH && boardY >= 0 && boardY < BOARD_HEIGHT)
+				if (boardX >= 1 && boardX < BOARD_WIDTH - 1 && boardY >= 0 && boardY < BOARD_HEIGHT - 1)
 				{
 					// 색을 차이내기 위한 Marker값으로 저장
 					gameBoard[boardY][boardX] = block->GetBoardMarker(); // 고정된 블록으로 저장
@@ -385,7 +385,7 @@ void TetrisLevel::RenderBoard()
 								int worldX = blockPos.x + bx;
 								int worldY = blockPos.y + by;
 
-								if (worldX == x && worldY == y)
+								if (worldX == x && worldY == y && worldY >= 0)
 								{
 									isCurrentBlock = true;
 								}
@@ -439,7 +439,9 @@ void TetrisLevel::RenderBoard()
 				switch (cellValue)
 				{
 				case 0: std::cout << "  "; break; // 빈 공간
-				case 1: std::cout << "□"; break; // 벽 (Map.txt의 1)
+				case 1: 
+					Utils::SetConsoleTextColor(Color::White);
+					std::cout << "□"; break; // 벽 (Map.txt의 1)
 				case 2:  // I
 					Utils::SetConsoleTextColor(Color::LightBlue);
 					std::cout << "■"; 
@@ -468,9 +470,11 @@ void TetrisLevel::RenderBoard()
 					Utils::SetConsoleTextColor(Color::Cyan);
 					std::cout << "■"; 
 					break; // 고정된 블록 (쌓인 블록)
-				default: std::cout << "  "; break;
+				default:
+					Utils::SetConsoleTextColor(Color::White);
+					std::cout << "  "; 
+					break;
 				}
-
 				Utils::SetConsoleTextColor(Color::White);
 			}
 		}
@@ -653,7 +657,7 @@ void TetrisLevel::ProcessCompletedLines()
 Vector2 TetrisLevel::GetSpawnPosition() const
 {
 	// 테트리스 표준 스폰 위치 (보드 중앙 상단, 벽 고려)
-	return Vector2{ BOARD_WIDTH / 2 - 2, 0 }; // Y=1 (맨 위 벽 바로 아래)
+	return Vector2{ BOARD_WIDTH / 2 - 2, 1 }; // Y=1 (맨 위 벽 바로 아래)
 }
 
 Vector2 TetrisLevel::CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const

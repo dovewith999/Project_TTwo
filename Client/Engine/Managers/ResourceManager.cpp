@@ -86,7 +86,7 @@ const BlockShapeData* ResourceManager::GetBlockShape(int blockType, int rotation
 		return nullptr;
 	}
 
-	return &blockShapes[blockType][rotation];
+	return &blockShapes[blockType - 2][rotation];
 }
 
 bool ResourceManager::IsValidBlockType(int blockType) const
@@ -158,7 +158,8 @@ bool ResourceManager::ParseBlockShapeLine(const std::string& line)
 	}
 
 	// 4x4 격자에 데이터 저장
-	BlockShapeData& shapeData = blockShapes[blockType][rotation];
+	// blockType을 편의상 I = 2로 시작하게 해놨기 때문에 배열에 인덱스로 이용할 때는 -2해줌
+	BlockShapeData& shapeData = blockShapes[blockType - 2][rotation];
 
 	for (int y = 0; y < 4; ++y)
 	{
