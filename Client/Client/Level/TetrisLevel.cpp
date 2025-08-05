@@ -105,6 +105,7 @@ void TetrisLevel::Render()
 	// 보드 출력
 	RenderBoard();
 
+	// TODO : Render에서 매 프레임마다 호출할 필요가 있나. 특히 조작법 같은 거
 	RenderUI();
 }
 
@@ -126,7 +127,11 @@ void TetrisLevel::StartGame()
 	blockDropTimer = 0.0f;
 	blockDropInterval = 1.0f;
 
+	memset(nextBlockUI, 0, sizeof(nextBlockUI));
+
 	InitializeBoard();
+
+	nextBlockType = GetNextBlockType();
 	SpawnNewBlock();
 }
 
@@ -159,8 +164,13 @@ void TetrisLevel::SpawnNewBlock()
 	SafeDelete(shadowBlock);
 
 	// 새 블록 생성
-	EBlockType newBlockType = GetNextBlockType();
+	newBlockType = nextBlockType;
 	Vector2 spawnPos = GetSpawnPosition();
+
+	// 그 다음에 생성될 블록 타입 저장
+	nextBlockType = GetNextBlockType();
+
+	const BlockShapeData* data = ResourceManager::GetInstance()->GetBlockShape(static_cast<int>(nextBlockType), 0);
 
 	Color color = Color::White;
 
@@ -211,6 +221,64 @@ void TetrisLevel::SpawnNewBlock()
 	{
 		isGameOver = true;
 		std::cout << "[TetrisLevel] 게임 오버! 새 블록을 생성할 공간이 없습니다.\n";
+	}
+
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			if (data->GetPixel(i, j) == 0)
+			{
+				nextBlockUI[i][j] = "  ";
+			}
+
+			else
+			{
+				nextBlockUI[i][j] = "■";
+			}
+		}
+	}
+
+	switch (nextBlockType)
+	{
+	case EBlockType::I:
+		color = Color::LightBlue;
+		break;
+	case EBlockType::O:
+		color = Color::Yellow;
+		break;
+	case EBlockType::T:
+		color = Color::Purple;
+		break;
+	case EBlockType::S:
+		color = Color::Red;
+		break;
+	case EBlockType::Z:
+		color = Color::LightGreen;
+		break;
+	case EBlockType::J:
+		color = Color::Blue;
+		break;
+	case EBlockType::L:
+		color = Color::Orange;
+		break;
+	case EBlockType::None:
+		break;
+	default:
+		break;
+	}
+	
+	Vector2 nextRenderPosition(32, 5);
+
+	// 다음에 나올 블럭을 출력
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			Utils::SetConsoleTextColor(color);
+			Utils::SetConsoleCursorPosition(Vector2{ nextRenderPosition.x + j * 2, nextRenderPosition.y + i});
+			std::cout << nextBlockUI[i][j];
+		}
 	}
 }
 
@@ -275,7 +343,9 @@ bool TetrisLevel::CanBlockMoveTo(const Vector2& position, EBlockType blockType, 
 void TetrisLevel::PlaceBlockOnBoard(TetrisBlock* block)
 {
 	if (!block)
+	{
 		return;
+	}
 
 	Vector2 pos = block->GetGridPosition();
 	int typeIndex = static_cast<int>(block->GetBlockType());
@@ -296,8 +366,7 @@ void TetrisLevel::PlaceBlockOnBoard(TetrisBlock* block)
 
 				if (boardX >= 1 && boardX < BOARD_WIDTH - 1 && boardY >= 0 && boardY < BOARD_HEIGHT - 1)
 				{
-					// 색을 차이내기 위한 Marker값으로 저장
-					gameBoard[boardY][boardX] = block->GetBoardMarker(); // 고정된 블록으로 저장
+					gameBoard[boardY][boardX] = block->GetBoardMarker(); // 색을 차이내기 위한 Marker값으로 저장
 				}
 			}
 		}
@@ -467,7 +536,7 @@ void TetrisLevel::RenderBoard()
 					std::cout << "■"; 
 					break; // 고정된 블록 (쌓인 블록)
 				case 8: // L
-					Utils::SetConsoleTextColor(Color::Cyan);
+					Utils::SetConsoleTextColor(Color::Orange);
 					std::cout << "■"; 
 					break; // 고정된 블록 (쌓인 블록)
 				default:
@@ -483,17 +552,17 @@ void TetrisLevel::RenderBoard()
 
 void TetrisLevel::RenderUI()
 {
-	// UI 정보 출력 (기존 테트리스와 동일한 위치)
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 3 });
+	// UI 정보 출력
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 15 });
 	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
 
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 5 });
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 16 });
 	std::cout << "Score :  " << score;
 
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 6 });
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 17 });
 	std::cout << "Level :  " << level;
 
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 8 });
+	Utils::SetConsoleCursorPosition(Vector2{ 32, 18 });
 	std::cout << "Lines :  " << linesCleared;
 
 	// 조작법 안내
@@ -657,7 +726,7 @@ void TetrisLevel::ProcessCompletedLines()
 Vector2 TetrisLevel::GetSpawnPosition() const
 {
 	// 테트리스 표준 스폰 위치 (보드 중앙 상단, 벽 고려)
-	return Vector2{ BOARD_WIDTH / 2 - 2, 1 }; // Y=1 (맨 위 벽 바로 아래)
+	return Vector2{ BOARD_WIDTH / 2 - 2, 0 }; // Y=1 (맨 위 벽 바로 아래)
 }
 
 Vector2 TetrisLevel::CalculateShadowPosition(const Vector2& currentPos, EBlockType blockType, int rotation) const

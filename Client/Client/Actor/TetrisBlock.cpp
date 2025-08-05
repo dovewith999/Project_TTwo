@@ -70,13 +70,9 @@ void TetrisBlock::Render()
 					gridPosition.y + y
 				};
 
-				// 화면 범위 내에서만 렌더링
-				if (screenPos.x >= 0 && screenPos.x < 10 && screenPos.y >= 0 && screenPos.y < 20)
-				{
-					Utils::SetConsoleCursorPosition(screenPos);
-					Utils::SetConsoleTextColor(color);
-					std::cout << displayChar;
-				}
+				Utils::SetConsoleCursorPosition(screenPos);
+				Utils::SetConsoleTextColor(color);
+				std::cout << displayChar;
 			}
 		}
 	}

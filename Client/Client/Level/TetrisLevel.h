@@ -74,6 +74,11 @@ private:
 	TetrisBlock* currentBlock = nullptr;
 	TetrisBlock* shadowBlock = nullptr;  // 그림자 블록
 
+	const char* nextBlockUI[4][4] = { " " }; // 다음 블록이 무엇인지 그려줄 공간
+
+	EBlockType newBlockType;
+	EBlockType nextBlockType;
+	
 	// 게임 보드 (12x21 크기 - Map.txt와 맞춤)
 	static const int BOARD_WIDTH = 12;
 	static const int BOARD_HEIGHT = 21;
