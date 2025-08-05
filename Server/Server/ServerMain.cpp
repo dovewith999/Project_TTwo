@@ -328,7 +328,7 @@ int main()
     // === 포트 설정 (기존과 동일) ===
     int serverPort = 5004;
     std::cout << "서버 포트: " << serverPort << "\n";
-    std::cout << "다른 포트를 사용하시겠습니까? (y/N): ";
+    std::cout << "다른 포트를 사용하시겠습니까? (Y / N): ";
 
     char changePort;
     std::cin >> changePort;

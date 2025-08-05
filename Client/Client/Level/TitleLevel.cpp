@@ -3,6 +3,7 @@
 #include "Manager/SoundManager.h"
 #include "TitleLevel.h"
 #include "Input.h"
+#include "Managers/NetworkManager.h"
 
 #include <iostream>
 
@@ -10,7 +11,7 @@ TitleLevel::TitleLevel()
 {	
 	// 메뉴 아이템 추가  
 	items.emplace_back(new TitleItem("- Start Single Game", []() {Game::GetInstance().StartSinglePlayer(); }));
-	items.emplace_back(new TitleItem("- Start Multi Game", []() {Game::GetInstance().StartMultiPlayer(); }));
+	items.emplace_back(new TitleItem("- Start Multi Game", []() {NetworkManager::GetInstance()->AcceptServer()/*.StartMultiPlayer()*/; }));
 	items.emplace_back(new TitleItem("- Quit Game", []() { Game::GetInstance().Quit(); }));
 
 	length = static_cast<int>(items.size());

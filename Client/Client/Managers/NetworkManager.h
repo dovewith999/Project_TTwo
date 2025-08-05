@@ -18,6 +18,7 @@ public:
 
 public:
 	void SendInput(int input); // 입력을 서버로 보내는 함수
+	void SendDirectionKey(int direction); // 테스트용 함수
 	UINT AcceptServer(); // 서버와 연결을 시도하는 함수
 	static UINT WINAPI ReceiveThread(LPVOID param);
 

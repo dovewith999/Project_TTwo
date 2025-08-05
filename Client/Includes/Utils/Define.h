@@ -14,7 +14,6 @@ namespace Define
 	{
 		TITLE,
 		BLOCK,
-		// TODO : 필요에 따라 UI로 교체 가능성 있음
 		MAP,
 	};
 

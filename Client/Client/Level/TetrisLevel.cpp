@@ -105,7 +105,7 @@ void TetrisLevel::Render()
 	// 보드 출력
 	RenderBoard();
 
-	// TODO : Render에서 매 프레임마다 호출할 필요가 있나. 특히 조작법 같은 거
+	//  TODO : Render에서 매 프레임마다 호출할 필요가 있나. 특히 조작법 같은 거
 	RenderUI();
 }
 

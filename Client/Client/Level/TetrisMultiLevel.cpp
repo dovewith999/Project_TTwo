@@ -8,11 +8,6 @@
 void TetrisMultiLevel::BeginPlay()
 {
     // 네트워크 연결 시도
-    NetworkManager::GetInstance()->AcceptServer();
-
-    // 상대방 보드 초기화
-    InitializeOpponentBoard();
-
     super::BeginPlay();
 
     if (this->calledBeginPlay == true)
@@ -21,6 +16,11 @@ void TetrisMultiLevel::BeginPlay()
     }
 
     this->calledBeginPlay = true;
+
+    // 상대방 보드 초기화
+    InitializeOpponentBoard();
+    
+    //NetworkManager::GetInstance()->AcceptServer();
 }
 
 void TetrisMultiLevel::Tick(float deltaTime)
