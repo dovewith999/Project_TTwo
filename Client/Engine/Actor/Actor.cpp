@@ -109,3 +109,8 @@ bool Actor::GetExpired() const
 {
 	return isExpired;
 }
+
+Color Actor::GetColor() const
+{
+	return color;
+}

@@ -48,6 +48,11 @@ public:/*Getter & Setter*/
 	FORCEINLINE void SetExpired(bool isExpired);
 	FORCEINLINE bool GetExpired() const;
 
+	FORCEINLINE Color GetColor() const;
+
+protected:
+	// 텍스트 색상 값
+	Color color = Color::White;
 
 private:
 	// 개체의 위치
@@ -55,9 +60,6 @@ private:
 
 	// 그려질 이미지 값
 	char image = ' ';
-
-	// 텍스트 색상 값
-	Color color = Color::White;
 
 	// BeginPlay 호출이 되었는지 확인.
 	bool hasBeganPlay = false;

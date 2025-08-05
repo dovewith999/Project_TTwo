@@ -1,6 +1,7 @@
 ﻿#include "TetrisController.h"
-#include "Actor/TetrisBlock.h"
 #include "Input.h"
+#include "Actor/TetrisBlock.h"
+#include "Managers/ObjectManager.h"
 
 TetrisController::TetrisController(ITetrisGameLogic* gameLogic)
 	: gameLogic(gameLogic)
@@ -77,6 +78,8 @@ void TetrisController::ControllBlock()
 		gameLogic->PlaceBlockOnBoard(currentControlBlock);
 		gameLogic->ProcessCompletedLines();
 		//SpawnNewBlock();
+		//ObjectManager::GetInstance()->SpawnActor();
+
 	}
 
 }

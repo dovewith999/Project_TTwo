@@ -4,11 +4,13 @@
 #include <iostream>
 #include <algorithm>
 
-TetrisBlock::TetrisBlock(EBlockType type, const Vector2& position, EBlockState state)
-	: type(type), gridPosition(position), state(state), rotation(0), dropTimer(0.0f)
+TetrisBlock::TetrisBlock(EBlockType type, const Vector2& position, EBlockState state, Color color)
+	: type(type), gridPosition(position), state(state), rotation(0), dropTimer(0.0f) 
 {
 	// 레벨에 따른 기본 낙하 속도 설정 (1초 = 1000ms)
 	dropSpeed = 1.0f; // 1초마다 한 칸씩 떨어짐
+
+	super::color = color;
 }
 
 TetrisBlock::~TetrisBlock()
@@ -71,6 +73,7 @@ void TetrisBlock::Render()
 				if (screenPos.x >= 0 && screenPos.x < 10 && screenPos.y >= 0 && screenPos.y < 20)
 				{
 					Utils::SetConsoleCursorPosition(screenPos);
+					Utils::SetConsoleTextColor(color);
 					std::cout << displayChar;
 				}
 			}
@@ -81,7 +84,9 @@ void TetrisBlock::Render()
 bool TetrisBlock::Move(const Vector2& direction)
 {
 	if (state == EBlockState::Fixed)
+	{
 		return false;
+	}
 
 	Vector2 newPosition = {
 		gridPosition.x + direction.x,
@@ -216,8 +221,6 @@ bool TetrisBlock::CanMoveTo(const Vector2& position, int testRotation) const
 				if (worldY < 0)
 					continue;
 
-				// TODO: 다른 블록과의 충돌 검사
-				// 실제로는 TetrisLevel의 보드 배열을 확인해야 함
 			}
 		}
 	}

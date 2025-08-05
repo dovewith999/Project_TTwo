@@ -3,6 +3,12 @@
 #include "Math/Vector2.h"
 #include "Actor/TetrisBlock.h"
 
+/// <summary>
+/// TetrisLevel과 TetrisController 사이의 의존성을 주입하기 위해 제작한 인터페이스
+/// 작성자 : 임희섭
+/// 작성일 : 25/08/05
+/// </summary>
+
 class ITetrisGameLogic abstract
 {
 public:

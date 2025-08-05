@@ -160,7 +160,38 @@ void TetrisLevel::SpawnNewBlock()
 	EBlockType newBlockType = GetNextBlockType();
 	Vector2 spawnPos = GetSpawnPosition();
 
-	currentBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Falling);
+	Color color = Color::White;
+
+	switch (newBlockType)
+	{
+	case EBlockType::I:
+		color = Color::LightBlue;
+		break;
+	case EBlockType::O:
+		color = Color::Yellow;
+		break;
+	case EBlockType::T:
+		color = Color::Purple;
+		break;
+	case EBlockType::S:
+		color = Color::Red;
+		break;
+	case EBlockType::Z:
+		color = Color::LightGreen;
+		break;
+	case EBlockType::J:
+		color = Color::Blue;
+		break;
+	case EBlockType::L:
+		color = Color::Cyan;
+		break;
+	case EBlockType::None:
+		break;
+	default:
+		break;
+	}
+
+	currentBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Falling, color);
 	shadowBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Shadow);
 
 	controller->SetCurrentBlock(currentBlock);
@@ -392,6 +423,7 @@ void TetrisLevel::RenderBoard()
 			// 렌더링 (기존 테트리스와 동일한 문자 사용)
 			if (isCurrentBlock)
 			{
+				Utils::SetConsoleTextColor(currentBlock->GetColor());
 				std::cout << "■"; // 현재 떨어지는 블록 (3번과 동일)
 			}
 			else if (isShadowBlock)
@@ -404,7 +436,10 @@ void TetrisLevel::RenderBoard()
 				switch (cellValue)
 				{
 				case 0: std::cout << "  "; break; // 빈 공간
-				case 1: std::cout << "□"; break; // 벽 (Map.txt의 1)
+				case 1:
+					Utils::SetConsoleTextColor(Color::White);
+					std::cout << "□";
+					break; // 벽 (Map.txt의 1)
 				case 2: std::cout << "■"; break; // 고정된 블록 (쌓인 블록)
 				default: std::cout << "  "; break;
 				}
@@ -621,7 +656,7 @@ void TetrisLevel::GenerateNextBag()
 
 	for (int i = 0; i < 7; ++i)
 	{
-		nextBlocks.push_back(static_cast<EBlockType>(i));
+		nextBlocks.emplace_back(static_cast<EBlockType>(i));
 	}
 
 	// 랜덤 셔플

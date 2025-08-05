@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor/Actor.h"
+#include "Math/Color.h"
 
 enum class EBlockType
 {
@@ -19,7 +20,7 @@ class TetrisBlock final : public Actor
 	RTTI_DECLARATIONS(TetrisBlock, Actor)
 
 public:
-	explicit TetrisBlock(EBlockType type = EBlockType::None, const Vector2& position = Vector2{ 0, 0 }, EBlockState state = EBlockState::Falling);
+	explicit TetrisBlock(EBlockType type = EBlockType::None, const Vector2& position = Vector2{ 0, 0 }, EBlockState state = EBlockState::Falling, Color color = Color::White);
 	virtual ~TetrisBlock();
 
 public:

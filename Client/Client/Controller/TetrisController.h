@@ -19,8 +19,7 @@ public:
 	void SetCurrentBlock(TetrisBlock* newBlock);
 
 private:
-	TetrisBlock* currentControlBlock = nullptr;
-
+	TetrisBlock* currentControlBlock = nullptr; // 현재 컨트롤하는 블럭
 	ITetrisGameLogic* gameLogic = nullptr; // 의존성 주입을 위한 인터페이스
 };
 
