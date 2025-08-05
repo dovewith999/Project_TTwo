@@ -19,8 +19,10 @@ TetrisLevel::TetrisLevel()
 
 TetrisLevel::~TetrisLevel()
 {
-	SafeDelete(currentBlock);
-	SafeDelete(shadowBlock);
+	//SafeDelete(currentBlock);
+	//SafeDelete(shadowBlock);
+	currentBlock = nullptr;
+	shadowBlock = nullptr;
 }
 
 void TetrisLevel::BeginPlay()

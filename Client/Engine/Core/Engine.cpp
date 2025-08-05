@@ -98,6 +98,12 @@ void Engine::Run()
 			previousTime = currentTime;
 
 			input.SavePreviouseKeyStates();
+
+			// 이 전 프레임에 추가 및 삭제 요청된 액터 처리
+			if (LevelManager::GetInstance()->GetCurrentLevel())
+			{
+				LevelManager::GetInstance()->GetCurrentLevel()->ProcessAddAndDestroyActors();
+			}
 		}
 	}
 
