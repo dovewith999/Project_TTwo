@@ -25,10 +25,14 @@ public:
 
 public:
     virtual void EndGame() override;
+    virtual int ClearCompletedLines() override;
+    void ReceiveAttackFromOpponent(int attackLines); 
+    void AddAttackLinesToOpponentBoard(int attackLines);
 
 public:
     void UpdateOpponentBoard(const TMCPBlockData& blockData);
-
+    void AddAttackLinesToBottom(int lines); 
+    
 private:
     // 상대방 보드 관리 함수들
     void InitializeOpponentBoard();
@@ -40,8 +44,6 @@ private:
 
 private:
     // 상대방 보드 데이터
-    //static const int BOARD_WIDTH = 12;
-    //static const int BOARD_HEIGHT = 21;
     int opponentBoard[BOARD_HEIGHT][BOARD_WIDTH] = {};
 };
 

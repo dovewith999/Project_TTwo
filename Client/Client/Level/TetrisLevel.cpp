@@ -573,6 +573,10 @@ void TetrisLevel::RenderBoard()
 					Utils::SetConsoleTextColor(Color::Orange);
 					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
+				case 9: // 공격 라인
+					Utils::SetConsoleTextColor(Color::DarkGray);
+					std::cout << "▨";
+					break;
 				default:
 					Utils::SetConsoleTextColor(Color::White);
 					std::cout << "  ";

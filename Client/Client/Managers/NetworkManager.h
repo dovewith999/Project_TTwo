@@ -20,6 +20,7 @@ public:
 public:
 	void SendInput(class TetrisBlock* block, int input, bool isFixed = false); // 입력을 서버로 보내는 함수
 	void SendPacket(int pktMsg); // TODO : short로 받아도 될 것 같다.
+	void SendAttackLines(int attackLines);
 	//void SendDirectionKey(int direction); // 테스트용 함수
 	UINT AcceptServer(); // 서버와 연결을 시도하는 함수
 	static UINT WINAPI ReceiveThread(LPVOID param);

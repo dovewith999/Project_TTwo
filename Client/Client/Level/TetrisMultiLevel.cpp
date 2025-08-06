@@ -6,6 +6,8 @@
 #include "Managers/ResourceManager.h"
 #include "Utils/Utils.h"
 
+#include <random>
+
 void TetrisMultiLevel::BeginPlay()
 {
     // 기다리고 있는 상태면 아무것도 안하고 리턴
@@ -93,6 +95,80 @@ void TetrisMultiLevel::EndGame()
     NetworkManager::GetInstance()->SendPacket(TMCP_GAME_OVER);
 }
 
+int TetrisMultiLevel::ClearCompletedLines()
+{
+	// 부모 클래스의 라인 클리어 로직 호출
+	int clearedLines = TetrisLevel::ClearCompletedLines();
+
+	// 멀티플레이어에서만 공격 로직 추가
+	if (clearedLines >= 2 && NetworkManager::GetInstance()->GetIsConnected())
+	{
+		// 테트리스 표준 공격 라인 수 계산
+		int attackLines = 0;
+		switch (clearedLines)
+		{
+		case 2: attackLines = 1; break;  // Double -> 1줄 공격
+		case 3: attackLines = 2; break;  // Triple -> 2줄 공격  
+		case 4: attackLines = 4; break;  // Tetris -> 4줄 공격
+		default: attackLines = 0; break; // Single은 공격 없음
+		}
+
+		if (attackLines > 0)
+		{
+			// NetworkManager에게 공격 패킷 전송 요청
+			NetworkManager::GetInstance()->SendAttackLines(attackLines);
+		}
+	}
+
+	return clearedLines;
+}
+
+void TetrisMultiLevel::ReceiveAttackFromOpponent(int attackLines)
+{
+	if (attackLines > 0)
+	{
+		AddAttackLinesToBottom(attackLines);
+	}
+}
+
+void TetrisMultiLevel::AddAttackLinesToOpponentBoard(int attackLines)
+{
+	// 상대방 보드를 위로 밀어올리기 (시각적 표현용)
+	for (int y = 1; y < BOARD_HEIGHT - attackLines - 1; ++y)  // 벽 제외
+	{
+		for (int x = 1; x < BOARD_WIDTH - 1; ++x)  // 양쪽 벽 제외
+		{
+			opponentBoard[y][x] = opponentBoard[y + attackLines][x];
+		}
+	}
+
+	// 상대방 보드 바닥에 공격 라인 추가 (각 라인마다 다른 랜덤 홀)
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(1, BOARD_WIDTH - 2);
+
+	for (int i = 0; i < attackLines; ++i)
+	{
+		int targetY = BOARD_HEIGHT - 2 - i;  // 바닥에서부터 위로
+
+		// 각 라인마다 새로운 랜덤 구멍 위치 생성
+		int holeX = dis(gen);
+
+		// 해당 라인을 공격 블록으로 채우기 (구멍 제외)
+		for (int x = 1; x < BOARD_WIDTH - 1; ++x)
+		{
+			if (x == holeX)
+			{
+				opponentBoard[targetY][x] = 0;  // 구멍
+			}
+			else
+			{
+				opponentBoard[targetY][x] = 9;  // 공격 라인 마커 (회색으로 표시)
+			}
+		}
+	}
+}
+
 void TetrisMultiLevel::InitializeOpponentBoard()
 {
     // 상대방 보드를 기본 테트리스 보드 구조로 초기화
@@ -164,6 +240,51 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
     {
         ClearOpponentCompletedLines(); // 라인처리가 가능한지 확인
     }
+}
+
+void TetrisMultiLevel::AddAttackLinesToBottom(int lines)
+{   
+// 현재 보드를 위로 밀어올리기
+	for (int y = 1; y < BOARD_HEIGHT - lines - 1; ++y)  // 벽 제외
+	{
+		for (int x = 1; x < BOARD_WIDTH - 1; ++x)  // 양쪽 벽 제외
+		{
+			gameBoard[y][x] = gameBoard[y + lines][x];
+		}
+	}
+
+	// 바닥 근처에 공격 라인 추가 (랜덤 홀 1개씩)
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	std::uniform_int_distribution<> dis(1, BOARD_WIDTH - 2);
+	for (int i = 0; i < lines; ++i)
+	{
+		int targetY = BOARD_HEIGHT - 2 - i;  // 바닥에서부터 위로
+
+		// 랜덤한 위치에 구멍 1개 만들기
+		int holeX = dis(gen);
+
+		// 해당 라인을 공격 블록으로 채우기 (구멍 제외)
+		for (int x = 1; x < BOARD_WIDTH - 1; ++x)
+		{
+			if (x == holeX)
+			{
+				gameBoard[targetY][x] = 0;  // 구멍
+			}
+			else
+			{
+				gameBoard[targetY][x] = 9;  // 공격 라인 마커 (회색으로 표시될 예정)
+			}
+		}
+	}
+
+	// 현재 블록이 새로 추가된 라인과 겹치는지 확인하고 게임오버 처리
+	if (currentBlock && !CanBlockMoveTo(currentBlock->GetGridPosition(),
+		currentBlock->GetBlockType(), currentBlock->GetRotation()))
+	{
+		isGameOver = true;
+	}
 }
 
 void TetrisMultiLevel::ClearOpponentCurrentBlock()
@@ -247,6 +368,10 @@ void TetrisMultiLevel::RenderOpponentBoard()
                 Utils::SetConsoleTextColor(Color::Orange);
                 std::cout << "■";
                 break;
+			case 9: // 공격 라인
+				Utils::SetConsoleTextColor(Color::DarkGray);
+				std::cout << "▨";
+				break;
             case 99: // 현재 떨어지는 블록 (상대방)
                 Utils::SetConsoleTextColor(Color::DarkGray);
                 std::cout << "▣"; // 상대방 블록은 다른 문자로 구분
