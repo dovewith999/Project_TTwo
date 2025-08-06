@@ -92,6 +92,11 @@ typedef struct TMCPResultData_t {
     bool isGameOver;          // 게임 오버 여부
 }TMCPResultData;
 
+typedef struct TMCPAttackData_t {
+    u_int attackLines;              // 공격 라인 수
+    u_int holePositions[4];         // 각 라인의 구멍 위치 (최대 4줄까지)
+} TMCPAttackData;
+
 /**
  * TMCP 패킷 전송
  * @param sockfd 소켓

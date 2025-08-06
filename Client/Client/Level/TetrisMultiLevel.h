@@ -26,12 +26,12 @@ public:
 public:
     virtual void EndGame() override;
     virtual int ClearCompletedLines() override;
-    void ReceiveAttackFromOpponent(int attackLines); 
-    void AddAttackLinesToOpponentBoard(int attackLines);
+    void ReceiveAttackFromOpponent(const TMCPAttackData& attackData);
+    void AddAttackLinesToOpponentBoard(const TMCPAttackData& attackData);
 
 public:
     void UpdateOpponentBoard(const TMCPBlockData& blockData);
-    void AddAttackLinesToBottom(int lines); 
+    void AddAttackLinesToBottom(const TMCPAttackData& attackData);
     
 private:
     // 상대방 보드 관리 함수들

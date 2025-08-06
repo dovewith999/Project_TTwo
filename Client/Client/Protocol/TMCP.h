@@ -85,12 +85,18 @@ typedef struct TMCPBlockData_t {
     u_int timestamp;         // 타임스탬프 (동기화용)
 } TMCPBlockData;
 
-//게임 결과를 알려줄 데이터
+// 게임 결과를 알려줄 데이터
 typedef struct TMCPResultData_t {
     u_int score;              // 내 점수가 몇점인지
     bool isWin;              // 이겼는지 졌는지 판단
     bool isGameOver;          // 게임 오버 여부
 }TMCPResultData;
+
+// 공격에 관련된 데이터 구조체
+typedef struct TMCPAttackData_t {
+	int attackLines;              // 공격 라인 수
+	int holePositions[4];         // 각 라인의 구멍 위치 (최대 4줄까지)
+} TMCPAttackData;
 
 
 /**

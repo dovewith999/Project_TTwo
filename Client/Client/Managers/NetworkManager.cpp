@@ -75,12 +75,11 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 		case TMCP_ATTACK_LINES:
 			if (payloadSize >= sizeof(int))
 			{
-				int* attackLines = (int*)payload;
+				TMCPAttackData* attackData = (TMCPAttackData*)payload;
 				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
 				{
 					TetrisMultiLevel* multiLevel = dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel());
-					multiLevel->ReceiveAttackFromOpponent(*attackLines); // 공격 하고
-					multiLevel->AddAttackLinesToOpponentBoard(*attackLines); // 내 화면 상대 보드에도 추가 
+					multiLevel->ReceiveAttackFromOpponent(*attackData); // 공격 하고
 				}
 			}
 			break;
@@ -173,19 +172,22 @@ void NetworkManager::SendPacket(int pktMsg)
 		printf("❌ 패킷 전송 실패!\n");
 	}
 }
-void NetworkManager::SendAttackLines(int attackLines)
+void NetworkManager::SendAttackLines(const TMCPAttackData& attackData)
 {
 	if (!isConnected) 
 	{
 		return;
 	}
 
-	// 공격 데이터 구조체 (간단하게 int만 사용)
-	int attackData = attackLines;
-
 	// TMCP_ATTACK_LINES 패킷 전송
 	int result = sendTMCP((unsigned int)clientSocket, TMCP_ATTACK_LINES,
-		&attackData, sizeof(attackData));
+		(void*)&attackData, sizeof(attackData));
+
+	if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
+	{
+		TetrisMultiLevel* multiLevel = dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel());
+		multiLevel->AddAttackLinesToOpponentBoard(attackData); // 내 화면 상대 보드에 추가 
+	}
 
 	if (result < 0) 
 	{
