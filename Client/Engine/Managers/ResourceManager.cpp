@@ -22,6 +22,12 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::Initialize()
 {
+	if (isInitialize == true)
+	{
+		return;
+	}
+
+	isInitialize = true;
 	LoadAllResources();
 }
 
@@ -89,34 +95,34 @@ const BlockShapeData* ResourceManager::GetBlockShape(int blockType, int rotation
 	return &blockShapes[blockType - 2][rotation];
 }
 
-bool ResourceManager::IsValidBlockType(int blockType) const
-{
-	return blockType >= 0 && blockType < 7 && blockShapesLoaded;
-}
+//bool ResourceManager::IsValidBlockType(int blockType) const
+//{
+//	return blockType >= 0 && blockType < 7 && blockShapesLoaded;
+//}
 
-void ResourceManager::LoadMapData(const char* fileName)
-{
-	std::string mapName = fileName;
-	std::string filePath = GetResourcePath(fileName);
+//void ResourceManager::LoadMapData(const char* fileName)
+//{
+//	std::string mapName = fileName;
+//	std::string filePath = GetResourcePath(fileName);
+//
+//	if (ParseMapFile(filePath.c_str(), mapName))
+//	{
+//	}
+//	else
+//	{
+//	}
+//}
 
-	if (ParseMapFile(filePath.c_str(), mapName))
-	{
-	}
-	else
-	{
-	}
-}
-
-const MapData* ResourceManager::GetMapData(const std::string& mapName) const
-{
-	auto it = mapDataContainer.find(mapName);
-	if (it != mapDataContainer.end())
-	{
-		return &it->second;
-	}
-
-	return nullptr;
-}
+//const MapData* ResourceManager::GetMapData(const std::string& mapName) const
+//{
+//	auto it = mapDataContainer.find(mapName);
+//	if (it != mapDataContainer.end())
+//	{
+//		return &it->second;
+//	}
+//
+//	return nullptr;
+//}
 
 std::string ResourceManager::GetResourcePath(const char* fileName, const char* extension) const
 {

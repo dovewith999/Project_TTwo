@@ -39,6 +39,11 @@ void LevelManager::ChangeLevel(Define::ELevel nameOfLevel)
 	{
 		return;
 	}
+	
+	if (currentLevel != nullptr)
+	{
+		currentLevel->Exit();
+	}
 
 	currentLevel = cachedLevels[nameOfLevel];
 }

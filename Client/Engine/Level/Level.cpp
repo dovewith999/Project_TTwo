@@ -47,111 +47,85 @@ void Level::DestroyActor(Actor* destroyedActor)
 
 void Level::BeginPlay()
 {
-	for (Actor* const actor : actors)
-	{
-		if (actor->HasBeganPlay())
-		{
-			continue;
-		}
-
-		actor->BeginPlay();
-	}
-
-	for (Actor* const actor : actors)
-	{
-		// 액터 처리 여부 확인.
-		if (!actor->GetActive() || actor->GetExpired())
-		{
-			continue;
-		}
-
-		// 이미 호출된 개체는 건너뛰기.
-		if (actor->HasBeganPlay())
-		{
-			continue;
-		}
-
-		actor->BeginPlay();
-	}
 }
 
 
 void Level::Tick(float deltaTime)
 {
-	for (Actor* const actor : actors)
-	{
-		actor->Tick(deltaTime);
-	}
 }
 
 void Level::Render()
 {
 	// Render Pass.
-	for (Actor* const actor : actors)
-	{
-		// 드로우 콜.
-		actor->Render();
-	}
+	//for (Actor* const actor : actors)
+	//{
+	//	// 드로우 콜.
+	//	actor->Render();
+	//}
+}
+
+void Level::Exit()
+{
 }
 
 void Level::ProcessAddAndDestroyActors()
 {
-	// actors 배열에서 제외 처리.
-	for (auto iterator = actors.begin(); iterator != actors.end();)
-	{
-		// 삭제 요청된 액터인지 확인 후 배열에서 제외
-		if ((*iterator)->GetExpired())
-		{
-			// erase 함수를 사용하면 iterator가 무효화되기 때문에
-			// 반환되는 값을 저장해야함.
-			iterator = actors.erase(iterator);
-			continue;
-		}
+	//// actors 배열에서 제외 처리.
+	//for (auto iterator = actors.begin(); iterator != actors.end();)
+	//{
+	//	// 삭제 요청된 액터인지 확인 후 배열에서 제외
+	//	if ((*iterator)->GetExpired())
+	//	{
+	//		// erase 함수를 사용하면 iterator가 무효화되기 때문에
+	//		// 반환되는 값을 저장해야함.
+	//		iterator = actors.erase(iterator);
+	//		continue;
+	//	}
 
-		++iterator;
-	}
+	//	++iterator;
+	//}
 
-	// destroyRequstedActors 배열을 순회하면서 액터 delete.
-	for (auto*& actor : destroyRequstedActors)
-	{
-		// 액터가 그렸던 곳 지우기.
-		Utils::SetConsoleCursorPosition(actor->GetPosition());
+	//// destroyRequstedActors 배열을 순회하면서 액터 delete.
+	//for (auto*& actor : destroyRequstedActors)
+	//{
+	//	// 액터가 그렸던 곳 지우기.
+	//	Utils::SetConsoleCursorPosition(actor->GetPosition());
 
-		// 콘솔에 빈문자 출력해서 지우기.
-		//for (int ix = 0; ix < actor->width; ++ix)
-		//{
-		//	std::cout << " ";
-		//}
+	//	// 콘솔에 빈문자 출력해서 지우기.
+	//	//for (int ix = 0; ix < actor->width; ++ix)
+	//	//{
+	//	//	std::cout << " ";
+	//	//}
 
-		// 리소스 해제.
-		SafeDelete(actor);
-	}
+	//	// 리소스 해제.
+	//	SafeDelete(actor);
+	//}
 
-	// 배열 초기화 -> 크기가 0.
-	destroyRequstedActors.clear();
+	//// 배열 초기화 -> 크기가 0.
+	//destroyRequstedActors.clear();
 
-	// addRequstedActors 배열을 순회하면서 새로운 액터 추가.
-	for (auto* const actor : addRequstedActors)
-	{
-		actors.emplace_back(actor);
-		actor->SetOwner(this);
-	}
+	//// addRequstedActors 배열을 순회하면서 새로운 액터 추가.
+	//for (auto* const actor : addRequstedActors)
+	//{
+	//	actors.emplace_back(actor);
+	//	actor->SetOwner(this);
+	//}
 
-	// 배열 초기화.
-	addRequstedActors.clear();
+	//// 배열 초기화.
+	//addRequstedActors.clear();
 }
 
 void Level::SortActorsBySortingOrder()
 {
 	// 버블 정렬
-	for (int i = 0; i < static_cast<int>(actors.size()); ++i)
-	{
-		for (int j = 0; j < static_cast<int>(actors.size()) - 1; ++j)
-		{
-			if (actors[j]->GetSortringOrder() > actors[j + 1]->GetSortringOrder())
-			{
-				std::swap(actors[j], actors[j + 1]);
-			}
-		}
-	}
+	//for (int i = 0; i < static_cast<int>(actors.size()); ++i)
+	//{
+	//	for (int j = 0; j < static_cast<int>(actors.size()) - 1; ++j)
+	//	{
+	//		if (actors[j]->GetSortringOrder() > actors[j + 1]->GetSortringOrder())
+	//		{
+	//			std::swap(actors[j], actors[j + 1]);
+	//		}
+	//	}
+	//}
 }

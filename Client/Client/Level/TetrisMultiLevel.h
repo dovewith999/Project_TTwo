@@ -14,6 +14,10 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
+    virtual void Exit() override;
+
+public:
+    virtual void EndGame() override;
 
 public:
     void UpdateOpponentBoard(const TMCPBlockData& blockData);
@@ -32,6 +36,6 @@ private:
     //static const int BOARD_HEIGHT = 21;
     int opponentBoard[BOARD_HEIGHT][BOARD_WIDTH] = {};
 
-    bool calledBeginPlay_multiLevel = false;
+    //bool calledBeginPlay_multiLevel = false;
 };
 

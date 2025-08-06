@@ -17,8 +17,7 @@
 
 TetrisLevel::TetrisLevel()
 {
-	InitializeBoard();
-	GenerateNextBag();
+
 }
 
 TetrisLevel::~TetrisLevel()
@@ -34,12 +33,19 @@ void TetrisLevel::BeginPlay()
 {
 	super::BeginPlay();
 
-	if (calledBeginPlay == true)
+ 	if (calledBeginPlay == true)
 	{
 		return;
 	}
 
-	calledBeginPlay = true;
+	InitializeBoard();
+	GenerateNextBag();
+
+	if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() == nullptr)
+	{
+		calledBeginPlay = true;
+	}
+
 	system("cls");
 
 	// 리소스 로드
@@ -120,6 +126,11 @@ void TetrisLevel::Render()
 
 	//  TODO : Render에서 매 프레임마다 호출할 필요가 있나. 특히 조작법 같은 거
 	RenderUI();
+}
+
+void TetrisLevel::Exit()
+{
+	calledBeginPlay = false;
 }
 
 void TetrisLevel::EndPlay()

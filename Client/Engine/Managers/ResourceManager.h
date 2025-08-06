@@ -79,11 +79,11 @@ public:
 	// 블록 모양 관리
 	void LoadBlockShapes(const char* fileName);
 	const BlockShapeData* GetBlockShape(int blockType, int rotation) const;
-	bool IsValidBlockType(int blockType) const;
+	//bool IsValidBlockType(int blockType) const;
 
 	// 맵 데이터 관리
-	void LoadMapData(const char* fileName);
-	const MapData* GetMapData(const std::string& mapName) const;
+	//void LoadMapData(const char* fileName);
+	//const MapData* GetMapData(const std::string& mapName) const;
 
 	// 유틸리티 함수
 	std::string GetResourcePath(const char* fileName, const char* extension = ".txt") const;
@@ -100,6 +100,7 @@ private:
 	// blockType을 편의상 I = 2로 시작하게 해놨기 때문에 배열에 인덱스로 이용할 때는 -2해줌
 	BlockShapeData blockShapes[7][4];
 	bool blockShapesLoaded = false;
+	bool isInitialize = false;
 
 	// 맵 데이터 컨테이너
 	std::unordered_map<std::string, MapData> mapDataContainer;

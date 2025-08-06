@@ -12,7 +12,7 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 	u_char cmd;
 	char payload[1024];
 
-	std::cout << "[수신 스레드] 시작 - 서버 패킷 대기 중...\n";
+	//std::cout << "[수신 스레드] 시작 - 서버 패킷 대기 중...\n";
 
 	while (NetworkManager::GetInstance()->isConnected)
 	{
@@ -28,15 +28,15 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 		switch (cmd)
 		{
 		case TMCP_CONNECT_RES:
-			std::cout << "서버 연결 성공\n";
+			//std::cout << "서버 연결 성공\n";
 			break;
 
 		case TMCP_MATCH_WAIT:
-			std::cout << "상대방을 기다리는 중...\n";
+			//std::cout << "상대방을 기다리는 중...\n";
 			break;
 
 		case TMCP_MATCH_FOUND:
-			std::cout << "상대방 발견\n";
+			//std::cout << "상대방 발견\n";
 			break;
 
 		case TMCP_GAME_START:
@@ -61,6 +61,7 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 		case TMCP_GAME_OVER:
 			std::cout << "게임 종료\n";
 			NetworkManager::GetInstance()->isGameStarted = false;
+			LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 			break;
 
 		case TMCP_DISCONNECT_REQ:
@@ -117,6 +118,7 @@ void NetworkManager::SendInput(TetrisBlock* block, int input, bool isFixed)
 		blockData.action = 2;
 	}
 
+	// TODO : 지금 입력값이 필요가 없음
 	//switch (input) 
 	//{
 	//case VK_LEFT: // 왼쪽
@@ -142,6 +144,16 @@ void NetworkManager::SendInput(TetrisBlock* block, int input, bool isFixed)
 
 	// 서버로 패킷 전송
 	int result = sendTMCP((unsigned int)clientSocket, TMCP_BLOCK_MOVE, &blockData, sizeof(blockData));
+	if (result < 0) {
+		printf("❌ 패킷 전송 실패!\n");
+	}
+}
+void NetworkManager::SendPacket(int pktMsg)
+{
+	TMCPBlockData blockData;
+
+	// 서버로 패킷 전송
+	int result = sendTMCP((unsigned int)clientSocket, pktMsg, &blockData, sizeof(blockData));
 	if (result < 0) {
 		printf("❌ 패킷 전송 실패!\n");
 	}

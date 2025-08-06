@@ -20,7 +20,6 @@ public:
 
     // 엔진 오버라이드
     virtual void CleanUp() override;
-
     static Game& GetInstance();
 
 private:

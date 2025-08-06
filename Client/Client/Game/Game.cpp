@@ -34,7 +34,7 @@ void Game::ShowSettings()
 
 void Game::QuitGame()
 {
-    
+    Game::Quit();
 }
 
 void Game::CleanUp()
@@ -55,8 +55,6 @@ void Game::InitializeLevels()
     LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TITLE, new TitleLevel());
     LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TETRIS_SINGLE, new TetrisLevel());
     LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TETRIS_MULTI, new TetrisMultiLevel());
-    //levelManager.RegisterLevel("Result", new ResultLevel());
-    //levelManager.RegisterLevel("Settings", new SettingsLevel());
 
     // 시작 레벨 설정
     LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);

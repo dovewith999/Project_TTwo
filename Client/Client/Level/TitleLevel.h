@@ -39,9 +39,10 @@ public:
 	virtual ~TitleLevel();
 
 public:
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
+	virtual void Exit() override; // 레벨 나갈 때 처리
 
 private:
 	// 현재 선택된 아이템의 인덱스,

@@ -25,6 +25,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
+	virtual void Exit() override;
 	void EndPlay();
 
 	// 게임 상태 관리

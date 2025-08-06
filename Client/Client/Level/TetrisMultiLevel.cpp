@@ -7,15 +7,21 @@
 
 void TetrisMultiLevel::BeginPlay()
 {
-    // 네트워크 연결 시도
     super::BeginPlay();
 
-    if (this->calledBeginPlay_multiLevel == true)
+    if (calledBeginPlay == true)
     {
         return;
     }
 
-    this->calledBeginPlay_multiLevel = true;
+    calledBeginPlay = true;
+
+    //if (this->calledBeginPlay_multiLevel == true)
+    //{
+    //    return;
+    //}
+
+    //this->calledBeginPlay_multiLevel = true;
 
     // 상대방 보드 초기화
     InitializeOpponentBoard();
@@ -41,6 +47,17 @@ void TetrisMultiLevel::Render()
 
     // 멀티플레이어 전용 UI 렌더링
     //RenderMultiUI();
+}
+
+void TetrisMultiLevel::Exit()
+{
+    calledBeginPlay = false;
+}
+
+void TetrisMultiLevel::EndGame()
+{
+    super::EndGame();
+    NetworkManager::GetInstance()->SendPacket(TMCP_GAME_OVER);
 }
 
 void TetrisMultiLevel::InitializeOpponentBoard()

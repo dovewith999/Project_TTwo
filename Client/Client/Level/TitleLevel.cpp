@@ -8,13 +8,13 @@
 #include <iostream>
 
 TitleLevel::TitleLevel()
-{	
+{
 	// 메뉴 아이템 추가  
 	items.emplace_back(new TitleItem("- Start Single Game", []() {Game::GetInstance().StartSinglePlayer(); }));
 	items.emplace_back(new TitleItem("- Start Multi Game", []() {NetworkManager::GetInstance()->AcceptServer()/*.StartMultiPlayer()*/; }));
 	items.emplace_back(new TitleItem("- Quit Game", []() { Game::GetInstance().Quit(); }));
 
-	length = static_cast<int>(items.size());
+	//length = static_cast<int>(items.size());
 
 	// 음악 재생
 	//SoundManager::GetInstance()->PlaySoundW(L"BGM Tetris_Nintendo music.mp3", Define::ESoundChannelID::BGM, 10.f);
@@ -28,6 +28,27 @@ TitleLevel::~TitleLevel()
 	}
 
 	items.clear();
+
+	Exit();
+}
+
+void TitleLevel::BeginPlay()
+{
+	super::BeginPlay();
+	if (calledBeginPlay)
+	{
+		return;
+	}
+
+	calledBeginPlay = true;
+	system("cls");
+
+	// 메뉴 아이템 추가  
+	//items.emplace_back(new TitleItem("- Start Single Game", []() {Game::GetInstance().StartSinglePlayer(); })); // 1인 플레이
+	//items.emplace_back(new TitleItem("- Start Multi Game", []() {NetworkManager::GetInstance()->AcceptServer(); })); // 멀티 플레이
+	//items.emplace_back(new TitleItem("- Quit Game", []() { Game::GetInstance().Quit(); })); // 겜 끄기
+
+	length = static_cast<int>(items.size());
 }
 
 void TitleLevel::Tick(float deltaTime)
@@ -71,4 +92,9 @@ void TitleLevel::Render()
 		Utils::SetConsoleTextColor(static_cast<WORD>(textColor));
 		std::wcout << items[i]->itemText << '\n';
 	}
+}
+
+void TitleLevel::Exit()
+{
+	calledBeginPlay = false;
 }
