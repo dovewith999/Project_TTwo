@@ -87,9 +87,9 @@ typedef struct TMCPBlockData_t {
 
 //게임 결과를 알려줄 데이터
 typedef struct TMCPResultData_t {
+    u_int score;              // 내 점수가 몇점인지
     bool isWin;              // 이겼는지 졌는지 판단
     bool isGameOver;          // 게임 오버 여부
-    u_int score              // 내 점수가 몇점인지
 }TMCPResultData;
 
 

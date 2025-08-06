@@ -32,11 +32,11 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			break;
 
 		case TMCP_MATCH_WAIT:
-			//std::cout << "상대방을 기다리는 중...\n";
+			std::cout << "상대방을 기다리는 중...\n";
 			break;
 
 		case TMCP_MATCH_FOUND:
-			//std::cout << "상대방 발견\n";
+			std::cout << "상대방 발견\n";
 			break;
 
 		case TMCP_GAME_START:

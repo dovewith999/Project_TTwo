@@ -39,7 +39,7 @@ void TetrisMultiLevel::Render()
     RenderOpponentBoard();
 
     // 멀티플레이어 전용 UI 렌더링
-    RenderMultiUI();
+    //RenderMultiUI();
 }
 
 void TetrisMultiLevel::Exit()

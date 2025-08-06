@@ -120,7 +120,6 @@ private:
 	// === 패킷 중계 ===
 	void RelayPacket(SOCKET from, SOCKET to, u_char cmd, void* payload, int size);
 
-
 private:
 	// === 기본 서버 정보 ===
 	int          portNumber;     // 서버 포트
