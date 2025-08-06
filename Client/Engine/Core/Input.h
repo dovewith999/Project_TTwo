@@ -32,6 +32,9 @@ private:
 	void ProcessInput();
 	void SavePreviouseKeyStates();
 
+	// 포커스 체크 함수 추가
+	bool IsWindowFocused() const;
+
 private:
 	static Input* instance;
 

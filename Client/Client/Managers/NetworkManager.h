@@ -8,19 +8,23 @@
 /// 작성자 : 임희섭
 /// 작성일 : 25/08/04
 /// </summary>
+
 class NetworkManager final : public SafeSingleton<NetworkManager>
 {
 	friend class SafeSingleton<NetworkManager>;
 
 public:
 	explicit NetworkManager() = default;
-	virtual ~NetworkManager() = default;
+	virtual ~NetworkManager();
 
 public:
 	void SendInput(int input); // 입력을 서버로 보내는 함수
+	void SendInput(class TetrisBlock* block, int input); // 입력을 서버로 보내는 함수
 	void SendDirectionKey(int direction); // 테스트용 함수
 	UINT AcceptServer(); // 서버와 연결을 시도하는 함수
 	static UINT WINAPI ReceiveThread(LPVOID param);
+
+	void Disconnect(); // 연결이 종료되면 처리할 일들
 
 public:
 	FORCEINLINE bool GetIsConnected() const { return isConnected; }
@@ -30,4 +34,6 @@ private:
 	bool isConnected = false;
 	bool isGameStarted = false;
 	char clientName[32] = "OwnerClient";
+
+	HANDLE receiveHandle; // 수신 스레드를 관리할 핸들
 };

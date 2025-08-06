@@ -1,6 +1,9 @@
 ﻿#include "TetrisController.h"
 #include "Input.h"
 #include "Actor/TetrisBlock.h"
+#include "Managers/NetworkManager.h"
+#include "Level/TetrisMultiLevel.h"
+#include "Managers/LevelManager.h"
 
 TetrisController::TetrisController(ITetrisGameLogic* gameLogic)
 	: gameLogic(gameLogic)
@@ -25,6 +28,7 @@ void TetrisController::ControllBlock()
 		if (gameLogic->CanBlockMoveTo(newPos, currentControlBlock->GetBlockType(), currentControlBlock->GetRotation()))
 		{
 			currentControlBlock->SetGridPosition(newPos);
+			SendInput(VK_LEFT); //현재 고정된 블록 정보
 		}
 	}
 	else if (Input::GetInstance().GetKeyDown(VK_RIGHT))
@@ -33,6 +37,7 @@ void TetrisController::ControllBlock()
 		if (gameLogic->CanBlockMoveTo(newPos, currentControlBlock->GetBlockType(), currentControlBlock->GetRotation()))
 		{
 			currentControlBlock->SetGridPosition(newPos);
+			SendInput(VK_RIGHT); //현재 고정된 블록 정보
 		}
 	}
 
@@ -43,23 +48,29 @@ void TetrisController::ControllBlock()
 		if (gameLogic->CanBlockMoveTo(currentPos, currentControlBlock->GetBlockType(), newRotation))
 		{
 			currentControlBlock->SetRotation(newRotation);
+			SendInput(VK_UP); //현재 블록 정보
 		}
 	}
 
 	// 소프트 드롭
-	else if (Input::GetInstance().GetKey(VK_DOWN))
+	else if (Input::GetInstance().GetKeyDown(VK_DOWN))
 	{
 		Vector2 newPos = { currentPos.x, currentPos.y + 1 };
 		if (gameLogic->CanBlockMoveTo(newPos, currentControlBlock->GetBlockType(), currentControlBlock->GetRotation()))
 		{
 			currentControlBlock->SetGridPosition(newPos);
+
+			SendInput(VK_DOWN);
 		}
 		else
 		{
 			// 더 이상 떨어질 수 없으면 고정
 			gameLogic->PlaceBlockOnBoard(currentControlBlock);
 			gameLogic->ProcessCompletedLines();
+			SendInput(VK_DOWN); //현재 고정된 블록 정보
+			
 			gameLogic->SpawnNewBlock();
+			SendInput(VK_DOWN); //새로 스폰된 블록 정보
 		}
 	}
 
@@ -73,12 +84,31 @@ void TetrisController::ControllBlock()
 			dropPos.y++;
 		}
 		currentControlBlock->SetGridPosition(dropPos);
-
 		gameLogic->PlaceBlockOnBoard(currentControlBlock);
 		gameLogic->ProcessCompletedLines();
+
+		SendInput(VK_SPACE); //현재 고정된 블록 정보
+
 		gameLogic->SpawnNewBlock();
+		SendInput(VK_SPACE); //새로 스폰된 블록 정보
+
+	}
+}
+
+bool TetrisController::IsMultiplayerMode() const
+{
+	// RTTI를 사용해서 TetrisMultiLevel인지 확인
+	return LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr;
+}
+
+void TetrisController::SendInput(int input)
+{
+	if (IsMultiplayerMode() == false)
+	{
+		return;
 	}
 
+	NetworkManager::GetInstance()->SendInput(currentControlBlock, input);
 }
 
 void TetrisController::SetCurrentBlock(TetrisBlock* newBlock)

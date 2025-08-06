@@ -172,7 +172,6 @@ UINT __stdcall GameServer::PlayerThread(LPVOID param)
 				break;
 			}
 
-
 			// === 특별 처리가 필요한 명령어들 ===
 			if (command == TMCP_DISCONNECT_REQ || command == TMCP_GAME_OVER) {
 				printf("[게임 종료] Player%d가 게임을 종료했습니다.\n", playerId + 1);
@@ -276,10 +275,10 @@ void SendTMCPPacket(SOCKET socket, u_char cmd, void* payload, u_short len)
 
 void PrintGameStart(const char* player1, const char* player2)
 {
-	printf("\n🎮 Non-blocking 게임 시작: %s vs %s\n", player1, player2);
+	printf("\nNon-blocking 게임 시작: %s vs %s\n", player1, player2);
 }
 
 void PrintGameEnd(const char* winner)
 {
-	printf("🏆 Non-blocking 게임 종료! 승자: %s\n\n", winner);
+	printf("Non-blocking 게임 종료! 승자: %s\n\n", winner);
 }
