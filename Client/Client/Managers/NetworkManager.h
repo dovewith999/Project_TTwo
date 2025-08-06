@@ -26,14 +26,18 @@ public:
 
 	void Disconnect(); // 연결이 종료되면 처리할 일들
 
-public:
-	FORCEINLINE bool GetIsConnected() const { return isConnected; }
+public: /*Getter*/
+	FORCEINLINE bool GetIsConnected() const { return isConnected; }	
+	FORCEINLINE bool GetIsGameStarted() const { return isGameStarted; }
+	FORCEINLINE bool GetIsWaitingForOpponent() const { return isWaitingForOpponent; }
 
 private:
 	SOCKET clientSocket = INVALID_SOCKET;
 	bool isConnected = false;
 	bool isGameStarted = false;
+	bool isWaitingForOpponent = false;
 	char clientName[32] = "OwnerClient";
 
 	HANDLE receiveHandle; // 수신 스레드를 관리할 핸들
+
 };

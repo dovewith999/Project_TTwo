@@ -11,7 +11,7 @@
 /// 작성자 : 임희섭
 /// 작성일 : 25/08/04
 /// </summary>
-/// 
+
 class TetrisController;
 class TetrisLevel : public Level, public ITetrisGameLogic
 {

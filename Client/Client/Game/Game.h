@@ -1,6 +1,11 @@
 ﻿#pragma once
 #include "Engine.h"
 
+/// <summary>
+/// 엔진을 클라이언트에서 쓰기 위한 클래스
+/// 작성자 : 임희섭
+/// 작성일 : 25/08/01
+/// </summary>
 class Level;
 class Game : public Engine
 {

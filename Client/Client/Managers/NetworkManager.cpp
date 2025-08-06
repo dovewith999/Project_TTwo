@@ -32,7 +32,8 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			break;
 
 		case TMCP_MATCH_WAIT:
-			std::cout << "상대방을 기다리는 중...\n";
+			NetworkManager::GetInstance()->isWaitingForOpponent = true;
+			NetworkManager::GetInstance()->isGameStarted = false;
 			break;
 
 		case TMCP_MATCH_FOUND:
@@ -44,6 +45,7 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			//std::cout << "   ↑: 위    ↓: 아래\n";
 			//std::cout << "   ←: 왼쪽  →: 오른쪽\n";
 			//std::cout << "   ESC: 종료\n\n";
+			NetworkManager::GetInstance()->isWaitingForOpponent = false;
 			NetworkManager::GetInstance()->isGameStarted = true;
 			break;
 

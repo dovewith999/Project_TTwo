@@ -20,13 +20,14 @@
 #include <tchar.h>
 #include <Windows.h>
 
-constexpr size_t SOUND_CHANNEL_COUNT = static_cast<size_t>(Define::ESoundChannelID::MAXCHANNEL);
-
 /// <summary>
 /// 사운드 파일 관리 및 재생을 전반적으로 관리할 클래스
 /// 작성자 : 임희섭
 /// 작성일 : 2025/08/01
 /// </summary>
+
+constexpr size_t SOUND_CHANNEL_COUNT = static_cast<size_t>(Define::ESoundChannelID::MAXCHANNEL);
+
 class Engine_API SoundManager  : public SafeSingleton<SoundManager>
 {
 	friend class SafeSingleton<SoundManager>;

@@ -2,6 +2,14 @@
 #include "Actor/Actor.h"
 #include "Math/Color.h"
 
+/// <summary>
+/// 테트리스의 블럭 역할을 하는 클래스
+/// 그런데 굳이 필요가 없을 것 같다.
+/// 블럭 타입, gridPosition, rotationState 말고 필요있는 데이터가 딱히 없다.
+/// 최종 리팩토링 때 많이 쳐내질 예정
+/// 작성자 : 임희섭
+/// 작성일 : 25/08/05
+/// </summary>
 enum class EBlockType
 {
 	I = 2, O, T, S, Z, J, L, None

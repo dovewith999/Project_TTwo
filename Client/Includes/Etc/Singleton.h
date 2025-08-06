@@ -2,6 +2,15 @@
 #include <memory>
 #include <mutex>
 
+/// <summary>
+/// 상속받는 클래스에 싱글톤 패턴을 적용시키는 템플릿 클래스
+/// 주로 매니저들이 상속받아 사용될 예정
+/// unique_ptr과 mutex를 이용해 더욱 안전하다
+/// 작성자 : 임희섭
+/// 작성일 : 25/08/01
+/// </summary>
+/// <typeparam name="T"></typeparam>
+
 template<typename T>
 class SafeSingleton
 {

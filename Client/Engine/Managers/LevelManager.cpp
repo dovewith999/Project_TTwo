@@ -44,7 +44,7 @@ void LevelManager::ChangeLevel(Define::ELevel nameOfLevel)
 	{
 		currentLevel->Exit();
 	}
-
+	system("cls");
 	currentLevel = cachedLevels[nameOfLevel];
 }
 

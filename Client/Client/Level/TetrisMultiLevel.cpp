@@ -1,45 +1,85 @@
 ﻿#include "TetrisMultiLevel.h"
 #include "Managers/FileManager.h"
 #include "Managers/SoundManager.h"
+#include "Managers/LevelManager.h"
 #include "Managers/NetworkManager.h"
 #include "Managers/ResourceManager.h"
 #include "Utils/Utils.h"
 
 void TetrisMultiLevel::BeginPlay()
 {
-    super::BeginPlay();
-
-    if (calledBeginPlay == true)
-    {
+    // 기다리고 있는 상태면 아무것도 안하고 리턴
+	if (NetworkManager::GetInstance()->GetIsWaitingForOpponent())
+	{
         return;
     }
 
-    calledBeginPlay = true;
+	super::BeginPlay();
 
-    // 상대방 보드 초기화
-    InitializeOpponentBoard();
+	if (calledBeginPlay == true)
+	{
+		return;
+	}
+
+	calledBeginPlay = true;
+
+	// 상대방 보드 초기화
+	InitializeOpponentBoard();
+
+	// 네트워크 연결 시작
+	if (!NetworkManager::GetInstance()->GetIsConnected())
+	{
+		NetworkManager::GetInstance()->AcceptServer();
+	}
 }
 
 void TetrisMultiLevel::Tick(float deltaTime)
 {
-    super::Tick(deltaTime);
+	if (NetworkManager::GetInstance()->GetIsWaitingForOpponent())
+	{
+		return; // 대기 중이므로 게임 진행 안함
+	}
 
-    // 라인 처리는 클라에서 하자
-    //ClearCompletedLines(); -> TetrisLevel에 있는 함수는 TetrisLevel의 GameBoard기준임
+	// 게임이 시작된 후에만 부모 클래스 Tick 호출
+	if (NetworkManager::GetInstance()->GetIsGameStarted())
+	{
+		super::Tick(deltaTime);
+	}
+
 }
 
 void TetrisMultiLevel::Render()
 {
-    super::Render(); // 기존 TetrisLevel의 Render 호출 (자신의 보드 + UI)
+	// 상대방을 기다리는 중이면 대기 화면 표시
+	if (NetworkManager::GetInstance()->GetIsWaitingForOpponent())
+	{
+		RenderWaitingScreen();
+		return;
+	}
 
-    if (!isGameStarted)
-        return;
+	// 게임이 시작되었을 때만 일반 렌더링
+	if (NetworkManager::GetInstance()->GetIsGameStarted())
+	{
+        super::Render();
 
-    // 상대방 보드 렌더링
-    RenderOpponentBoard();
+		// 상대방 보드 렌더링
+		RenderOpponentBoard();
 
-    // 멀티플레이어 전용 UI 렌더링
-    //RenderMultiUI();
+		// 멀티플레이어 전용 UI 렌더링
+		//RenderMultiUI();
+	}
+
+ //   super::Render(); // 기존 TetrisLevel의 Render 호출 (자신의 보드 + UI)
+
+ //   if (!isGameStarted)
+ //       return;
+
+	//// 상대방 보드 렌더링
+	//RenderOpponentBoard();
+
+	//// 멀티플레이어 전용 UI 렌더링
+	////RenderMultiUI();
+
 }
 
 void TetrisMultiLevel::Exit()
@@ -148,7 +188,7 @@ void TetrisMultiLevel::RenderOpponentBoard()
     const int OPPONENT_START_Y = BOARD_START_Y;
 
     // 상대방 보드 제목
-    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_START_X + 5, OPPONENT_START_Y - 1 });
+    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_START_X + 7, OPPONENT_START_Y - 1 });
     Utils::SetConsoleTextColor(Color::Yellow);
     std::cout << "OPPONENT";
     Utils::SetConsoleTextColor(Color::White);
@@ -219,6 +259,40 @@ void TetrisMultiLevel::RenderOpponentBoard()
             Utils::SetConsoleTextColor(Color::White);
         }
     }
+}
+
+// TetrisMultiLevel.cpp에 추가
+void TetrisMultiLevel::RenderWaitingScreen()
+{
+	// 화면 지우기
+	//system("cls");
+
+	// 대기 메시지 중앙에 표시
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 10 });
+	Utils::SetConsoleTextColor(Color::Yellow);
+	std::cout << "=================================";
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 11 });
+	std::cout << "  상대방을 기다리는 중...";
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 12 });
+	std::cout << "  Waiting for opponent...";
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 13 });
+	std::cout << "=================================";
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 15 });
+	Utils::SetConsoleTextColor(Color::Red);
+	std::cout << "ESC: 취소하고 메인으로 돌아가기";
+
+	Utils::SetConsoleTextColor(Color::White);
+
+	// ESC 키 처리 (대기 중에도 나가기 가능)
+	if (Input::GetInstance().GetKeyDown(VK_ESCAPE))
+	{
+		NetworkManager::GetInstance()->Disconnect();
+		LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
+	}
 }
 
 void TetrisMultiLevel::RenderMultiUI()

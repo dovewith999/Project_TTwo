@@ -2,6 +2,13 @@
 #include "Level/Level.h"
 #include "Math/Color.h"
 
+/// <summary>
+/// 강사님 코드의 ManuLevel을 거의 그대로 가져온 클래스
+/// 게임 시작 시 Title을 보여주기 때문에 TitleLevel로 변경
+/// 작성자 : 임희섭
+/// 작성일 : 25/08/01
+/// </summary>
+
 struct TitleItem
 {
 	// 함수포인터
