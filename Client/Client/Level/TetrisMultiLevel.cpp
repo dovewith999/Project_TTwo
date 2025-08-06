@@ -27,7 +27,6 @@ void TetrisMultiLevel::Tick(float deltaTime)
 
     // 라인 처리는 클라에서 하자
     //ClearCompletedLines(); -> TetrisLevel에 있는 함수는 TetrisLevel의 GameBoard기준임
-    ClearOpponentCompletedLines();
 }
 
 void TetrisMultiLevel::Render()
@@ -109,6 +108,11 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
                 }
             }
         }
+    }
+
+    if (blockData.action == 2)
+    {
+        ClearOpponentCompletedLines(); // 라인처리가 가능한지 확인
     }
 }
 
@@ -286,7 +290,7 @@ void TetrisMultiLevel::ClearOpponentCompletedLines()
             {
                 opponentBoard[1][x] = 0;
             }
-            y++; // 같은 라인을 다시 체크 (위에서 내려온 라인이 또 가득 찰 수 있음)
+            y++;
         }
     }
 }
