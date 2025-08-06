@@ -71,7 +71,7 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
 
     // 새로운 블록 위치에 표시
     // blockData의 정보를 사용해서 상대방 보드에 블록 표시
-    int blockType = blockData.blockType;
+    int blockType = blockData.blockType + 1; // 1~7 값을 2~8 값으로 보간
     int posX = blockData.posX;
     int posY = blockData.posY;
     int rotation = blockData.rotation;

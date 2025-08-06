@@ -40,10 +40,10 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			break;
 
 		case TMCP_GAME_START:
-			std::cout << "게임 시작! 방향키로 테스트하세요!\n";
-			std::cout << "   ↑: 위    ↓: 아래\n";
-			std::cout << "   ←: 왼쪽  →: 오른쪽\n";
-			std::cout << "   ESC: 종료\n\n";
+			//std::cout << "게임 시작! 방향키로 테스트하세요!\n";
+			//std::cout << "   ↑: 위    ↓: 아래\n";
+			//std::cout << "   ←: 왼쪽  →: 오른쪽\n";
+			//std::cout << "   ESC: 종료\n\n";
 			NetworkManager::GetInstance()->isGameStarted = true;
 			break;
 
@@ -51,9 +51,9 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			if (payloadSize >= sizeof(TMCPBlockData))
 			{
 				TMCPBlockData* blockData = (TMCPBlockData*)payload;
-				Utils::SetConsoleCursorPosition(Vector2{ 70, 40 });
-				printf("타입=%d, 회전=%d\n",
-					blockData->blockType, blockData->rotation);
+				//Utils::SetConsoleCursorPosition(Vector2{ 70, 40 });
+				//printf("타입=%d, 회전=%d\n",
+				//	blockData->blockType, blockData->rotation);
 
 				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
 				{
@@ -112,6 +112,8 @@ void NetworkManager::SendInput(TetrisBlock* block, int input)
 	blockData.blockType = static_cast<int>(block->GetBlockType()) - 1;  // 2~8인 값을 1~7로 보정
 	blockData.rotation = block->GetRotation();
 	blockData.direction = input;
+	blockData.posX = block->GetGridPosition().x;
+	blockData.posY = block->GetGridPosition().y;
 
 	switch (input) {
 	case VK_LEFT: // 왼쪽
