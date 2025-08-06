@@ -59,8 +59,9 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			break;
 
 		case TMCP_GAME_OVER:
-			std::cout << "게임 종료\n";
+			//std::cout << "게임 종료\n";
 			NetworkManager::GetInstance()->isGameStarted = false;
+			NetworkManager::GetInstance()->isConnected = false;
 			LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 			break;
 

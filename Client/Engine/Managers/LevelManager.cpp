@@ -70,7 +70,6 @@ void LevelManager::BeginPlayCurrentLevel()
 	}
 
 	currentLevel->BeginPlay();
-
 }
 
 void LevelManager::TickCurrentLevel(float deltaTime)

@@ -16,13 +16,6 @@ void TetrisMultiLevel::BeginPlay()
 
     calledBeginPlay = true;
 
-    //if (this->calledBeginPlay_multiLevel == true)
-    //{
-    //    return;
-    //}
-
-    //this->calledBeginPlay_multiLevel = true;
-
     // 상대방 보드 초기화
     InitializeOpponentBoard();
 }
@@ -46,7 +39,7 @@ void TetrisMultiLevel::Render()
     RenderOpponentBoard();
 
     // 멀티플레이어 전용 UI 렌더링
-    //RenderMultiUI();
+    RenderMultiUI();
 }
 
 void TetrisMultiLevel::Exit()

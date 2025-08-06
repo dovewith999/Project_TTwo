@@ -106,7 +106,7 @@ public:
 
 	// === 정적 스레드 함수 ===
 	static UINT WINAPI AcceptThread(LPVOID param);    // 연결 수락 스레드 
-	static UINT WINAPI PlayerThread(LPVOID param);    // 플레이어 처리 스레드 (Non-blocking으로 변경!)
+	static UINT WINAPI PlayerThread(LPVOID param);    // 플레이어 처리 스레드 (Non-blocking)
 
 private:
 	// === 기본 서버 함수 ===

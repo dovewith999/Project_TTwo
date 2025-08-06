@@ -530,10 +530,12 @@ void TetrisLevel::RenderBoard()
 				Utils::SetConsoleTextColor(currentBlock->GetColor());
 				std::cout << "■"; // 현재 떨어지는 블록 (3번과 동일)
 			}
+
 			else if (isShadowBlock)
 			{
 				std::cout << "▨"; // 그림자 블록 (1번과 동일)
 			}
+
 			else
 			{
 				// Map.txt에서 읽어온 값 + 고정된 블록에 따라 렌더링
@@ -586,11 +588,11 @@ void TetrisLevel::RenderUI()
 {
 	// UI 정보 출력 TODO : 한번만 나오면 되는데 얘네는
 	Utils::SetConsoleTextColor(Color::Orange);
-	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X - 13, 3 }); // TODO : 엄청난 하드코딩이다.
+	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X - 13, 3 }); // TODO : 엄청난 하드코딩이다.ㄱ-
 	std::cout << "Save Block";
 
 	Utils::SetConsoleTextColor(Color::Orange);
-	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X + 26, 3 }); // TODO : 엄청난 하드코딩이다.
+	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X + 26, 3 }); // TODO : 엄청난 하드코딩이다.ㄱ-
 	std::cout << "Next Block";
 
 	Utils::SetConsoleTextColor(Color::White);
@@ -616,19 +618,7 @@ void TetrisLevel::RenderUI()
 	Utils::SetConsoleCursorPosition(Vector2{ settingStartX, 27 });
 	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";
 	Utils::SetConsoleCursorPosition(Vector2{ settingStartX, 28 });
-	std::cout << "P: 일시정지";
-
-	//if (isGamePaused)
-	//{
-	//	Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
-	//	std::cout << "PAUSED - Press P to resume";
-	//}
-
-	//if (isGameOver)
-	//{
-	//	Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
-	//	std::cout << "GAME OVER - Press R to restart";
-	//}
+	std::cout << "TAB: 블럭 Save & Switching";
 }
 
 void TetrisLevel::LoadMapFromFile(const char* fileName)

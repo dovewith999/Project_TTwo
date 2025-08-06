@@ -35,7 +35,5 @@ private:
     //static const int BOARD_WIDTH = 12;
     //static const int BOARD_HEIGHT = 21;
     int opponentBoard[BOARD_HEIGHT][BOARD_WIDTH] = {};
-
-    //bool calledBeginPlay_multiLevel = false;
 };
 
