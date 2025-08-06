@@ -27,6 +27,7 @@ TetrisLevel::~TetrisLevel()
 	//SafeDelete(shadowBlock);
 	currentBlock = nullptr;
 	shadowBlock = nullptr;
+	SafeDelete(controller);
 }
 
 void TetrisLevel::BeginPlay()
@@ -165,8 +166,13 @@ void TetrisLevel::EndGame()
 
 	SafeDelete(currentBlock);
 	SafeDelete(shadowBlock);
+	system("cls");
 
 	std::cout << "[TetrisLevel] 게임 종료! 최종 점수: " << score << "\n";
+
+	Sleep(3000);
+	system("cls");
+	LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 }
 
 void TetrisLevel::SpawnNewBlock()
@@ -241,14 +247,14 @@ void TetrisLevel::SpawnNewBlock()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			if (data->GetPixel(i, j) == 0)
+			if (data->GetPixel(j, i) == 0)
 			{
-				nextBlockUI[i][j] = "  ";
+				nextBlockUI[j][i] = "  ";
 			}
 
 			else
 			{
-				nextBlockUI[i][j] = "■";
+				nextBlockUI[j][i] = "■";
 			}
 		}
 	}
@@ -291,7 +297,7 @@ void TetrisLevel::SpawnNewBlock()
 		{
 			Utils::SetConsoleTextColor(color);
 			Utils::SetConsoleCursorPosition(Vector2{ nextRenderPosition.x + j * 2, nextRenderPosition.y + i });
-			std::cout << nextBlockUI[i][j];
+			std::cout << nextBlockUI[j][i];
 		}
 	}
 #pragma endregion
@@ -576,7 +582,7 @@ void TetrisLevel::RenderUI()
 	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X + 26, 3 }); // TODO : 엄청난 하드코딩이다.
 	std::cout << "Next Block";
 
-
+	Utils::SetConsoleTextColor(Color::White);
 	const int uiStartX = BOARD_START_X + 26;
 	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 15 });
 	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
@@ -841,14 +847,14 @@ void TetrisLevel::SwitchBlock()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			if (data->GetPixel(i, j) == 0)
+			if (data->GetPixel(j, i) == 0)
 			{
-				saveBlockUI[i][j] = "  ";
+				saveBlockUI[j][i] = "  ";
 			}
 
 			else
 			{
-				saveBlockUI[i][j] = "■";
+				saveBlockUI[j][i] = "■";
 			}
 		}
 	}
@@ -862,11 +868,10 @@ void TetrisLevel::SwitchBlock()
 		{
 			Utils::SetConsoleTextColor(color);
 			Utils::SetConsoleCursorPosition(Vector2{ saveRenderPosition.x + j * 2, saveRenderPosition.y + i });
-			std::cout << saveBlockUI[i][j];
+			std::cout << saveBlockUI[j][i];
 		}
 	}
 #pragma endregion
-
 }
 
 Vector2 TetrisLevel::GetSpawnPosition() const

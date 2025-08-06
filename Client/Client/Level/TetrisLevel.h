@@ -31,7 +31,7 @@ public:
 	void StartGame();
 	void PauseGame();
 	void ResumeGame();
-	void EndGame();
+	virtual void EndGame();
 
 	// 블록 관리
 	virtual void SpawnNewBlock() override;
