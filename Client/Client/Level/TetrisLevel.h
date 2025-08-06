@@ -43,6 +43,7 @@ public:
 	virtual void PlaceBlockOnBoard(TetrisBlock* block) override;
 	virtual int ClearCompletedLines() override;
 	virtual void ProcessCompletedLines() override;
+	virtual void SwitchBlock() override;
 
 	void RenderBoard();
 	void RenderUI();
@@ -73,8 +74,11 @@ protected:
 	// 현재 조작 중인 블록
 	TetrisBlock* currentBlock = nullptr;
 	TetrisBlock* shadowBlock = nullptr;  // 그림자 블록
+	
+	EBlockType saveBlockType = EBlockType::None; // 저장하고 스위칭 할 블럭
 
 	const char* nextBlockUI[4][4] = { " " }; // 다음 블록이 무엇인지 그려줄 공간
+	const char* saveBlockUI[4][4] = { " " }; // 저장하고 있는 블록이 무엇인지 그려줄 공간
 
 	EBlockType newBlockType;
 	EBlockType nextBlockType;
@@ -83,6 +87,9 @@ protected:
 	static const int BOARD_WIDTH = 12;
 	static const int BOARD_HEIGHT = 21;
 	int gameBoard[BOARD_HEIGHT][BOARD_WIDTH];
+
+	const int BOARD_START_X = 20; // 보드 그리기 시작 위치 x
+	const int BOARD_START_Y = 3; // 보드 그리기 시작 위치 y
 
 	// 렌더링용 문자
 	const char* Block_Types[4] = {

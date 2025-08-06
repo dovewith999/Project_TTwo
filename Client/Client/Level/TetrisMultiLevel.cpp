@@ -40,7 +40,7 @@ void TetrisMultiLevel::Render()
     RenderOpponentBoard();
 
     // 멀티플레이어 전용 UI 렌더링
-    RenderMultiUI();
+    //RenderMultiUI();
 }
 
 void TetrisMultiLevel::InitializeOpponentBoard()
@@ -118,12 +118,12 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
 
 void TetrisMultiLevel::ClearOpponentCurrentBlock()
 {
-    // 현재 떨어지는 블록만 지우기 (99값), 고정된 블록은 유지
+    // 현재 떨어지는 블록만 지우기, 고정된 블록은 유지
     for (int y = 0; y < BOARD_HEIGHT; ++y)
     {
         for (int x = 0; x < BOARD_WIDTH; ++x)
         {
-            if (opponentBoard[y][x] > 1 && opponentBoard[y][x] < 100) // 현재 블록 표시값 (벽과 0, 고정된 값이 아니면 0으로 지움)
+            if (opponentBoard[y][x] > 1 && opponentBoard[y][x] < 100) // 현재 블록 표시값 (벽과 0, 고정된 값(기존 값 + 100)이 아니면 0으로 지움)
             {
                 opponentBoard[y][x] = 0; // 빈 공간으로 변경
             }
@@ -134,8 +134,8 @@ void TetrisMultiLevel::ClearOpponentCurrentBlock()
 void TetrisMultiLevel::RenderOpponentBoard()
 {
     // 상대방 보드 시작 위치 (기존 보드 오른쪽)
-    const int OPPONENT_START_X = 50;
-    const int OPPONENT_START_Y = 3;
+    const int OPPONENT_START_X = BOARD_START_X + 55;
+    const int OPPONENT_START_Y = BOARD_START_Y;
 
     // 상대방 보드 제목
     Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_START_X + 5, OPPONENT_START_Y - 1 });

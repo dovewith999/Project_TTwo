@@ -9,6 +9,7 @@
 #include "Managers/NetworkManager.h"
 #include "Controller/TetrisController.h"
 #include "TetrisMultiLevel.h"
+#include "Utils/Utils.h"
 
 #include <iostream>
 #include <algorithm>
@@ -214,6 +215,7 @@ void TetrisLevel::SpawnNewBlock()
 		break;
 	}
 
+
 	currentBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Falling, color);
 	shadowBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Shadow);
 
@@ -234,6 +236,7 @@ void TetrisLevel::SpawnNewBlock()
 		std::cout << "[TetrisLevel] 게임 오버! 새 블록을 생성할 공간이 없습니다.\n";
 	}
 
+#pragma region Next Block UI
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
@@ -278,8 +281,8 @@ void TetrisLevel::SpawnNewBlock()
 	default:
 		break;
 	}
-	
-	Vector2 nextRenderPosition(32, 5);
+
+	Vector2 nextRenderPosition(BOARD_START_X + 26, 5);
 
 	// 다음에 나올 블럭을 출력
 	for (int i = 0; i < 4; ++i)
@@ -287,10 +290,11 @@ void TetrisLevel::SpawnNewBlock()
 		for (int j = 0; j < 4; ++j)
 		{
 			Utils::SetConsoleTextColor(color);
-			Utils::SetConsoleCursorPosition(Vector2{ nextRenderPosition.x + j * 2, nextRenderPosition.y + i});
+			Utils::SetConsoleCursorPosition(Vector2{ nextRenderPosition.x + j * 2, nextRenderPosition.y + i });
 			std::cout << nextBlockUI[i][j];
 		}
 	}
+#pragma endregion
 }
 
 void TetrisLevel::HandleInput()
@@ -439,7 +443,7 @@ void TetrisLevel::RenderBoard()
 	// 게임 보드 출력 (기존 테트리스와 동일한 위치 - gotoxy(6, i + 3))
 	for (int y = 0; y < BOARD_HEIGHT; ++y)
 	{
-		Utils::SetConsoleCursorPosition(Vector2{ 6, y + 3 });
+		Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X, y + BOARD_START_Y });
 
 		for (int x = 0; x < BOARD_WIDTH; ++x)
 		{
@@ -519,12 +523,12 @@ void TetrisLevel::RenderBoard()
 				switch (cellValue)
 				{
 				case 0: std::cout << "  "; break; // 빈 공간
-				case 1: 
+				case 1:
 					Utils::SetConsoleTextColor(Color::White);
 					std::cout << "□"; break; // 벽 (Map.txt의 1)
 				case 2:  // I
 					Utils::SetConsoleTextColor(Color::LightBlue);
-					std::cout << "■"; 
+					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
 				case 3: // O
 					Utils::SetConsoleTextColor(Color::Yellow);
@@ -532,27 +536,27 @@ void TetrisLevel::RenderBoard()
 					break; // 고정된 블록 (쌓인 블록)
 				case 4: // T
 					Utils::SetConsoleTextColor(Color::Purple);
-					std::cout << "■"; 
+					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
 				case 5: // S
 					Utils::SetConsoleTextColor(Color::Red);
-					std::cout << "■"; 
+					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
 				case 6: // Z
 					Utils::SetConsoleTextColor(Color::LightGreen);
-					std::cout << "■"; 
+					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
 				case 7: // J
 					Utils::SetConsoleTextColor(Color::Blue);
-					std::cout << "■"; 
+					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
 				case 8: // L
 					Utils::SetConsoleTextColor(Color::Orange);
-					std::cout << "■"; 
+					std::cout << "■";
 					break; // 고정된 블록 (쌓인 블록)
 				default:
 					Utils::SetConsoleTextColor(Color::White);
-					std::cout << "  "; 
+					std::cout << "  ";
 					break;
 				}
 				Utils::SetConsoleTextColor(Color::White);
@@ -563,40 +567,51 @@ void TetrisLevel::RenderBoard()
 
 void TetrisLevel::RenderUI()
 {
-	// UI 정보 출력
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 15 });
+	// UI 정보 출력 TODO : 한번만 나오면 되는데 얘네는
+	Utils::SetConsoleTextColor(Color::Orange);
+	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X - 13, 3 }); // TODO : 엄청난 하드코딩이다.
+	std::cout << "Save Block";
+
+	Utils::SetConsoleTextColor(Color::Orange);
+	Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X + 26, 3 }); // TODO : 엄청난 하드코딩이다.
+	std::cout << "Next Block";
+
+
+	const int uiStartX = BOARD_START_X + 26;
+	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 15 });
 	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
 
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 16 });
+	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 16 });
 	std::cout << "Score :  " << score;
 
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 17 });
+	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 17 });
 	std::cout << "Level :  " << level;
 
-	Utils::SetConsoleCursorPosition(Vector2{ 32, 18 });
+	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 18 });
 	std::cout << "Lines :  " << linesCleared;
 
 	// 조작법 안내
-	Utils::SetConsoleCursorPosition(Vector2{ 5, 25 });
-	std::cout << "조작법:";						
-	Utils::SetConsoleCursorPosition(Vector2{ 5, 26 });
-	std::cout << "←→: 이동  ↑: 회전";			   
-	Utils::SetConsoleCursorPosition(Vector2{ 5, 27 });
-	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";	
-	Utils::SetConsoleCursorPosition(Vector2{ 5, 28 });
+	const int settingStartX = BOARD_START_X - 1;
+	Utils::SetConsoleCursorPosition(Vector2{ settingStartX, 25 });
+	std::cout << "조작법:";
+	Utils::SetConsoleCursorPosition(Vector2{ settingStartX, 26 });
+	std::cout << "←→: 이동  ↑: 회전";
+	Utils::SetConsoleCursorPosition(Vector2{ settingStartX, 27 });
+	std::cout << "↓: 소프트드롭  SPACE: 하드드롭";
+	Utils::SetConsoleCursorPosition(Vector2{ settingStartX, 28 });
 	std::cout << "P: 일시정지";
 
-	if (isGamePaused)
-	{
-		Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
-		std::cout << "PAUSED - Press P to resume";
-	}
+	//if (isGamePaused)
+	//{
+	//	Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
+	//	std::cout << "PAUSED - Press P to resume";
+	//}
 
-	if (isGameOver)
-	{
-		Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
-		std::cout << "GAME OVER - Press R to restart";
-	}
+	//if (isGameOver)
+	//{
+	//	Utils::SetConsoleCursorPosition(Vector2{ 15, 10 });
+	//	std::cout << "GAME OVER - Press R to restart";
+	//}
 }
 
 void TetrisLevel::LoadMapFromFile(const char* fileName)
@@ -729,9 +744,129 @@ void TetrisLevel::ProcessCompletedLines()
 		if (newLevel > level)
 		{
 			level = newLevel;
-			blockDropInterval = 0.1f >  1.0f - (level * 0.1f) ? 0.1f : 1.0f - (level * 0.1f); // 레벨이 올라갈수록 빨라짐
+			blockDropInterval = 0.1f > 1.0f - (level * 0.1f) ? 0.1f : 1.0f - (level * 0.1f); // 레벨이 올라갈수록 빨라짐
 		}
 	}
+}
+// TODO : 현재 컨트롤 중인 블럭을 saveBlock으로 두고 다음 블럭 가져오기, 혹시 saveBlock이 None이 아니라면 save블럭을 컨트롤하기
+void TetrisLevel::SwitchBlock()
+{
+	Color color = Color::White;
+
+	if (saveBlockType != EBlockType::None)
+	{
+		switch (saveBlockType)
+		{
+		case EBlockType::I:
+			color = Color::LightBlue;
+			break;
+		case EBlockType::O:
+			color = Color::Yellow;
+			break;
+		case EBlockType::T:
+			color = Color::Purple;
+			break;
+		case EBlockType::S:
+			color = Color::Red;
+			break;
+		case EBlockType::Z:
+			color = Color::LightGreen;
+			break;
+		case EBlockType::J:
+			color = Color::Blue;
+			break;
+		case EBlockType::L:
+			color = Color::Orange;
+			break;
+		case EBlockType::None:
+			break;
+		default:
+			break;
+		}
+
+		EBlockType tempBlockType = currentBlock->GetBlockType();
+
+		SafeDelete(currentBlock);
+		SafeDelete(shadowBlock);
+
+		currentBlock = new TetrisBlock(saveBlockType, GetSpawnPosition(), EBlockState::Falling, color);
+		shadowBlock = new TetrisBlock(saveBlockType, GetSpawnPosition(), EBlockState::Shadow);
+
+		controller->SetCurrentBlock(currentBlock);
+		
+		saveBlockType = tempBlockType;
+	}
+
+	else if (saveBlockType == EBlockType::None)
+	{
+		saveBlockType = currentBlock->GetBlockType();
+		SpawnNewBlock();
+	}
+
+
+#pragma region save Block UI
+
+	switch (saveBlockType)
+	{
+	case EBlockType::I:
+		color = Color::LightBlue;
+		break;
+	case EBlockType::O:
+		color = Color::Yellow;
+		break;
+	case EBlockType::T:
+		color = Color::Purple;
+		break;
+	case EBlockType::S:
+		color = Color::Red;
+		break;
+	case EBlockType::Z:
+		color = Color::LightGreen;
+		break;
+	case EBlockType::J:
+		color = Color::Blue;
+		break;
+	case EBlockType::L:
+		color = Color::Orange;
+		break;
+	case EBlockType::None:
+		break;
+	default:
+		break;
+	}
+
+	const BlockShapeData* data = ResourceManager::GetInstance()->GetBlockShape(static_cast<int>(saveBlockType), 0);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			if (data->GetPixel(i, j) == 0)
+			{
+				saveBlockUI[i][j] = "  ";
+			}
+
+			else
+			{
+				saveBlockUI[i][j] = "■";
+			}
+		}
+	}
+
+	Vector2 saveRenderPosition(BOARD_START_X - 13, 5);
+
+	// 다음에 나올 블럭을 출력
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			Utils::SetConsoleTextColor(color);
+			Utils::SetConsoleCursorPosition(Vector2{ saveRenderPosition.x + j * 2, saveRenderPosition.y + i });
+			std::cout << saveBlockUI[i][j];
+		}
+	}
+#pragma endregion
+
 }
 
 Vector2 TetrisLevel::GetSpawnPosition() const

@@ -91,7 +91,13 @@ void TetrisController::ControllBlock()
 
 		gameLogic->SpawnNewBlock();
 		SendInput(VK_SPACE); //새로 스폰된 블록 정보
+	}
 
+	// 블럭 스위칭
+	else if (Input::GetInstance().GetKeyDown(VK_TAB))
+	{
+		gameLogic->SwitchBlock();
+		SendInput(VK_TAB);
 	}
 }
 

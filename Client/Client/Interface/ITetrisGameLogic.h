@@ -9,6 +9,7 @@
 /// 작성일 : 25/08/05
 /// </summary>
 
+//__inferface
 class ITetrisGameLogic abstract
 {
 public:
@@ -20,4 +21,5 @@ public:
 	virtual int ClearCompletedLines() PURE;
 	virtual void ProcessCompletedLines() PURE;
 	virtual void SpawnNewBlock() PURE;
+	virtual void SwitchBlock() PURE;
 };

@@ -28,8 +28,8 @@ private:
 
 private:
     // 상대방 보드 데이터
-    static const int BOARD_WIDTH = 12;
-    static const int BOARD_HEIGHT = 21;
+    //static const int BOARD_WIDTH = 12;
+    //static const int BOARD_HEIGHT = 21;
     int opponentBoard[BOARD_HEIGHT][BOARD_WIDTH] = {};
 
     bool calledBeginPlay_multiLevel = false;
