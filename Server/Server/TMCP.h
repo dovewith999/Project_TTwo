@@ -55,6 +55,8 @@
 #define TMCP_SCORE_UPDATE		0x31
 #define TMCP_ATTACK_LINES		0x32
 #define TMCP_NEXT_BLOCK			0x33
+#define TMCP_GAME_WIN           0x34
+#define TMCP_GAME_LOSE          0x35 
 
 // 기타	
 #define TMCP_HERATBEAT // 연결 확인
@@ -83,26 +85,12 @@ typedef struct TMCPBlockData_t {
     u_int timestamp;         // 타임스탬프 (동기화용)
 } TMCPBlockData;
 
-// 라인 클리어 데이터 (16 bytes) - 충분한 정보 저장
-typedef struct TMCPLineData_t {
-    u_char linesCount;       // 클리어된 라인 수 (1~4)
-    u_char lineNumbers[4];   // 클리어된 라인 번호들 (0~19)
-    u_char attackLines;      // 상대방에게 보낼 공격 라인 수
-    u_char comboCount;       // 현재 콤보 수
-    u_char spinType;         // T-spin 등 특수 동작 (0:일반, 1:T-spin, 2:Perfect Clear)
-    u_char reserved;         // 예약
-    u_int scoreGained;       // 이번 클리어로 얻은 점수
-} TMCPLineData;
-
-// 점수 업데이트 데이터 (16 bytes) - 테트리스 점수는 매우 커질 수 있음
-typedef struct TMCPScoreData_t {
-    u_int  currentScore;     // 현재 점수 (최대 42억점)
-    u_int  totalLines;       // 총 클리어 라인 수 (최대 42억 라인)
-    u_short currentLevel;    // 현재 레벨 (1~65535)
-    u_short fallSpeed;       // 현재 낙하 속도 (ms 단위)
-    u_int timestamp;         // 타임스탬프 (게임 시간)
-} TMCPScoreData;
-
+//게임 결과를 알려줄 데이터
+typedef struct TMCPResultData_t {
+    u_int score;              // 내 점수가 몇점인지
+    bool isWin;              // 이겼는지 졌는지 판단
+    bool isGameOver;          // 게임 오버 여부
+}TMCPResultData;
 
 /**
  * TMCP 패킷 전송
