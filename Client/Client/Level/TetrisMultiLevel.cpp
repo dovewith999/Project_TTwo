@@ -24,6 +24,10 @@ void TetrisMultiLevel::BeginPlay()
 void TetrisMultiLevel::Tick(float deltaTime)
 {
     super::Tick(deltaTime);
+
+    // 라인 처리는 클라에서 하자
+    //ClearCompletedLines(); -> TetrisLevel에 있는 함수는 TetrisLevel의 GameBoard기준임
+    ClearOpponentCompletedLines();
 }
 
 void TetrisMultiLevel::Render()
@@ -76,8 +80,15 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
     int posY = blockData.posY;
     int rotation = blockData.rotation;
 
+    int marker = blockType; // 보드에 저장되는 값
+
     // ResourceManager에서 블록 모양 데이터 가져오기
     const BlockShapeData* shapeData = ResourceManager::GetInstance()->GetBlockShape(blockType, rotation);
+
+    if (blockData.action == 2) // 고정되는 액션이라면
+    {
+        marker += 100; // 보드에 고정되는 값으로 변경
+    }
 
     if (shapeData)
     {
@@ -93,7 +104,7 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
                     if (boardX >= 0 && boardX < BOARD_WIDTH && boardY >= 0 && boardY < BOARD_HEIGHT)
                     {
                         // 현재 떨어지는 블록으로 표시 (임시값 99 사용)
-                        opponentBoard[boardY][boardX] = 99;
+                        opponentBoard[boardY][boardX] = marker;
                     }
                 }
             }
@@ -108,7 +119,7 @@ void TetrisMultiLevel::ClearOpponentCurrentBlock()
     {
         for (int x = 0; x < BOARD_WIDTH; ++x)
         {
-            if (opponentBoard[y][x] == 99) // 현재 블록 표시값
+            if (opponentBoard[y][x] > 1 && opponentBoard[y][x] < 100) // 현재 블록 표시값 (벽과 0, 고정된 값이 아니면 0으로 지움)
             {
                 opponentBoard[y][x] = 0; // 빈 공간으로 변경
             }
@@ -143,34 +154,42 @@ void TetrisMultiLevel::RenderOpponentBoard()
                 std::cout << "  ";
                 break; // 빈 공간
             case 1:
+            case 101:
                 Utils::SetConsoleTextColor(Color::White);
                 std::cout << "□";
                 break; // 벽
             case 2:  // I 블록 (고정)
+            case 102:
                 Utils::SetConsoleTextColor(Color::LightBlue);
                 std::cout << "■";
                 break;
             case 3: // O 블록 (고정)
+            case 103:
                 Utils::SetConsoleTextColor(Color::Yellow);
                 std::cout << "■";
                 break;
             case 4: // T 블록 (고정)
+            case 104:
                 Utils::SetConsoleTextColor(Color::Purple);
                 std::cout << "■";
                 break;
             case 5: // S 블록 (고정)
+            case 105:
                 Utils::SetConsoleTextColor(Color::Red);
                 std::cout << "■";
                 break;
             case 6: // Z 블록 (고정)
+            case 106:
                 Utils::SetConsoleTextColor(Color::LightGreen);
                 std::cout << "■";
                 break;
             case 7: // J 블록 (고정)
+            case 107:
                 Utils::SetConsoleTextColor(Color::Blue);
                 std::cout << "■";
                 break;
             case 8: // L 블록 (고정)
+            case 108:
                 Utils::SetConsoleTextColor(Color::Orange);
                 std::cout << "■";
                 break;
@@ -232,4 +251,42 @@ void TetrisMultiLevel::RenderMultiUI()
     std::cout << "Multi Controls:";
     Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_UI_X, OPPONENT_UI_Y + 6 });
     std::cout << "ESC: Disconnect";
+}
+
+void TetrisMultiLevel::ClearOpponentCompletedLines()
+{
+    // 아래에서 위로 라인 체크 (벽 제외하고 1~11열만)
+    for (int y = BOARD_HEIGHT - 2; y >= 1; --y) // 바닥(20행)과 맨 위(0행) 제외
+    {
+        bool isLineFull = true;
+
+        // 해당 라인이 가득 찼는지 확인 (벽 제외)
+        for (int x = 1; x < BOARD_WIDTH - 1; ++x) // 양옆 벽 제외
+        {
+            if (opponentBoard[y][x] == 0)
+            {
+                isLineFull = false;
+                break;
+            }
+        }
+
+        if (isLineFull)
+        {
+            // 라인 제거 - 위쪽 라인들을 아래로 이동
+            for (int moveY = y; moveY > 1; --moveY) // 맨 위 벽까지만
+            {
+                for (int x = 1; x < BOARD_WIDTH - 1; ++x) // 양옆 벽 제외
+                {
+                    opponentBoard[moveY][x] = opponentBoard[moveY - 1][x];
+                }
+            }
+
+            // 맨 위 라인은 빈 공간으로 (벽 제외)
+            for (int x = 1; x < BOARD_WIDTH - 1; ++x)
+            {
+                opponentBoard[1][x] = 0;
+            }
+            y++; // 같은 라인을 다시 체크 (위에서 내려온 라인이 또 가득 찰 수 있음)
+        }
+    }
 }

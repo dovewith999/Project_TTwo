@@ -5,7 +5,10 @@
 #include "Managers/SoundManager.h"
 #include "Managers/FileManager.h"
 #include "Managers/ResourceManager.h"
+#include "Managers/LevelManager.h"
+#include "Managers/NetworkManager.h"
 #include "Controller/TetrisController.h"
+#include "TetrisMultiLevel.h"
 
 #include <iostream>
 #include <algorithm>
@@ -73,11 +76,19 @@ void TetrisLevel::Tick(float deltaTime)
 			if (CanBlockMoveTo(newPos, currentBlock->GetBlockType(), currentBlock->GetRotation()))
 			{
 				currentBlock->SetGridPosition(newPos);
+				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
+				{
+					NetworkManager::GetInstance()->SendInput(currentBlock, VK_DOWN);
+				}
 			}
 			else
 			{
 				// 블록이 더 이상 떨어질 수 없음 - 고정하고 새 블록 생성
 				PlaceBlockOnBoard(currentBlock);
+				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
+				{
+					NetworkManager::GetInstance()->SendInput(currentBlock, VK_DOWN, true);
+				}
 				ProcessCompletedLines();
 				SpawnNewBlock();
 			}

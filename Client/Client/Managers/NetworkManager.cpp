@@ -51,10 +51,6 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			if (payloadSize >= sizeof(TMCPBlockData))
 			{
 				TMCPBlockData* blockData = (TMCPBlockData*)payload;
-				//Utils::SetConsoleCursorPosition(Vector2{ 70, 40 });
-				//printf("타입=%d, 회전=%d\n",
-				//	blockData->blockType, blockData->rotation);
-
 				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
 				{
 					dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel())->UpdateOpponentBoard(*blockData);
@@ -104,7 +100,7 @@ void NetworkManager::Disconnect()
 	WSACleanup();
 }
 
-void NetworkManager::SendInput(TetrisBlock* block, int input)
+void NetworkManager::SendInput(TetrisBlock* block, int input, bool isFixed)
 {	
 	TMCPBlockData blockData;
 
@@ -114,26 +110,33 @@ void NetworkManager::SendInput(TetrisBlock* block, int input)
 	blockData.direction = input;
 	blockData.posX = block->GetGridPosition().x;
 	blockData.posY = block->GetGridPosition().y;
+	blockData.action = 0;
 
-	switch (input) {
-	case VK_LEFT: // 왼쪽
-		blockData.action = 0;     // 이동
-		break;
-	case VK_RIGHT: // 오른쪽  
-		blockData.action = 0;     // 이동
-		break;
-	case VK_DOWN: // 아래
-		blockData.action = 0;     // 이동
-		break;
-	case VK_UP: // 위 (회전으로 처리)
-		blockData.action = 1;     // 이동
-		break;
-	case VK_SPACE:
-		blockData.action = 3;
-		break;
-	default:
-		break;
+	if (isFixed)
+	{
+		blockData.action = 2;
 	}
+
+	//switch (input) 
+	//{
+	//case VK_LEFT: // 왼쪽
+	//	blockData.action = 0;     // 이동
+	//	break;
+	//case VK_RIGHT: // 오른쪽  
+	//	blockData.action = 0;     // 이동
+	//	break;
+	//case VK_DOWN: // 아래
+	//	blockData.action = 0;     // 이동
+	//	break;
+	//case VK_UP: // 위 (회전으로 처리)
+	//	blockData.action = 1;     // 이동
+	//	break;
+	//case VK_SPACE:
+	//	blockData.action = 3;
+	//	break;
+	//default:
+	//	break;
+	//}
 
 	blockData.timestamp = (u_int)time(NULL);
 
@@ -143,56 +146,56 @@ void NetworkManager::SendInput(TetrisBlock* block, int input)
 		printf("❌ 패킷 전송 실패!\n");
 	}
 }
-
-void NetworkManager::SendDirectionKey(int direction)
-{
-	TMCPBlockData blockData;
-
-	// 방향에 따라 블록 데이터 설정
-	blockData.blockType = 3;  // T-블록으로 고정
-	blockData.rotation = 0;
-	blockData.action = 0;     // 이동
-	blockData.direction = direction;
-
-	// 방향에 따른 좌표 설정 (테스트용)
-	static u_short testX = 5, testY = 10;
-
-	switch (direction) {
-	case 1: // 왼쪽
-		if (testX > 0) testX--;
-		printf("왼쪽 이동 전송 (X=%d)\n", testX);
-		break;
-	case 2: // 오른쪽  
-		if (testX < 9) testX++;
-		printf("오른쪽 이동 전송 (X=%d)\n", testX);
-		break;
-	case 3: // 아래
-		if (testY < 19) testY++;
-		printf("아래 이동 전송 (Y=%d)\n", testY);
-		break;
-	case 0: // 위 (회전으로 처리)		
-		blockData.rotation = (blockData.rotation + 1) % 4;
-		printf("회전 전송(회전 = % d)\n", blockData.rotation);
-		break;
-	case 4: // 스페이스
-		blockData.action;
-		printf("하드 드롭 전송\n");
-		break;
-	default:
-		break;
-	}
-
-	blockData.posX = testX;
-	blockData.posY = testY;
-	blockData.timestamp = (u_int)time(NULL);
-
-	// 서버로 패킷 전송
-	int result = sendTMCP((unsigned int)clientSocket, TMCP_BLOCK_MOVE, &blockData, sizeof(blockData));
-	if (result < 0) {
-		printf("❌ 패킷 전송 실패!\n");
-	}
-}
-
+#pragma region Test용 코드
+//void NetworkManager::SendDirectionKey(int direction)
+//{
+//	TMCPBlockData blockData;
+//
+//	// 방향에 따라 블록 데이터 설정
+//	blockData.blockType = 3;  // T-블록으로 고정
+//	blockData.rotation = 0;
+//	blockData.action = 0;     // 이동
+//	blockData.direction = direction;
+//
+//	// 방향에 따른 좌표 설정 (테스트용)
+//	static u_short testX = 5, testY = 10;
+//
+//	switch (direction) {
+//	case 1: // 왼쪽
+//		if (testX > 0) testX--;
+//		printf("왼쪽 이동 전송 (X=%d)\n", testX);
+//		break;
+//	case 2: // 오른쪽  
+//		if (testX < 9) testX++;
+//		printf("오른쪽 이동 전송 (X=%d)\n", testX);
+//		break;
+//	case 3: // 아래
+//		if (testY < 19) testY++;
+//		printf("아래 이동 전송 (Y=%d)\n", testY);
+//		break;
+//	case 0: // 위 (회전으로 처리)		
+//		blockData.rotation = (blockData.rotation + 1) % 4;
+//		printf("회전 전송(회전 = % d)\n", blockData.rotation);
+//		break;
+//	case 4: // 스페이스
+//		blockData.action = 3;
+//		printf("하드 드롭 전송\n");
+//		break;
+//	default:
+//		break;
+//	}
+//
+//	blockData.posX = testX;
+//	blockData.posY = testY;
+//	blockData.timestamp = (u_int)time(NULL);
+//
+//	// 서버로 패킷 전송
+//	int result = sendTMCP((unsigned int)clientSocket, TMCP_BLOCK_MOVE, &blockData, sizeof(blockData));
+//	if (result < 0) {
+//		printf("❌ 패킷 전송 실패!\n");
+//	}
+//}
+#pragma endregion
 
 UINT NetworkManager::AcceptServer()
 {
@@ -206,6 +209,8 @@ UINT NetworkManager::AcceptServer()
 	char serverIP[32] = "127.0.0.1"; // 기본은 로컬 IP로
 	int serverPort = 5004;
 	std::cout << "서버 연결 시도: " << serverIP << ":" << serverPort << "\n";
+
+	#pragma region 서버 IP 및 포트를 입력 받는 코드
 	// 다른 IP 및 port를 이용할 것이라면 입력 받기
 	//char inputIP[32];
 	//std::cin >> inputIP;
@@ -219,6 +224,7 @@ UINT NetworkManager::AcceptServer()
 	//{
 	//	serverPort = atoi(inputPort);
 	//}
+#pragma endregion
 
 	// TCP 소켓 생성
 	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -261,8 +267,8 @@ UINT NetworkManager::AcceptServer()
 		return -1;
 	}
 
-	#pragma region 메인 입력 루프 (블럭 별로 처리하던가 Player를 만들어서 처리해야함) 
-	// TODO : 메인 입력 루프 -> 블럭 별로 처리하던가 Player를 만들어서 처리해야함.
+	#pragma region Test용 루프
+	// 메인 입력 루프 -> 블럭 별로 처리하던가 Player를 만들어서 처리해야함.
 	//printf("조작법:\n");
 	//printf("방향키: 블록 이동 테스트\n");
 	//printf("ESC: 종료\n");
@@ -315,23 +321,25 @@ UINT NetworkManager::AcceptServer()
 
 	//	Sleep(10);  // CPU 사용률 조절
 	//}
-#pragma endregion
+	#pragma endregion
 
 	Game::GetInstance().StartMultiPlayer();
 
-	// === 정리 ===
-	//isConnected = false;
+	#pragma region Lagacy
+		// === 정리 ===
+		//isConnected = false;
 
-	//if (receiveHandle) {
-	//	WaitForSingleObject(receiveHandle, 2000);  // 2초 대기
-	//	CloseHandle(receiveHandle);
-	//}
+		//if (receiveHandle) {
+		//	WaitForSingleObject(receiveHandle, 2000);  // 2초 대기
+		//	CloseHandle(receiveHandle);
+		//}
 
-	//if (clientSocket != INVALID_SOCKET) {
-	//	closesocket(clientSocket);
-	//}
+		//if (clientSocket != INVALID_SOCKET) {
+		//	closesocket(clientSocket);
+		//}
 
-	//WSACleanup();
+		//WSACleanup();
+	#pragma endregion
 
 	return 0;
 }

@@ -67,7 +67,7 @@ void TetrisController::ControllBlock()
 			// 더 이상 떨어질 수 없으면 고정
 			gameLogic->PlaceBlockOnBoard(currentControlBlock);
 			gameLogic->ProcessCompletedLines();
-			SendInput(VK_DOWN); //현재 고정된 블록 정보
+			SendInput(VK_DOWN, true); //현재 고정된 블록 정보
 			
 			gameLogic->SpawnNewBlock();
 			SendInput(VK_DOWN); //새로 스폰된 블록 정보
@@ -87,7 +87,7 @@ void TetrisController::ControllBlock()
 		gameLogic->PlaceBlockOnBoard(currentControlBlock);
 		gameLogic->ProcessCompletedLines();
 
-		SendInput(VK_SPACE); //현재 고정된 블록 정보
+		SendInput(VK_SPACE, true); //현재 고정된 블록 정보
 
 		gameLogic->SpawnNewBlock();
 		SendInput(VK_SPACE); //새로 스폰된 블록 정보
@@ -101,14 +101,14 @@ bool TetrisController::IsMultiplayerMode() const
 	return LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr;
 }
 
-void TetrisController::SendInput(int input)
+void TetrisController::SendInput(int input, bool isFixed)
 {
 	if (IsMultiplayerMode() == false)
 	{
 		return;
 	}
 
-	NetworkManager::GetInstance()->SendInput(currentControlBlock, input);
+	NetworkManager::GetInstance()->SendInput(currentControlBlock, input, isFixed);
 }
 
 void TetrisController::SetCurrentBlock(TetrisBlock* newBlock)
