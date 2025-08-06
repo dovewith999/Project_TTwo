@@ -70,7 +70,7 @@ UINT __stdcall GameServer::AcceptThread(LPVOID param)
 	sockaddr_in serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = INADDR_ANY;
+	serverAddr.sin_addr.s_addr = INADDR_ANY; // 어떤 IP에서 접근해도 괜찮다는 뜻
 	serverAddr.sin_port = htons(server->portNumber);
 
 	if (bind(server->serverSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
