@@ -194,7 +194,7 @@ UINT __stdcall GameServer::PlayerThread(LPVOID param)
 
 			else if (command == TMCP_SCORE_UPDATE)
 			{
-				if (payloadSize >= sizeof(u_int)) 
+				if (payloadSize >= sizeof(u_int))
 				{
 					u_int* scoreData = (u_int*)payload;
 
@@ -206,7 +206,7 @@ UINT __stdcall GameServer::PlayerThread(LPVOID param)
 						printf("[점수 업데이트] Player1: %d점\n", *scoreData);
 					}
 
-					else 
+					else
 					{
 						server->currentSession.player2Score = *scoreData;
 						printf("[점수 업데이트] Player2: %d점\n", *scoreData);
@@ -327,8 +327,6 @@ void GameServer::RelayPacket(SOCKET from, SOCKET to, u_char cmd, void* payload, 
 
 void GameServer::CheckGameTimerLimit()
 {
-	std::lock_guard<std::mutex> sessionLock(sessionMutex);
-
 	if (!currentSession.isActive || currentSession.gameEndedByTime || currentSession.gameEndedByGameOver)
 	{
 		return;
@@ -337,62 +335,70 @@ void GameServer::CheckGameTimerLimit()
 	time_t currentTime = time(NULL);
 	time_t elapsedTime = currentTime - currentSession.startTime;
 
+	{
+		std::lock_guard<std::mutex> sessionLock(sessionMutex);
+
+		if (elapsedTime >= GameSession::GAME_DURATION_SECONDS)
+		{
+			currentSession.gameEndedByTime = true;
+			TMCPResultData result1, result2;
+
+			if (currentSession.player1Score > currentSession.player2Score)
+			{
+				// Player1 승리
+				result1.score = currentSession.player1Score;
+				result1.isWin = true;
+				result1.isGameOver = true;
+
+				result2.score = currentSession.player2Score;
+				result2.isWin = false;
+				result2.isGameOver = true;
+
+				SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_WIN, &result1, sizeof(TMCPResultData));
+				SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_LOSE, &result2, sizeof(TMCPResultData));
+
+				PrintGameEnd("Player1 (시간 종료 - 점수 우위)");
+			}
+
+			else if (currentSession.player2Score > currentSession.player1Score)
+			{
+				// Player2 승리
+				result1.score = currentSession.player1Score;
+				result1.isWin = false;
+				result1.isGameOver = true;
+
+				result2.score = currentSession.player2Score;
+				result2.isWin = true;
+				result2.isGameOver = true;
+
+				SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_LOSE, &result1, sizeof(TMCPResultData));
+				SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_WIN, &result2, sizeof(TMCPResultData));
+
+				PrintGameEnd("Player2 (시간 종료 - 점수 우위)");
+			}
+
+			else
+			{
+				// 무승부
+				result1.score = currentSession.player1Score;
+				result1.isWin = false;
+				result1.isGameOver = true;
+
+				result2.score = currentSession.player2Score;
+				result2.isWin = false;
+				result2.isGameOver = true;
+
+				SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_DRAW, &result1, sizeof(TMCPResultData));
+				SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_DRAW, &result2, sizeof(TMCPResultData));
+
+				PrintGameEnd("무승부 (시간 종료 - 동점)");
+			}
+		}
+
+	}
+
 	if (elapsedTime >= GameSession::GAME_DURATION_SECONDS)
 	{
-		currentSession.gameEndedByTime = true;
-		TMCPResultData result1, result2;
-
-		if (currentSession.player1Score > currentSession.player2Score)
-		{
-			// Player1 승리
-			result1.score = currentSession.player1Score;
-			result1.isWin = true;
-			result1.isGameOver = true;
-
-			result2.score = currentSession.player2Score;
-			result2.isWin = false;
-			result2.isGameOver = true;
-
-			SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_WIN, &result1, sizeof(TMCPResultData));
-			SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_LOSE, &result2, sizeof(TMCPResultData));
-
-			PrintGameEnd("Player1 (시간 종료 - 점수 우위)");
-		}
-
-		else if (currentSession.player2Score > currentSession.player1Score)
-		{
-			// Player2 승리
-			result1.score = currentSession.player1Score;
-			result1.isWin = false;
-			result1.isGameOver = true;
-
-			result2.score = currentSession.player2Score;
-			result2.isWin = true;
-			result2.isGameOver = true;
-
-			SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_LOSE, &result1, sizeof(TMCPResultData));
-			SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_WIN, &result2, sizeof(TMCPResultData));
-
-			PrintGameEnd("Player2 (시간 종료 - 점수 우위)");
-		}
-
-		else
-		{
-			// 무승부
-			result1.score = currentSession.player1Score;
-			result1.isWin = false;
-			result1.isGameOver = true;
-
-			result2.score = currentSession.player2Score;
-			result2.isWin = false;
-			result2.isGameOver = true;
-
-			SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_DRAW, &result1, sizeof(TMCPResultData));
-			SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_DRAW, &result2, sizeof(TMCPResultData));
-
-			PrintGameEnd("무승부 (시간 종료 - 동점)");
-		}
-
 		EndGame();
 	}
 }
@@ -486,7 +492,7 @@ UINT WINAPI GameServer::GameTimerThread(LPVOID param)
 
 		if (!server->currentSession.isActive)
 		{
-			break; 
+			break;
 		}
 
 		server->SendTimeUpdate(); // 시간 업데이트
