@@ -40,6 +40,8 @@ void Game::QuitGame()
 void Game::CleanUp()
 {
 	Engine::CleanUp();
+
+    NetworkManager::DestroyInstance();
 }
 
 Game& Game::GetInstance()
@@ -49,7 +51,6 @@ Game& Game::GetInstance()
 
 void Game::InitializeLevels()
 {
-    //auto levelManager = LevelManager::GetInstance();
 
     // 레벨들을 미리 생성하고 등록
     LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TITLE, new TitleLevel());

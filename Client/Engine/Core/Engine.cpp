@@ -4,7 +4,10 @@
 #include <Windows.h>
 #include "Utils/Utils.h"
 #include "Input.h"
+#include "Managers/FileManager.h"
 #include "Managers/LevelManager.h"
+#include "Managers/SoundManager.h"
+#include "Managers/ResourceManager.h"
 
 Engine* Engine::instance = nullptr;
 
@@ -13,7 +16,11 @@ BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
 	switch (CtrlType)
 	{
 	case CTRL_CLOSE_EVENT:
+	case CTRL_BREAK_EVENT:
+	case CTRL_LOGOFF_EVENT:
+	case CTRL_SHUTDOWN_EVENT:
 		// Engine의 메모리 해제.
+		Engine::GetInstance().Quit();
 		Engine::GetInstance().CleanUp();
 		return false;
 		break;
@@ -21,7 +28,7 @@ BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
 		break;
 	}
 
-	return false;;
+	return false;
 }
 
 Engine::Engine()
@@ -225,4 +232,13 @@ void Engine::LoadEngineSettings()
 
 void Engine::CleanUp()
 {
+	if (SoundManager::GetInstance())
+	{
+		SoundManager::GetInstance()->StopAll(); // 모든 사운드 정지
+	}
+
+	SoundManager::DestroyInstance();
+	ResourceManager::DestroyInstance();
+	FileManager::DestroyInstance();
+	LevelManager::DestroyInstance();
 }

@@ -165,13 +165,40 @@ void SoundManager::PlaySoundSimple(const TCHAR* pSoundKey, Define::ESoundChannel
 
 void SoundManager::StopSound(Define::ESoundChannelID eID)
 {
-	channelArr[static_cast<size_t>(eID)]->stop();
+    size_t index = static_cast<size_t>(eID);
+
+    if (index >= SOUND_CHANNEL_COUNT)
+        return;
+
+    if (channelArr[index] != nullptr)
+    {
+        channelArr[index]->stop();
+        channelArr[index] = nullptr;
+    }
 }
 
 void SoundManager::StopAll()
 {
-	for (int i = 0; i < SOUND_CHANNEL_COUNT; ++i)
-		channelArr[i]->stop();
+    if (!system)
+        return;
+
+    for (int i = 0; i < SOUND_CHANNEL_COUNT; ++i)
+    {
+        if (channelArr[i] != nullptr) // ← nullptr 체크 필수!
+        {
+            // 추가 안전성 체크
+            bool isPlaying = false;
+            FMOD_RESULT result = channelArr[i]->isPlaying(&isPlaying);
+
+            if (result == FMOD_OK && isPlaying)
+            {
+                channelArr[i]->stop();
+            }
+            channelArr[i] = nullptr;
+        }
+    }
+
+    system->update();
 }
 
 void SoundManager::SetChannelVolume(Define::ESoundChannelID eID, float fVolume)
