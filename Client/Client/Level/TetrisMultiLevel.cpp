@@ -33,6 +33,9 @@ void TetrisMultiLevel::BeginPlay()
 	{
 		NetworkManager::GetInstance()->AcceptServer();
 	}
+
+    isGameTimeLimited = true;
+    remainingTime = 60; // 1분
 }
 
 void TetrisMultiLevel::Tick(float deltaTime)
@@ -72,6 +75,23 @@ void TetrisMultiLevel::Render()
 void TetrisMultiLevel::Exit()
 {
     calledBeginPlay = false;
+}
+
+bool TetrisMultiLevel::IsGameOver() const
+{
+    // 부모 클래스의 게임오버 조건 체크
+    if (TetrisLevel::IsGameOver())
+    {
+        return true;
+    }
+
+    // 시간이 다 되었을 때
+    if (remainingTime <= 0)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void TetrisMultiLevel::EndGame()
@@ -117,6 +137,9 @@ int TetrisMultiLevel::ClearCompletedLines()
             NetworkManager::GetInstance()->SendAttackLines(attackData);
         }
     }
+
+    // Multi Level에서만 점수 보내면 됨.
+    NetworkManager::GetInstance()->SendScore(score);
     
     return clearedLines;
 }
@@ -165,6 +188,10 @@ void TetrisMultiLevel::AddAttackLinesToOpponentBoard(const TMCPAttackData& attac
     SoundManager::GetInstance()->PlaySoundW(L"ATTACK.wav", Define::ESoundChannelID::ATTACKEFFECT, 3.f);
 }
 
+void TetrisMultiLevel::SetRemainingTime(time_t time)
+{
+    remainingTime = time;
+}
 void TetrisMultiLevel::InitializeOpponentBoard()
 {
     // 상대방 보드를 기본 테트리스 보드 구조로 초기화

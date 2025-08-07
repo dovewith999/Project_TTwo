@@ -28,6 +28,12 @@ struct GameSession
 	HANDLE player1Handle;
 	HANDLE player2Handle;
 
+	static const int GAME_DURATION_SECONDS = 60; // 게임 시간 제한
+	int player1Score;
+	int player2Score;
+	bool gameEndedByTime;
+	bool gameEndedByGameOver;
+
 	GameSession()
 	{
 		player1Socket = INVALID_SOCKET;
@@ -41,6 +47,11 @@ struct GameSession
 
 		player1Handle = NULL;
 		player2Handle = NULL;
+
+		player1Score = 0;
+		player2Score = 0;
+		gameEndedByTime = false;
+		gameEndedByGameOver = false;
 	}
 
 	void Reset()
@@ -53,6 +64,11 @@ struct GameSession
 		player1Socket = INVALID_SOCKET;
 		player2Socket = INVALID_SOCKET;
 		isActive = false;
+
+		player1Score = 0;
+		player2Score = 0;
+		gameEndedByTime = false;
+		gameEndedByGameOver = false;
 	}
 };
 
@@ -67,28 +83,6 @@ struct PlayerParam
 	PlayerParam(GameServer* server, SOCKET player, SOCKET opponent, int id)
 	: server(server), playerSocket(player), opponentSocket(opponent), playerId(id) {}
 };
-
-///// 클라이언트 연결 정보 구조체
-//struct ClientInfo
-//{
-//	SOCKET clientSocket;
-//	bool isConnect;
-//	char id[50];
-//	HANDLE clientHandle;
-//	HANDLE listenHandle;
-//
-//	ClientInfo()
-//	{
-//		memset(id, 0, sizeof(id));
-//		clientSocket = NULL;
-//		isConnect = false;
-//		clientHandle = NULL;
-//		listenHandle = NULL;
-//	}
-//};
-
-// 타입 재정의
-//using ClientIterator = std::vector<ClientInfo>::iterator;
 
 class GameServer
 {
@@ -119,6 +113,16 @@ private:
 
 	// === 패킷 중계 ===
 	void RelayPacket(SOCKET from, SOCKET to, u_char cmd, void* payload, int size);
+
+	// === 게임 타이머 관리 ===
+	void CheckGameTimerLimit();
+	void HandleGameOver(int playerIndex);
+	void EndGameWithWinner(SOCKET winnerSocket, SOCKET loserScket, bool isTimeUp = false);
+
+	void SendTimeUpdate();
+
+	static UINT WINAPI GameTimerThread(LPVOID param);
+	HANDLE gameTimerHandle;
 
 private:
 	// === 기본 서버 정보 ===

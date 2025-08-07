@@ -23,11 +23,14 @@ public:
 	virtual void Render() override;
     virtual void Exit() override;
 
+	virtual bool IsGameOver() const override;
+
 public:
     virtual void EndGame() override;
     virtual int ClearCompletedLines() override;
     void ReceiveAttackFromOpponent(const TMCPAttackData& attackData);
     void AddAttackLinesToOpponentBoard(const TMCPAttackData& attackData);
+    void SetRemainingTime(time_t time);
 
 public:
     void UpdateOpponentBoard(const TMCPBlockData& blockData);

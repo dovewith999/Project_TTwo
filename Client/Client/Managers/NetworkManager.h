@@ -21,16 +21,20 @@ public:
 	void SendInput(class TetrisBlock* block, int input, bool isFixed = false); // 입력을 서버로 보내는 함수
 	void SendPacket(int pktMsg); // TODO : short로 받아도 될 것 같다.
 	void SendAttackLines(const TMCPAttackData& attackData);
-	//void SendDirectionKey(int direction); // 테스트용 함수
+	void SendScore(int score);
+	void SendGameOver();
+	void SetRemainingTime(time_t time);
 	UINT AcceptServer(); // 서버와 연결을 시도하는 함수
 	static UINT WINAPI ReceiveThread(LPVOID param);
-
 	void Disconnect(); // 연결이 종료되면 처리할 일들
 
 public: /*Getter*/
 	FORCEINLINE bool GetIsConnected() const { return isConnected; }	
 	FORCEINLINE bool GetIsGameStarted() const { return isGameStarted; }
 	FORCEINLINE bool GetIsWaitingForOpponent() const { return isWaitingForOpponent; }
+
+private:
+	void HandleGameResult(bool isWin, int finalScore);
 
 private:
 	SOCKET clientSocket = INVALID_SOCKET;

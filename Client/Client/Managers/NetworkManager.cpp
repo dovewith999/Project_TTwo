@@ -83,6 +83,29 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 				}
 			}
 			break;
+		case TMCP_TIME_UPDATE:
+			if (payloadSize >= sizeof(time_t))
+			{
+				time_t* remainingTime = (time_t*)payload;
+				NetworkManager::GetInstance()->SetRemainingTime(*remainingTime);
+			}
+			break;
+
+		case TMCP_GAME_WIN:
+			if (payloadSize >= sizeof(TMCPResultData))
+			{
+				TMCPResultData* result = (TMCPResultData*)payload;
+				NetworkManager::GetInstance()->HandleGameResult(true, result->score);
+			}
+			break;
+
+		case TMCP_GAME_LOSE:
+			if (payloadSize >= sizeof(TMCPResultData))
+			{
+				TMCPResultData* result = (TMCPResultData*)payload;
+				NetworkManager::GetInstance()->HandleGameResult(false, result->score);
+			}
+			break;
 		default:
 			break;
 		}
@@ -158,8 +181,9 @@ void NetworkManager::SendInput(TetrisBlock* block, int input, bool isFixed)
 
 	// 서버로 패킷 전송
 	int result = sendTMCP((unsigned int)clientSocket, TMCP_BLOCK_MOVE, &blockData, sizeof(blockData));
-	if (result < 0) {
-		printf("❌ 패킷 전송 실패!\n");
+	if (result < 0) 
+	{
+		printf(" 패킷 전송 실패!\n");
 	}
 }
 void NetworkManager::SendPacket(int pktMsg)
@@ -169,7 +193,7 @@ void NetworkManager::SendPacket(int pktMsg)
 	// 서버로 패킷 전송
 	int result = sendTMCP((unsigned int)clientSocket, pktMsg, &blockData, sizeof(blockData));
 	if (result < 0) {
-		printf("❌ 패킷 전송 실패!\n");
+		printf("패킷 전송 실패!\n");
 	}
 }
 void NetworkManager::SendAttackLines(const TMCPAttackData& attackData)
@@ -194,56 +218,80 @@ void NetworkManager::SendAttackLines(const TMCPAttackData& attackData)
 		printf("공격 패킷 전송 실패!\n");
 	}
 }
-#pragma region Test용 코드
-//void NetworkManager::SendDirectionKey(int direction)
-//{
-//	TMCPBlockData blockData;
-//
-//	// 방향에 따라 블록 데이터 설정
-//	blockData.blockType = 3;  // T-블록으로 고정
-//	blockData.rotation = 0;
-//	blockData.action = 0;     // 이동
-//	blockData.direction = direction;
-//
-//	// 방향에 따른 좌표 설정 (테스트용)
-//	static u_short testX = 5, testY = 10;
-//
-//	switch (direction) {
-//	case 1: // 왼쪽
-//		if (testX > 0) testX--;
-//		printf("왼쪽 이동 전송 (X=%d)\n", testX);
-//		break;
-//	case 2: // 오른쪽  
-//		if (testX < 9) testX++;
-//		printf("오른쪽 이동 전송 (X=%d)\n", testX);
-//		break;
-//	case 3: // 아래
-//		if (testY < 19) testY++;
-//		printf("아래 이동 전송 (Y=%d)\n", testY);
-//		break;
-//	case 0: // 위 (회전으로 처리)		
-//		blockData.rotation = (blockData.rotation + 1) % 4;
-//		printf("회전 전송(회전 = % d)\n", blockData.rotation);
-//		break;
-//	case 4: // 스페이스
-//		blockData.action = 3;
-//		printf("하드 드롭 전송\n");
-//		break;
-//	default:
-//		break;
-//	}
-//
-//	blockData.posX = testX;
-//	blockData.posY = testY;
-//	blockData.timestamp = (u_int)time(NULL);
-//
-//	// 서버로 패킷 전송
-//	int result = sendTMCP((unsigned int)clientSocket, TMCP_BLOCK_MOVE, &blockData, sizeof(blockData));
-//	if (result < 0) {
-//		printf("❌ 패킷 전송 실패!\n");
-//	}
-//}
-#pragma endregion
+
+void NetworkManager::SendScore(int score)
+{
+	if (!isConnected) 
+	{
+		return;
+	}
+
+	u_int scoreData = static_cast<u_int>(score);
+	sendTMCP((unsigned int)clientSocket, TMCP_SCORE_UPDATE, &scoreData, sizeof(u_int));
+}
+
+void NetworkManager::SendGameOver()
+{
+	if (!isConnected) return;
+
+	sendTMCP((unsigned int)clientSocket, TMCP_GAME_OVER, nullptr, 0);
+}
+
+void NetworkManager::SetRemainingTime(time_t time)
+{
+	// TetrisLevel에 남은 시간 전달 (TetrisLevel이 멤버로 시간을 가지고 있다고 가정)
+	if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
+	{
+		TetrisMultiLevel* multiLevel = dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel());
+		multiLevel->SetRemainingTime(time);
+	}
+}
+
+void NetworkManager::HandleGameResult(bool isWin, int finalScore)
+{
+	// 게임 결과 처리
+	system("cls");
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 10 });
+	if (isWin)
+	{
+		Utils::SetConsoleTextColor(Color::LightGreen);
+		std::cout << "=================================";
+		Utils::SetConsoleCursorPosition(Vector2{ 30, 11 });
+		std::cout << "         승리하셨습니다!";
+		Utils::SetConsoleCursorPosition(Vector2{ 30, 12 });
+		std::cout << "         You Win!";
+	}
+	else
+	{
+		Utils::SetConsoleTextColor(Color::Red);
+		std::cout << "=================================";
+		Utils::SetConsoleCursorPosition(Vector2{ 30, 11 });
+		std::cout << "         패배하셨습니다!";
+		Utils::SetConsoleCursorPosition(Vector2{ 30, 12 });
+		std::cout << "         You Lose!";
+	}
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 13 });
+	Utils::SetConsoleTextColor(Color::White);
+	std::cout << "     최종 점수: " << finalScore;
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 14 });
+	std::cout << "=================================";
+
+	Utils::SetConsoleCursorPosition(Vector2{ 30, 16 });
+	std::cout << "아무 키나 누르면 메인으로...";
+
+	Utils::SetConsoleTextColor(Color::White);
+
+	// 키 입력 대기
+	_getch();
+
+	// 메인으로 돌아가기
+	isConnected = false;
+	isGameStarted = false;
+	LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
+}
 
 UINT NetworkManager::AcceptServer()
 {

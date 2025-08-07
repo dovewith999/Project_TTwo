@@ -181,6 +181,30 @@ UINT __stdcall GameServer::PlayerThread(LPVOID param)
 				break;
 			}
 
+			else if (command == TMCP_SCORE_UPDATE)
+			{
+				if (payloadSize >= sizeof(u_int)) 
+				{
+					u_int* scoreData = (u_int*)payload;
+
+					// 점수를 서버에 저장
+					std::lock_guard<std::mutex> sessionLock(server->sessionMutex);
+					if (playerId == 0)
+					{
+						server->currentSession.player1Score = *scoreData;
+						printf("[점수 업데이트] Player1: %d점\n", *scoreData);
+					}
+
+					else 
+					{
+						server->currentSession.player2Score = *scoreData;
+						printf("[점수 업데이트] Player2: %d점\n", *scoreData);
+					}
+				}
+				// 점수 업데이트는 상대방에게 중계하지 않음 (서버에서만 관리)
+				continue;
+			}
+
 			server->RelayPacket(mySocket, opponentSocket, command, payload, payloadSize);
 		}
 	}
@@ -238,12 +262,24 @@ void GameServer::StartGame(SOCKET player1, SOCKET player2)
 	currentSession.player1Handle = (HANDLE)_beginthreadex(NULL, 0, GameServer::PlayerThread, param1, 0, NULL);
 	currentSession.player2Handle = (HANDLE)_beginthreadex(NULL, 0, GameServer::PlayerThread, param2, 0, NULL);
 
+	gameTimerHandle = (HANDLE)_beginthreadex(NULL, 0, GameServer::GameTimerThread, this, 0, NULL);
+
 	if (!currentSession.player1Handle || !currentSession.player2Handle)
 	{
 		std::cout << "플레이어 스레드 생성 실패\n";
 		EndGame();
 		return;
 	}
+
+	if (!gameTimerHandle)
+	{
+		std::cout << "타이머 스레드 생성 실패\n";
+		EndGame();
+		return;
+	}
+
+	// 로그 찍기
+	PrintGameStart(currentSession.player1Name, currentSession.player2Name);
 }
 
 void GameServer::EndGame()
@@ -254,7 +290,17 @@ void GameServer::EndGame()
 	{
 		return;
 	}
-	time_t gametiem = time(NULL) - serverStartTime;
+
+	// 타이머 스레드 종료
+	if (gameTimerHandle)
+	{
+		CloseHandle(gameTimerHandle);
+		gameTimerHandle = NULL;
+	}
+
+	time_t gameTime = time(NULL) - currentSession.startTime;
+	std::cout << "게임 진행 시간: " << gameTime << "초\n";
+
 	currentSession.Reset();
 }
 
@@ -266,6 +312,175 @@ void GameServer::RelayPacket(SOCKET from, SOCKET to, u_char cmd, void* payload, 
 	{
 		std::cout << "패킷 전송 실패\n";
 	}
+}
+
+void GameServer::CheckGameTimerLimit()
+{
+	std::lock_guard<std::mutex> sessionLock(sessionMutex);
+
+	if (!currentSession.isActive || currentSession.gameEndedByTime || currentSession.gameEndedByGameOver)
+	{
+		return;
+	}
+
+	time_t currentTime = time(NULL);
+	time_t elapsedTime = currentTime - currentSession.startTime;
+
+	if (elapsedTime >= GameSession::GAME_DURATION_SECONDS)
+	{
+		currentSession.gameEndedByTime = true;
+		TMCPResultData result1, result2;
+
+		if (currentSession.player1Score > currentSession.player2Score)
+		{
+			// Player1 승리
+			result1.score = currentSession.player1Score;
+			result1.isWin = true;
+			result1.isGameOver = true;
+
+			result2.score = currentSession.player2Score;
+			result2.isWin = false;
+			result2.isGameOver = true;
+
+			SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_WIN, &result1, sizeof(TMCPResultData));
+			SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_LOSE, &result2, sizeof(TMCPResultData));
+
+			PrintGameEnd("Player1 (시간 종료 - 점수 우위)");
+		}
+
+		else if (currentSession.player2Score > currentSession.player1Score)
+		{
+			// Player2 승리
+			result1.score = currentSession.player1Score;
+			result1.isWin = false;
+			result1.isGameOver = true;
+
+			result2.score = currentSession.player2Score;
+			result2.isWin = true;
+			result2.isGameOver = true;
+
+			SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_LOSE, &result1, sizeof(TMCPResultData));
+			SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_WIN, &result2, sizeof(TMCPResultData));
+
+			PrintGameEnd("Player2 (시간 종료 - 점수 우위)");
+		}
+
+		else
+		{
+			// 무승부
+			result1.score = currentSession.player1Score;
+			result1.isWin = false;
+			result1.isGameOver = true;
+
+			result2.score = currentSession.player2Score;
+			result2.isWin = false;
+			result2.isGameOver = true;
+
+			SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_DRAW, &result1, sizeof(TMCPResultData));
+			SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_DRAW, &result2, sizeof(TMCPResultData));
+
+			PrintGameEnd("무승부 (시간 종료 - 동점)");
+		}
+
+		EndGame();
+	}
+}
+
+void GameServer::HandleGameOver(int playerIndex)
+{
+	std::lock_guard<std::mutex> sessionLock(sessionMutex);
+
+	if (!currentSession.isActive || currentSession.gameEndedByGameOver || currentSession.gameEndedByTime)
+	{
+		return;
+	}
+
+	currentSession.gameEndedByGameOver = true;
+
+	TMCPResultData winnerResult, loserResult;
+
+	if (playerIndex == 0) // Player1이 게임 오버
+	{
+		// Player2 승리
+		winnerResult.score = currentSession.player2Score;
+		winnerResult.isWin = true;
+		winnerResult.isGameOver = true;
+
+		loserResult.score = currentSession.player1Score;
+		loserResult.isWin = false;
+		loserResult.isGameOver = true;
+
+		SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_WIN, &winnerResult, sizeof(TMCPResultData));
+		SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_LOSE, &loserResult, sizeof(TMCPResultData));
+
+		PrintGameEnd("Player2 (Player1 게임오버)");
+	}
+
+	else // Player2가 게임 오버
+	{
+		// Player1 승리
+		winnerResult.score = currentSession.player1Score;
+		winnerResult.isWin = true;
+		winnerResult.isGameOver = true;
+
+		loserResult.score = currentSession.player2Score;
+		loserResult.isWin = false;
+		loserResult.isGameOver = true;
+
+		SendTMCPPacket(currentSession.player1Socket, TMCP_GAME_WIN, &winnerResult, sizeof(TMCPResultData));
+		SendTMCPPacket(currentSession.player2Socket, TMCP_GAME_LOSE, &loserResult, sizeof(TMCPResultData));
+
+		PrintGameEnd("Player1 (Player2 게임오버)");
+	}
+
+	EndGame();
+}
+
+void GameServer::EndGameWithWinner(SOCKET winnerSocket, SOCKET loserScket, bool isTimeUp)
+{
+}
+
+void GameServer::SendTimeUpdate()
+{
+	std::lock_guard<std::mutex> sessionLock(sessionMutex);
+
+	if (!currentSession.isActive)
+		return;
+
+	time_t currentTime = time(NULL);
+	time_t elapsedTime = currentTime - currentSession.startTime;
+	time_t remainingTime = GameSession::GAME_DURATION_SECONDS - elapsedTime;
+
+	if (remainingTime < 0)
+	{
+		remainingTime = 0;
+	}
+
+	// 남은 시간을 클라이언트에게 전송
+	sendTMCP((u_int)currentSession.player1Socket, TMCP_TIME_UPDATE, &remainingTime, sizeof(time_t));
+	sendTMCP((u_int)currentSession.player2Socket, TMCP_TIME_UPDATE, &remainingTime, sizeof(time_t));
+
+}
+
+UINT WINAPI GameServer::GameTimerThread(LPVOID param)
+{
+	GameServer* server = (GameServer*)param;
+
+	// 서버가 켜져있고 서버의 현재 세션이 활성화중일 때
+	while (server->isRunning && server->currentSession.isActive)
+	{
+		Sleep(1000); // 1초 대기
+
+		if (!server->currentSession.isActive)
+		{
+			break; 
+		}
+
+		server->SendTimeUpdate(); // 시간 업데이트
+		server->CheckGameTimerLimit(); // 시간 체크
+	}
+
+	return 0;
 }
 
 void SendTMCPPacket(SOCKET socket, u_char cmd, void* payload, u_short len)

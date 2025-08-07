@@ -37,7 +37,7 @@ public:
 	// 블록 관리
 	virtual void SpawnNewBlock() override;
 	void HandleInput();
-	bool IsGameOver() const;
+	virtual bool IsGameOver() const;
 
 	// 게임 로직 관리 - 인터페이스 오버라이딩
 	virtual bool CanBlockMoveTo(const Vector2& position, EBlockType blockType, int rotation) const override;
@@ -69,21 +69,27 @@ protected:
 	bool isGamePaused = false;
 	bool isGameOver = false;
 
+	// 게임 시간 관리
+	time_t gameStartTime;
+	time_t remainingTime;
+	bool isGameTimeLimited;
+
+	// 게임 종료 조건
+	bool isWaitingForGameResult;
+
 	// 입력을 제어하기 위한 컨트롤러
 	TetrisController* controller = nullptr;
 
-	// 현재 조작 중인 블록
-	TetrisBlock* currentBlock = nullptr;
+	TetrisBlock* currentBlock = nullptr; // 현재 조작 중인 블록
 	TetrisBlock* shadowBlock = nullptr;  // 그림자 블록
-	
-	EBlockType saveBlockType = EBlockType::None; // 저장하고 스위칭 할 블럭
 
 	const char* nextBlockUI[4][4] = { " " }; // 다음 블록이 무엇인지 그려줄 공간
 	const char* saveBlockUI[4][4] = { " " }; // 저장하고 있는 블록이 무엇인지 그려줄 공간
 
 	EBlockType newBlockType;
 	EBlockType nextBlockType;
-	
+	EBlockType saveBlockType = EBlockType::None; // 저장하고 스위칭 할 블럭 타입
+
 	// 게임 보드 (12x21 크기 - Map.txt와 맞춤)
 	static const int BOARD_WIDTH = 12;
 	static const int BOARD_HEIGHT = 21;
@@ -100,7 +106,7 @@ protected:
 		"■"   // 3: 현재 떨어지는 블록
 	};
 
-	// 게임 타이머
+	// 블럭 타이머
 	float blockDropTimer = 0.0f;
 	float blockDropInterval = 1.0f;  // 1초마다 블록 자동 낙하
 
@@ -108,4 +114,6 @@ protected:
 	int score = 0;
 	int linesCleared = 0;
 	int level = 1;
+
+
 };

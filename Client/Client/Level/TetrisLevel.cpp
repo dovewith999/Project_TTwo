@@ -145,6 +145,7 @@ void TetrisLevel::StartGame()
 	isGameStarted = true;
 	isGamePaused = false;
 	isGameOver = false;
+	isWaitingForGameResult = false;
 
 	score = 0;
 	linesCleared = 0;
@@ -152,6 +153,11 @@ void TetrisLevel::StartGame()
 
 	blockDropTimer = 0.0f;
 	blockDropInterval = 1.0f;
+
+	// 시간 관리 초기화
+	gameStartTime = time(NULL);
+	remainingTime = 60; // 1분
+	isGameTimeLimited = (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr);
 
 	memset(nextBlockUI, 0, sizeof(nextBlockUI));
 
@@ -304,7 +310,31 @@ void TetrisLevel::HandleInput()
 
 bool TetrisLevel::IsGameOver() const
 {
-	return isGameOver;
+	if (isGameOver || isWaitingForGameResult)
+		return true;
+
+	// 멀티플레이어에서는 블럭이 한계선을 넘으면 게임 오버
+	if (isGameTimeLimited)
+	{
+		// 게임 보드의 상단 3줄 중 하나라도 블럭이 있으면 게임 오버
+		for (int y = 1; y <= 3; ++y) // 맨 위 벽 제외하고 3줄 체크
+		{
+			for (int x = 1; x < BOARD_WIDTH - 1; ++x) // 양쪽 벽 제외
+			{
+				if (gameBoard[y][x] != 0)
+				{
+					// 서버에게 게임 오버 알림
+					if (NetworkManager::GetInstance()->GetIsConnected())
+					{
+						NetworkManager::GetInstance()->SendGameOver();
+					}
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 bool TetrisLevel::CanBlockMoveTo(const Vector2& position, EBlockType blockType, int rotation) const
@@ -571,8 +601,34 @@ void TetrisLevel::RenderUI()
 
 	Utils::SetConsoleTextColor(Color::White);
 	const int uiStartX = BOARD_START_X + 26;
+	// 시간 표시
 	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 15 });
-	std::cout << "Time  :  0:00"; // TODO: 실제 시간 계산
+
+	if (isGameTimeLimited)
+	{
+		// 멀티플레이어 모드 - 서버에서 받은 남은 시간 표시
+		int minutes = remainingTime / 60;
+		int seconds = remainingTime % 60;
+
+		// 시간이 10초 이하면 빨간색으로 표시
+		if (remainingTime <= 10)
+			Utils::SetConsoleTextColor(Color::Red);
+		else if (remainingTime <= 30)
+			Utils::SetConsoleTextColor(Color::Yellow);
+		else
+			Utils::SetConsoleTextColor(Color::White);
+
+		std::cout << "Time  :  " << minutes << ":" << (seconds < 10 ? "0" : "") << seconds;
+		Utils::SetConsoleTextColor(Color::White);
+	}
+	else
+	{
+		// 싱글플레이어 모드 - 경과 시간 표시
+		time_t elapsedTime = time(NULL) - gameStartTime;
+		int minutes = elapsedTime / 60;
+		int seconds = elapsedTime % 60;
+		std::cout << "Time  :  " << minutes << ":" << (seconds < 10 ? "0" : "") << seconds;
+	}
 
 	Utils::SetConsoleCursorPosition(Vector2{ uiStartX, 16 });
 	std::cout << "Score :  " << score;

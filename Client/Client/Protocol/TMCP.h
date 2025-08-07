@@ -53,10 +53,13 @@
 // 게임 이벤트
 #define TMCP_LINE_CLEAR			0x30
 #define TMCP_SCORE_UPDATE		0x31
-#define TMCP_ATTACK_LINES		0x32
-#define TMCP_NEXT_BLOCK			0x33
-#define TMCP_GAME_WIN           0x34
-#define TMCP_GAME_LOSE          0x35 
+#define TMCP_TIME_UPDATE        0x32
+#define TMCP_ATTACK_LINES		0x33
+#define TMCP_NEXT_BLOCK			0x34
+#define TMCP_GAME_WIN           0x35
+#define TMCP_GAME_LOSE          0x36 
+#define TMCP_GAME_DRAW          0x37 // 무승부 (점수가 같음)
+#define TMCP_GAME_TIME_UP       0x41  // 서버 -> 클라이언트: 시간 종료 알림
 
 // 기타	
 #define TMCP_HERATBEAT // 연결 확인
@@ -86,17 +89,26 @@ typedef struct TMCPBlockData_t {
 } TMCPBlockData;
 
 // 게임 결과를 알려줄 데이터
+// 기존 TMCPResultData에 시간 정보 추가
 typedef struct TMCPResultData_t {
-    u_int score;              // 내 점수가 몇점인지
-    bool isWin;              // 이겼는지 졌는지 판단
-    bool isGameOver;          // 게임 오버 여부
-}TMCPResultData;
+    u_int score;                 // 내 점수가 몇점인지
+    bool isWin;                  // 이겼는지 졌는지 판단
+    bool isGameOver;             // 게임 오버 여부
+    time_t finalTime;            // 게임 종료 시점의 시간
+    bool endedByTime;            // 시간 종료로 인한 게임 종료 여부
+} TMCPResultData;
 
 // 공격에 관련된 데이터 구조체
 typedef struct TMCPAttackData_t {
 	int attackLines;              // 공격 라인 수
 	int holePositions[4];         // 각 라인의 구멍 위치 (최대 4줄까지)
 } TMCPAttackData;
+
+// 시간 데이터 구조체 추가
+typedef struct TMCPTimeData_t {
+    time_t remainingSeconds;     // 남은 시간 (초)
+    time_t totalGameTime;        // 전체 게임 시간 (초)
+} TMCPTimeData;
 
 
 /**
