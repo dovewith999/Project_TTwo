@@ -114,7 +114,7 @@ typedef struct TMCPTimeData_t {
 /**
  * TMCP 패킷 전송
  * @param sockfd 소켓
- * @param cmd 명령어
+ * @param cmd(command) 명령어
  * @param payload 데이터 (NULL 가능)
  * @param len 데이터 크기
  * @return 전송된 바이트 수 (실패시 음수)
@@ -124,7 +124,7 @@ int sendTMCP(unsigned int sockfd, unsigned char cmd, void* payload, unsigned sho
 /**
  * TMCP 패킷 수신
  * @param sockfd 소켓
- * @param cmd 수신된 명령어 (출력)
+ * @param cmd(command) 수신된 명령어 (출력)
  * @param payload 수신 데이터 버퍼
  * @param maxLen 버퍼 최대 크기
  * @return 수신된 페이로드 크기 (실패시 음수)
