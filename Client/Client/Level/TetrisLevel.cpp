@@ -224,15 +224,10 @@ void TetrisLevel::SpawnNewBlock()
 	default: break;
 	}
 
-
 	currentBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Falling, color);
 	shadowBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Shadow);
 
 	controller->SetCurrentBlock(currentBlock);
-
-	// 레벨에 액터로 추가
-	//AddActor(currentBlock);
-	//AddActor(shadowBlock);
 
 	//// 블록 시작
 	currentBlock->BeginPlay();
