@@ -9,7 +9,6 @@
 #include "Managers/NetworkManager.h"
 #include "Controller/TetrisController.h"
 #include "TetrisMultiLevel.h"
-#include "Utils/Utils.h"
 
 #include <iostream>
 #include <algorithm>
@@ -140,6 +139,9 @@ void TetrisLevel::EndPlay()
 
 void TetrisLevel::StartGame()
 {
+	// BGM 시작
+	SoundManager::GetInstance()->PlaySoundW(L"BGM_INGAME.wav", Define::ESoundChannelID::BGM, 3.f);
+
 	isGameStarted = true;
 	isGamePaused = false;
 	isGameOver = false;
@@ -205,31 +207,15 @@ void TetrisLevel::SpawnNewBlock()
 
 	switch (newBlockType)
 	{
-	case EBlockType::I:
-		color = Color::LightBlue;
-		break;
-	case EBlockType::O:
-		color = Color::Yellow;
-		break;
-	case EBlockType::T:
-		color = Color::Purple;
-		break;
-	case EBlockType::S:
-		color = Color::Red;
-		break;
-	case EBlockType::Z:
-		color = Color::LightGreen;
-		break;
-	case EBlockType::J:
-		color = Color::Blue;
-		break;
-	case EBlockType::L:
-		color = Color::Orange;
-		break;
-	case EBlockType::None:
-		break;
-	default:
-		break;
+	case EBlockType::I: color = Color::LightBlue; break;
+	case EBlockType::O: color = Color::Yellow; break;
+	case EBlockType::T: color = Color::Purple; break;
+	case EBlockType::S: color = Color::Red; break;
+	case EBlockType::Z: color = Color::LightGreen; break;
+	case EBlockType::J: color = Color::Blue; break;
+	case EBlockType::L: color = Color::Orange; break;
+	case EBlockType::None: break;
+	default: break;
 	}
 
 
@@ -272,31 +258,15 @@ void TetrisLevel::SpawnNewBlock()
 
 	switch (nextBlockType)
 	{
-	case EBlockType::I:
-		color = Color::LightBlue;
-		break;
-	case EBlockType::O:
-		color = Color::Yellow;
-		break;
-	case EBlockType::T:
-		color = Color::Purple;
-		break;
-	case EBlockType::S:
-		color = Color::Red;
-		break;
-	case EBlockType::Z:
-		color = Color::LightGreen;
-		break;
-	case EBlockType::J:
-		color = Color::Blue;
-		break;
-	case EBlockType::L:
-		color = Color::Orange;
-		break;
-	case EBlockType::None:
-		break;
-	default:
-		break;
+	case EBlockType::I: color = Color::LightBlue; break;
+	case EBlockType::O: color = Color::Yellow; break;
+	case EBlockType::T: color = Color::Purple; break;
+	case EBlockType::S: color = Color::Red; break;
+	case EBlockType::Z: color = Color::LightGreen; break;
+	case EBlockType::J: color = Color::Blue; break;
+	case EBlockType::L: color = Color::Orange; break;
+	case EBlockType::None: break;
+	default: break;
 	}
 
 	Vector2 nextRenderPosition(BOARD_START_X + 26, 5);
@@ -742,10 +712,22 @@ void TetrisLevel::ProcessCompletedLines()
 		int lineScore = 0;
 		switch (cleared)
 		{
-		case 1: lineScore = 100; break;  // Single
-		case 2: lineScore = 300; break;  // Double  
-		case 3: lineScore = 500; break;  // Triple
-		case 4: lineScore = 800; break;  // Tetris
+		case 1: 
+			lineScore = 100;
+			SoundManager::GetInstance()->PlaySoundW(L"SINGLE.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
+			break;  // 1줄 클리어
+		case 2:
+			lineScore = 300;
+			SoundManager::GetInstance()->PlaySoundW(L"DOUBLE.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
+			break;  // 2줄 클리어  
+		case 3: 
+			lineScore = 500; 
+			SoundManager::GetInstance()->PlaySoundW(L"TRIPLE.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
+			break;  // 3줄 클리어
+		case 4: 
+			lineScore = 800; 
+			SoundManager::GetInstance()->PlaySoundW(L"TETRIS.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
+			break;  // 4줄 클리어(Tetris)
 		}
 
 		score += lineScore * level;
@@ -768,31 +750,15 @@ void TetrisLevel::SwitchBlock()
 	{
 		switch (saveBlockType)
 		{
-		case EBlockType::I:
-			color = Color::LightBlue;
-			break;
-		case EBlockType::O:
-			color = Color::Yellow;
-			break;
-		case EBlockType::T:
-			color = Color::Purple;
-			break;
-		case EBlockType::S:
-			color = Color::Red;
-			break;
-		case EBlockType::Z:
-			color = Color::LightGreen;
-			break;
-		case EBlockType::J:
-			color = Color::Blue;
-			break;
-		case EBlockType::L:
-			color = Color::Orange;
-			break;
-		case EBlockType::None:
-			break;
-		default:
-			break;
+		case EBlockType::I: color = Color::LightBlue; break;
+		case EBlockType::O: color = Color::Yellow; break;
+		case EBlockType::T: color = Color::Purple; break;
+		case EBlockType::S: color = Color::Red; break;
+		case EBlockType::Z: color = Color::LightGreen; break;
+		case EBlockType::J: color = Color::Blue; break;
+		case EBlockType::L: color = Color::Orange; break;
+		case EBlockType::None: break;
+		default: break;
 		}
 
 		EBlockType tempBlockType = currentBlock->GetBlockType();
@@ -817,33 +783,18 @@ void TetrisLevel::SwitchBlock()
 
 #pragma region save Block UI
 
+	// 바뀐 SaveBlockType으로 색 재지정
 	switch (saveBlockType)
 	{
-	case EBlockType::I:
-		color = Color::LightBlue;
-		break;
-	case EBlockType::O:
-		color = Color::Yellow;
-		break;
-	case EBlockType::T:
-		color = Color::Purple;
-		break;
-	case EBlockType::S:
-		color = Color::Red;
-		break;
-	case EBlockType::Z:
-		color = Color::LightGreen;
-		break;
-	case EBlockType::J:
-		color = Color::Blue;
-		break;
-	case EBlockType::L:
-		color = Color::Orange;
-		break;
-	case EBlockType::None:
-		break;
-	default:
-		break;
+	case EBlockType::I: color = Color::LightBlue; break;
+	case EBlockType::O: color = Color::Yellow; break;
+	case EBlockType::T: color = Color::Purple; break;
+	case EBlockType::S: color = Color::Red; break;
+	case EBlockType::Z: color = Color::LightGreen; break;
+	case EBlockType::J: color = Color::Blue; break;
+	case EBlockType::L: color = Color::Orange; break;
+	case EBlockType::None: break;
+	default: break;
 	}
 
 	const BlockShapeData* data = ResourceManager::GetInstance()->GetBlockShape(static_cast<int>(saveBlockType), 0);
@@ -912,6 +863,7 @@ void TetrisLevel::GenerateNextBag()
 	// 7-bag 시스템: 7개 블록을 모두 한 번씩 나오게 한 후 섞기
 	nextBlocks.clear();
 
+	//BlockType이 2~9부터기 때문에 이런 조건으로 반복
 	for (int i = 2; i < 9; ++i)
 	{
 		nextBlocks.emplace_back(static_cast<EBlockType>(i));

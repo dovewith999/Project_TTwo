@@ -191,7 +191,7 @@ void NetworkManager::SendAttackLines(const TMCPAttackData& attackData)
 
 	if (result < 0) 
 	{
-		printf("❌ 공격 패킷 전송 실패!\n");
+		printf("공격 패킷 전송 실패!\n");
 	}
 }
 #pragma region Test용 코드

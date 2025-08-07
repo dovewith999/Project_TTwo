@@ -39,7 +39,6 @@ private:
     void ClearOpponentCurrentBlock();
     void RenderWaitingScreen(); 
     void RenderOpponentBoard();
-    void RenderMultiUI();
     void ClearOpponentCompletedLines();
 
 private:

@@ -4,6 +4,7 @@
 #include "Managers/NetworkManager.h"
 #include "Level/TetrisMultiLevel.h"
 #include "Managers/LevelManager.h"
+#include "Managers/SoundManager.h"
 
 TetrisController::TetrisController(ITetrisGameLogic* gameLogic)
 	: gameLogic(gameLogic)
@@ -29,6 +30,7 @@ void TetrisController::ControllBlock()
 		{
 			currentControlBlock->SetGridPosition(newPos);
 			SendInput(VK_LEFT); //현재 고정된 블록 정보
+			SoundManager::GetInstance()->PlaySoundW(L"MOVE.wav", Define::ESoundChannelID::EFFECT, 3.f);
 		}
 	}
 	else if (Input::GetInstance().GetKeyDown(VK_RIGHT))
@@ -38,6 +40,7 @@ void TetrisController::ControllBlock()
 		{
 			currentControlBlock->SetGridPosition(newPos);
 			SendInput(VK_RIGHT); //현재 고정된 블록 정보
+			SoundManager::GetInstance()->PlaySoundW(L"MOVE.wav", Define::ESoundChannelID::EFFECT, 3.f);
 		}
 	}
 
@@ -49,6 +52,7 @@ void TetrisController::ControllBlock()
 		{
 			currentControlBlock->SetRotation(newRotation);
 			SendInput(VK_UP); //현재 블록 정보
+			SoundManager::GetInstance()->PlaySoundW(L"ROTATE.wav", Define::ESoundChannelID::EFFECT, 3.f);
 		}
 	}
 
@@ -59,8 +63,9 @@ void TetrisController::ControllBlock()
 		if (gameLogic->CanBlockMoveTo(newPos, currentControlBlock->GetBlockType(), currentControlBlock->GetRotation()))
 		{
 			currentControlBlock->SetGridPosition(newPos);
-
 			SendInput(VK_DOWN);
+			SoundManager::GetInstance()->PlaySoundW(L"SOFTDROP.wav", Define::ESoundChannelID::EFFECT, 3.f);
+
 		}
 		else
 		{
@@ -68,10 +73,13 @@ void TetrisController::ControllBlock()
 			gameLogic->PlaceBlockOnBoard(currentControlBlock);
 			gameLogic->ProcessCompletedLines();
 			SendInput(VK_DOWN, true); //현재 고정된 블록 정보
+			SoundManager::GetInstance()->PlaySoundW(L"LANDING.wav", Define::ESoundChannelID::EFFECT, 3.f);
 			
 			gameLogic->SpawnNewBlock();
 			SendInput(VK_DOWN); //새로 스폰된 블록 정보
 		}
+
+
 	}
 
 	// 하드 드롭
@@ -86,8 +94,8 @@ void TetrisController::ControllBlock()
 		currentControlBlock->SetGridPosition(dropPos);
 		gameLogic->PlaceBlockOnBoard(currentControlBlock);
 		gameLogic->ProcessCompletedLines();
-
 		SendInput(VK_SPACE, true); //현재 고정된 블록 정보
+		SoundManager::GetInstance()->PlaySoundW(L"HARDDROP.wav", Define::ESoundChannelID::EFFECT, 3.f);
 
 		gameLogic->SpawnNewBlock();
 		SendInput(VK_SPACE); //새로 스폰된 블록 정보

@@ -6,13 +6,14 @@
 /// </summary>
 namespace Define
 {
-	enum class ESoundChannelID
+	enum class ESoundChannelID // 동시에 재생하고 싶은 사운드의 갯수만큼 정의해서 사용(최대 32개)
 	{
 		NONE		= -1,
-		BGM	,			// 배경음
-		EFFECT,			// 효과음
-
-		MAXCHANNEL,		// 채널의 수
+		BGM			=  1, // 배경음 (배경음)
+		EFFECT,			  // 효과음 (이동, 회전)
+		SUBEFFECT,		  // 서브효과음 (라인 클리어)
+		ATTACKEFFECT,     // 이게 하나 더 필요하네 (공격)
+		MAXCHANNEL,		  // 채널의 수를 체크하기 위한 용도
 	};
 
 	enum class EFileType

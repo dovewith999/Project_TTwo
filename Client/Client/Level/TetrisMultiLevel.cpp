@@ -66,22 +66,7 @@ void TetrisMultiLevel::Render()
 
 		// 상대방 보드 렌더링
 		RenderOpponentBoard();
-
-		// 멀티플레이어 전용 UI 렌더링
-		//RenderMultiUI();
 	}
-
- //   super::Render(); // 기존 TetrisLevel의 Render 호출 (자신의 보드 + UI)
-
- //   if (!isGameStarted)
- //       return;
-
-	//// 상대방 보드 렌더링
-	//RenderOpponentBoard();
-
-	//// 멀티플레이어 전용 UI 렌더링
-	////RenderMultiUI();
-
 }
 
 void TetrisMultiLevel::Exit()
@@ -176,6 +161,8 @@ void TetrisMultiLevel::AddAttackLinesToOpponentBoard(const TMCPAttackData& attac
 			}
 		}
 	}
+
+    SoundManager::GetInstance()->PlaySoundW(L"ATTACK.wav", Define::ESoundChannelID::ATTACKEFFECT, 3.f);
 }
 
 void TetrisMultiLevel::InitializeOpponentBoard()
@@ -423,52 +410,6 @@ void TetrisMultiLevel::RenderWaitingScreen()
 		NetworkManager::GetInstance()->Disconnect();
 		LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 	}
-}
-
-void TetrisMultiLevel::RenderMultiUI()
-{
-    // NetworkManager 상태 확인
-    bool isConnected = NetworkManager::GetInstance()->GetIsConnected(); // private 멤버라면 getter 함수 필요
-
-    // 상대방 정보 표시 위치
-    const int OPPONENT_UI_X = 75;
-    const int OPPONENT_UI_Y = 15;
-
-    // 연결 상태 표시
-    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_UI_X, OPPONENT_UI_Y });
-    std::cout << "Network Status:";
-
-    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_UI_X, OPPONENT_UI_Y + 1 });
-    if (isConnected)
-    {
-        Utils::SetConsoleTextColor(Color::LightGreen);
-        std::cout << "CONNECTED";
-    }
-    else
-    {
-        Utils::SetConsoleTextColor(Color::Red);
-        std::cout << "DISCONNECTED";
-    }
-    Utils::SetConsoleTextColor(Color::White);
-
-    // 게임 상태 표시
-    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_UI_X, OPPONENT_UI_Y + 3 });
-    if (!isConnected)
-    {
-        Utils::SetConsoleTextColor(Color::Yellow);
-        std::cout << "Waiting for connection...";
-        Utils::SetConsoleTextColor(Color::White);
-    }
-    else
-    {
-        std::cout << "Playing with opponent";
-    }
-
-    // 멀티플레이어 조작법
-    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_UI_X, OPPONENT_UI_Y + 5 });
-    std::cout << "Multi Controls:";
-    Utils::SetConsoleCursorPosition(Vector2{ OPPONENT_UI_X, OPPONENT_UI_Y + 6 });
-    std::cout << "ESC: Disconnect";
 }
 
 void TetrisMultiLevel::ClearOpponentCompletedLines()

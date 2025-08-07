@@ -43,6 +43,8 @@ void TitleLevel::BeginPlay()
 	calledBeginPlay = true;
 	system("cls");
 
+	SoundManager::GetInstance()->PlaySoundW(L"BGM_TITLE.wav", Define::ESoundChannelID::BGM, 3.f);
+
 	// 메뉴 아이템 추가  
 	//items.emplace_back(new TitleItem("- Start Single Game", []() {Game::GetInstance().StartSinglePlayer(); })); // 1인 플레이
 	//items.emplace_back(new TitleItem("- Start Multi Game", []() {NetworkManager::GetInstance()->AcceptServer(); })); // 멀티 플레이
