@@ -289,9 +289,8 @@ void NetworkManager::HandleGameResult(bool isWin, int finalScore)
 
 	Utils::SetConsoleTextColor(Color::White);
 
-	// 키 입력 대기
-	//_getch();
-	std::cin.get();
+	//씬 전환 대기
+	Sleep(5000);
 
 	// 메인으로 돌아가기
 	isConnected = false;
@@ -326,7 +325,7 @@ UINT NetworkManager::AcceptServer()
 	//{
 	//	serverPort = atoi(inputPort);
 	//}
-#pragma endregion
+	#pragma endregion
 
 	// TCP 소켓 생성
 	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);

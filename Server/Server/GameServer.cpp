@@ -176,16 +176,15 @@ UINT __stdcall GameServer::PlayerThread(LPVOID param)
 			if (command == TMCP_DISCONNECT_REQ || command == TMCP_GAME_OVER) {
 				printf("[게임 종료] Player%d가 게임을 종료했습니다.\n", playerId + 1);
 
-				//TMCPResultData result1, result2;
+				server->HandleGameOver(playerId);
 
-				//result1.isWin = true;
-				//result1.isGameOver = true;
+				// 상대방에게 게임 종료 알림
+				SendTMCPPacket(opponentSocket, TMCP_GAME_OVER);
+				break;
+			}
 
-				//result2.isWin = false;
-				//result2.isGameOver = true;
-				//SendTMCPPacket(opponentSocket, TMCP_GAME_WIN, &result1, sizeof(TMCPResultData));
-				//SendTMCPPacket(mySocket, TMCP_GAME_LOSE, &result2, sizeof(TMCPResultData));
-
+			else if (command == TMCP_GAME_LOSE)
+			{
 				server->HandleGameOver(playerId);
 
 				// 상대방에게 게임 종료 알림
