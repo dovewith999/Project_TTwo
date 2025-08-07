@@ -138,9 +138,12 @@ int TetrisMultiLevel::ClearCompletedLines()
         }
     }
 
-    // Multi Level에서만 점수 보내면 됨.
-    NetworkManager::GetInstance()->SendScore(score);
-    
+    if (clearedLines > 0)
+    {
+		// Multi Level에서만 점수 보내면 됨.
+		NetworkManager::GetInstance()->SendScore(score);
+    }
+
     return clearedLines;
 }
 

@@ -85,7 +85,7 @@ void TitleLevel::Render()
 	Utils::SetConsoleCursorPosition(Vector2{ 0,0 });
 	Utils::SetConsoleTextColor(static_cast<WORD>(unselectedColor));
 
-	std::cout << "TETRIS\n\n";
+	std::cout << "TE2RIS\n\n";
 
 	for (int i = 0; i < length; ++i)
 	{
