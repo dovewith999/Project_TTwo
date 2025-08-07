@@ -20,62 +20,62 @@ TetrisBlock::~TetrisBlock()
 
 void TetrisBlock::BeginPlay()
 {
-	super::BeginPlay();
+	//super::BeginPlay();
 
-	// 초기 위치 설정 (테트리스 보드 중앙 상단)
-	if (gridPosition.x == 0 && gridPosition.y == 0)
-	{
-		gridPosition.x = 4; // 보드 중앙 (10칸 기준)
-		gridPosition.y = 1; // 맨 위
-	}
+	//// 초기 위치 설정 (테트리스 보드 중앙 상단)
+	//if (gridPosition.x == 0 && gridPosition.y == 0)
+	//{
+	//	gridPosition.x = 4; // 보드 중앙 (10칸 기준)
+	//	gridPosition.y = 1; // 맨 위
+	//}
 }
 
 void TetrisBlock::Tick(float deltaTime)
 {
-	super::Tick(deltaTime);
+	//super::Tick(deltaTime);
 
-	// 떨어지는 블록인 경우에만 자동 낙하
-	if (state == EBlockState::Falling)
-	{
-		dropTimer += deltaTime;
+	//// 떨어지는 블록인 경우에만 자동 낙하
+	//if (state == EBlockState::Falling)
+	//{
+	//	dropTimer += deltaTime;
 
-		// 낙하 시간이 되었으면 한 칸 아래로 이동
-		if (dropTimer >= dropSpeed)
-		{
-			Move(Vector2{ 0, 1 });
-			dropTimer = 0.0f;
-		}
-	}
+	//	// 낙하 시간이 되었으면 한 칸 아래로 이동
+	//	if (dropTimer >= dropSpeed)
+	//	{
+	//		Move(Vector2{ 0, 1 });
+	//		dropTimer = 0.0f;
+	//	}
+	//}
 }
 
 void TetrisBlock::Render()
 {
-	super::Render();
+	//super::Render();
 
-	if (type == EBlockType::None)
-		return;
+	//if (type == EBlockType::None)
+	//	return;
 
-	// 그림자 블록은 다른 색상으로 표시
-	char displayChar = (state == EBlockState::Shadow) ? '░' : '█';
+	//// 그림자 블록은 다른 색상으로 표시
+	//char displayChar = (state == EBlockState::Shadow) ? '░' : '█';
 
-	// 현재 블록 모양에 따라 렌더링
-	for (int y = 0; y < 4; ++y)
-	{
-		for (int x = 0; x < 4; ++x)
-		{
-			if (GetBlockPixel(x, y))
-			{
-				Vector2 screenPos = {
-					gridPosition.x + x,
-					gridPosition.y + y
-				};
+	//// 현재 블록 모양에 따라 렌더링
+	//for (int y = 0; y < 4; ++y)
+	//{
+	//	for (int x = 0; x < 4; ++x)
+	//	{
+	//		if (GetBlockPixel(x, y))
+	//		{
+	//			Vector2 screenPos = {
+	//				gridPosition.x + x,
+	//				gridPosition.y + y
+	//			};
 
-				Utils::SetConsoleCursorPosition(screenPos);
-				Utils::SetConsoleTextColor(color);
-				std::cout << displayChar;
-			}
-		}
-	}
+	//			Utils::SetConsoleCursorPosition(screenPos);
+	//			Utils::SetConsoleTextColor(color);
+	//			std::cout << displayChar;
+	//		}
+	//	}
+	//}
 }
 
 bool TetrisBlock::Move(const Vector2& direction)
@@ -139,24 +139,24 @@ bool TetrisBlock::Rotate()
 
 void TetrisBlock::Drop()
 {
-	if (state == EBlockState::Fixed)
-		return;
+	//if (state == EBlockState::Fixed)
+	//	return;
 
-	// 한 칸씩 아래로 이동
-	while (Move(Vector2{ 0, 1 }))
-	{
-		// 이동 가능한 동안 계속 이동
-	}
+	//// 한 칸씩 아래로 이동
+	//while (Move(Vector2{ 0, 1 }))
+	//{
+	//	// 이동 가능한 동안 계속 이동
+	//}
 }
 
 void TetrisBlock::HardDrop()
 {
-	if (state == EBlockState::Fixed)
-		return;
+	//if (state == EBlockState::Fixed)
+	//	return;
 
-	// 즉시 바닥까지 떨어뜨리고 고정
-	Drop();
-	SetAsFixed();
+	//// 즉시 바닥까지 떨어뜨리고 고정
+	//Drop();
+	//SetAsFixed();
 }
 
 void TetrisBlock::SetAsFixed()
