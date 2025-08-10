@@ -282,13 +282,6 @@ void GameServer::StartGame(SOCKET player1, SOCKET player2)
 		return;
 	}
 
-	if (!gameTimerHandle)
-	{
-		std::cout << "타이머 스레드 생성 실패\n";
-		EndGame();
-		return;
-	}
-
 	// 로그 찍기
 	PrintGameStart(currentSession.player1Name, currentSession.player2Name);
 }

@@ -21,10 +21,10 @@ TetrisLevel::TetrisLevel()
 
 TetrisLevel::~TetrisLevel()
 {
-	//SafeDelete(currentBlock);
-	//SafeDelete(shadowBlock);
-	currentBlock = nullptr;
-	shadowBlock = nullptr;
+	SafeDelete(currentBlock);
+	SafeDelete(shadowBlock);
+	//currentBlock = nullptr;
+	//shadowBlock = nullptr;
 	SafeDelete(controller);
 }
 
@@ -70,7 +70,6 @@ void TetrisLevel::Tick(float deltaTime)
 		return;
 
 	// 입력 처리
-	//HandleInput();
 	controller->ControllBlock();
 
 	// 블록 자동 낙하
@@ -137,6 +136,7 @@ void TetrisLevel::Exit()
 void TetrisLevel::EndPlay()
 {
 	EndGame();
+	isGameOver = false;
 }
 
 void TetrisLevel::StartGame()
@@ -182,18 +182,22 @@ void TetrisLevel::ResumeGame()
 
 void TetrisLevel::EndGame()
 {
-	isGameStarted = false;
-	isGameOver = true;
+	if (!isMultiplayLevel)
+	{
+		isGameStarted = false;
+		isGameOver = true;
+		Exit();
 
-	SafeDelete(currentBlock);
-	SafeDelete(shadowBlock);
-	system("cls");
+		SafeDelete(currentBlock);
+		SafeDelete(shadowBlock);
+		system("cls");
 
-	std::cout << "[TetrisLevel] 게임 종료! 최종 점수: " << score << "\n";
+		std::cout << "[TetrisLevel] 게임 종료! 최종 점수: " << score << "\n";
 
-	Sleep(3000);
-	system("cls");
-	LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
+		Sleep(3000);
+		system("cls");
+		LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
+	}
 }
 
 void TetrisLevel::SpawnNewBlock()
@@ -460,10 +464,7 @@ int TetrisLevel::ClearCompletedLines()
 
 void TetrisLevel::RenderBoard()
 {
-	// 화면 지우기 (깜빡임 방지를 위해 필요한 부분만)
-	Utils::SetConsoleCursorPosition(Vector2{ 0, 0 });
-
-	// 게임 보드 출력 (기존 테트리스와 동일한 위치 - gotoxy(6, i + 3))
+	// 게임 보드 출력 (기존 테트리스와 동일한 위치 - gotoxy(BOARD_START_X, y + BOARD_START_Y))
 	for (int y = 0; y < BOARD_HEIGHT; ++y)
 	{
 		Utils::SetConsoleCursorPosition(Vector2{ BOARD_START_X, y + BOARD_START_Y });
