@@ -36,7 +36,6 @@ public:
 
 	// 블록 관리
 	virtual void SpawnNewBlock() override;
-	void HandleInput();
 	virtual bool IsGameOver() const;
 
 	// 게임 로직 관리 - 인터페이스 오버라이딩

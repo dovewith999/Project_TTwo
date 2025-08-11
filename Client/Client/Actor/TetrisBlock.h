@@ -36,22 +36,6 @@ public:
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
 
-	// 블록 조작
-	bool Move(const Vector2& direction);
-	bool Rotate();
-	void Drop();                    // 소프트 드롭 (한 칸씩)
-	void HardDrop();               // 하드 드롭 (즉시 바닥까지)
-	void SetAsFixed();
-	void SetAsShadow();
-
-	// 유틸리티 함수
-	bool GetBlockPixel(int x, int y) const;                    // 특정 위치의 픽셀 확인
-	bool CanMoveTo(const Vector2& position, int testRotation) const;  // 이동 가능 여부 확인
-	void SetDropSpeed(float speed);                            // 낙하 속도 설정
-
-	// 정적 함수
-	static EBlockType GetRandomBlockType();                    // 랜덤 블록 타입 생성
-
 public: /* Getter & Setter */
 	FORCEINLINE EBlockType GetBlockType() const { return type; }
 	FORCEINLINE EBlockState GetBlockState() const { return state; }

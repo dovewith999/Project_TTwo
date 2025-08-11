@@ -291,24 +291,6 @@ void TetrisLevel::SpawnNewBlock()
 #pragma endregion
 }
 
-void TetrisLevel::HandleInput()
-{
-	if (!currentBlock || currentBlock->GetBlockState() != EBlockState::Falling)
-		return;
-
-	// 일시정지
-	else if (Input::GetInstance().GetKeyDown('P'))
-	{
-		PauseGame();
-	}
-
-	// 재시작 (게임 오버 시)
-	else if (isGameOver && Input::GetInstance().GetKeyDown('R'))
-	{
-		StartGame();
-	}
-}
-
 bool TetrisLevel::IsGameOver() const
 {
 	if (isGameOver || isWaitingForGameResult)
@@ -413,9 +395,6 @@ void TetrisLevel::PlaceBlockOnBoard(TetrisBlock* block)
 			}
 		}
 	}
-
-	// 블록을 고정 상태로 변경
-	block->SetAsFixed();
 }
 
 int TetrisLevel::ClearCompletedLines()
