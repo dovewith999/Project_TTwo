@@ -34,7 +34,7 @@ void TetrisMultiLevel::BeginPlay()
 		NetworkManager::GetInstance()->AcceptServer();
 	}
 
-    isGameTimeLimited = true;
+    isMultiplayLevel = true;
     remainingTime = 60; // 1분
 }
 
@@ -97,7 +97,10 @@ bool TetrisMultiLevel::IsGameOver() const
 void TetrisMultiLevel::EndGame()
 {
     super::EndGame();
-    NetworkManager::GetInstance()->SendPacket(TMCP_GAME_OVER);
+    Exit();
+    //NetworkManager::GetInstance()->SendPacket(TMCP_GAME_OVER);
+    NetworkManager::GetInstance()->SendGameOver();
+    isGameOver = false;
 }
 
 int TetrisMultiLevel::ClearCompletedLines()

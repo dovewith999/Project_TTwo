@@ -79,7 +79,7 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
 				{
 					TetrisMultiLevel* multiLevel = dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel());
-					multiLevel->ReceiveAttackFromOpponent(*attackData); // 공격 하고
+					multiLevel->ReceiveAttackFromOpponent(*attackData); // 공격
 				}
 			}
 			break;
@@ -96,9 +96,8 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			{
 				TMCPResultData* result = (TMCPResultData*)payload;
 				NetworkManager::GetInstance()->HandleGameResult(true, result->score);
-
-				system("cls");
-				std::cout << "승리했습니다.\n";
+				//system("cls");
+				//std::cout << "승리했습니다.\n";
 			}
 			break;
 
@@ -107,8 +106,8 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			{
 				TMCPResultData* result = (TMCPResultData*)payload;
 				NetworkManager::GetInstance()->HandleGameResult(false, result->score);
-				system("cls");
-				std::cout << "패배했습니다.\n";
+				//system("cls");
+				//std::cout << "패배했습니다.\n";
 			}
 			break;
 		default:
@@ -197,7 +196,8 @@ void NetworkManager::SendPacket(int pktMsg)
 
 	// 서버로 패킷 전송
 	int result = sendTMCP((unsigned int)clientSocket, pktMsg, &blockData, sizeof(blockData));
-	if (result < 0) {
+	if (result < 0) 
+	{
 		printf("패킷 전송 실패!\n");
 	}
 }
@@ -257,6 +257,11 @@ void NetworkManager::HandleGameResult(bool isWin, int finalScore)
 	// 게임 결과 처리
 	system("cls");
 
+	// 메인으로 돌아가기
+	isConnected = false;
+	isGameStarted = false;
+	isWaitingForOpponent = false;
+
 	Utils::SetConsoleCursorPosition(Vector2{ 30, 10 });
 	if (isWin)
 	{
@@ -284,17 +289,12 @@ void NetworkManager::HandleGameResult(bool isWin, int finalScore)
 	Utils::SetConsoleCursorPosition(Vector2{ 30, 14 });
 	std::cout << "=================================";
 
-	Utils::SetConsoleCursorPosition(Vector2{ 30, 16 });
-	std::cout << "아무 키나 누르면 메인으로...";
-
 	Utils::SetConsoleTextColor(Color::White);
 
 	//씬 전환 대기
 	Sleep(5000);
 
-	// 메인으로 돌아가기
-	isConnected = false;
-	isGameStarted = false;
+
 	LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 }
 

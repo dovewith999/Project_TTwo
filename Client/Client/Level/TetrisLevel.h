@@ -72,7 +72,8 @@ protected:
 	// 게임 시간 관리
 	time_t gameStartTime;
 	time_t remainingTime;
-	bool isGameTimeLimited;
+	time_t elapsedTime;
+	bool isMultiplayLevel;
 
 	// 게임 종료 조건
 	bool isWaitingForGameResult;

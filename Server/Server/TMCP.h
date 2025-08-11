@@ -91,17 +91,17 @@ typedef struct TMCPBlockData_t {
 // 게임 결과를 알려줄 데이터
 // 기존 TMCPResultData에 시간 정보 추가
 typedef struct TMCPResultData_t {
-    u_int score;                 // 내 점수가 몇점인지
-    bool isWin;                  // 이겼는지 졌는지 판단
-    bool isGameOver;             // 게임 오버 여부
     time_t finalTime;            // 게임 종료 시점의 시간
-    bool endedByTime;            // 시간 종료로 인한 게임 종료 여부
+    u_int score;                 // 내 점수가 몇점인지
+	bool isWin;                  // 이겼는지 졌는지 판단
+	bool isGameOver;             // 게임 오버 여부
+	bool endedByTime;            // 시간 종료로 인한 게임 종료 여부
 } TMCPResultData;
 
 // 공격에 관련된 데이터 구조체
 typedef struct TMCPAttackData_t {
-	int attackLines;              // 공격 라인 수
-	int holePositions[4];         // 각 라인의 구멍 위치 (최대 4줄까지)
+    u_int attackLines;              // 공격 라인 수
+    u_int holePositions[4];         // 각 라인의 구멍 위치 (최대 4줄까지)
 } TMCPAttackData;
 
 // 시간 데이터 구조체 추가
@@ -109,7 +109,6 @@ typedef struct TMCPTimeData_t {
     time_t remainingSeconds;     // 남은 시간 (초)
     time_t totalGameTime;        // 전체 게임 시간 (초)
 } TMCPTimeData;
-
 
 /**
  * TMCP 패킷 전송
