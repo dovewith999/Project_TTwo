@@ -297,10 +297,12 @@ void GameServer::EndGame()
 {
 	std::lock_guard<std::mutex> sessionLock(sessionMutex);
 
+	//essionMutex.lock();
 	if (!currentSession.isActive)
 	{
 		return;
 	}
+	//sessionMutex.unlock();
 
 	// 타이머 스레드 종료
 	if (gameTimerHandle)
