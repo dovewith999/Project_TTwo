@@ -135,12 +135,6 @@ void TetrisLevel::Exit()
 	calledBeginPlay = false;
 }
 
-void TetrisLevel::EndPlay()
-{
-	EndGame();
-	isGameOver = false;
-}
-
 void TetrisLevel::StartGame()
 {
 	// BGM 시작
@@ -781,7 +775,7 @@ void TetrisLevel::ProcessCompletedLines()
 		}
 	}
 }
-// TODO : 현재 컨트롤 중인 블럭을 saveBlock으로 두고 다음 블럭 가져오기, 혹시 saveBlock이 None이 아니라면 save블럭을 컨트롤하기
+
 void TetrisLevel::SwitchBlock()
 {
 	Color color = Color::White;

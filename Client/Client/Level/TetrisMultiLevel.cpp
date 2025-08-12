@@ -97,8 +97,7 @@ bool TetrisMultiLevel::IsGameOver() const
 void TetrisMultiLevel::EndGame()
 {
     super::EndGame();
-    Exit();
-    //NetworkManager::GetInstance()->SendPacket(TMCP_GAME_OVER);
+    //Exit();
     NetworkManager::GetInstance()->SendGameOver();
     isGameOver = false;
 }
@@ -198,6 +197,7 @@ void TetrisMultiLevel::SetRemainingTime(time_t time)
 {
     remainingTime = time;
 }
+
 void TetrisMultiLevel::InitializeOpponentBoard()
 {
     // 상대방 보드를 기본 테트리스 보드 구조로 초기화
@@ -242,6 +242,7 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
     if (blockData.action == 2) // 고정되는 액션이라면
     {
         marker += 100; // 보드에 고정되는 값으로 변경
+        ClearOpponentCompletedLines(); // 라인처리가 가능한지 확인
     }
 
     if (shapeData)
@@ -263,11 +264,6 @@ void TetrisMultiLevel::UpdateOpponentBoard(const TMCPBlockData& blockData)
                 }
             }
         }
-    }
-
-    if (blockData.action == 2)
-    {
-        ClearOpponentCompletedLines(); // 라인처리가 가능한지 확인
     }
 }
 

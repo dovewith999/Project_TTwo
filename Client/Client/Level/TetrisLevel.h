@@ -26,7 +26,6 @@ public:
 	virtual void Tick(float deltaTime) override;
 	virtual void Render() override;
 	virtual void Exit() override;
-	void EndPlay();
 
 	// 게임 상태 관리
 	void StartGame();
@@ -43,6 +42,7 @@ public:
 	virtual void ProcessCompletedLines() override;
 	virtual void SwitchBlock() override;
 
+	//Render 관리
 	void RenderBoard();
 	void RenderUI();
 

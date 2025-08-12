@@ -41,10 +41,6 @@ UINT WINAPI NetworkManager::ReceiveThread(LPVOID param)
 			break;
 
 		case TMCP_GAME_START:
-			//std::cout << "게임 시작! 방향키로 테스트하세요!\n";
-			//std::cout << "   ↑: 위    ↓: 아래\n";
-			//std::cout << "   ←: 왼쪽  →: 오른쪽\n";
-			//std::cout << "   ESC: 종료\n\n";
 			NetworkManager::GetInstance()->isWaitingForOpponent = false;
 			NetworkManager::GetInstance()->isGameStarted = true;
 			break;
@@ -214,7 +210,10 @@ void NetworkManager::SendScore(int score)
 
 void NetworkManager::SendGameOver()
 {
-	if (!isConnected) return;
+	if (!isConnected)
+	{
+		return;
+	}
 
 	sendTMCP((unsigned int)clientSocket, TMCP_GAME_OVER, nullptr, 0);
 }
@@ -222,11 +221,13 @@ void NetworkManager::SendGameOver()
 void NetworkManager::SetRemainingTime(time_t time)
 {
 	// TetrisLevel에 남은 시간 전달 (TetrisLevel이 멤버로 시간을 가지고 있다고 가정)
-	if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
+	if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() == nullptr)
 	{
-		TetrisMultiLevel* multiLevel = dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel());
-		multiLevel->SetRemainingTime(time);
+		return;
 	}
+	
+	TetrisMultiLevel* multiLevel = dynamic_cast<TetrisMultiLevel*>(LevelManager::GetInstance()->GetCurrentLevel());
+	multiLevel->SetRemainingTime(time);
 }
 
 void NetworkManager::HandleGameResult(bool isWin, int finalScore)
@@ -249,6 +250,7 @@ void NetworkManager::HandleGameResult(bool isWin, int finalScore)
 		Utils::SetConsoleCursorPosition(Vector2{ 30, 12 });
 		std::cout << "         You Win!";
 	}
+
 	else
 	{
 		Utils::SetConsoleTextColor(Color::Red);
@@ -270,7 +272,6 @@ void NetworkManager::HandleGameResult(bool isWin, int finalScore)
 
 	//씬 전환 대기
 	Sleep(5000);
-
 
 	LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
 }
@@ -345,79 +346,7 @@ UINT NetworkManager::AcceptServer()
 		return -1;
 	}
 
-	#pragma region Test용 루프
-	// 메인 입력 루프 -> 블럭 별로 처리하던가 Player를 만들어서 처리해야함.
-	//printf("조작법:\n");
-	//printf("방향키: 블록 이동 테스트\n");
-	//printf("ESC: 종료\n");
-	//printf("다른 클라이언트도 실행해서 서로 패킷을 주고받는지 확인하세요!\n\n");
-
-	//while (isConnected) 
-	//{
-	//	if (_kbhit())
-	//	{
-	//		int key = _getch();
-
-	//		// 방향키 처리 (확장 키코드)
-	//		if (key == 224) {  // 확장 키 프리픽스
-	//			key = _getch();  // 실제 방향키 코드
-
-	//			if (isGameStarted) {
-	//				switch (key) {
-	//				case 72:  // 위쪽 화살표
-	//					SendDirectionKey(0);
-	//					break;
-	//				case 80:  // 아래쪽 화살표  
-	//					SendDirectionKey(3);
-	//					break;
-	//				case 75:  // 왼쪽 화살표
-	//					SendDirectionKey(1);
-	//					break;
-	//				case 77:  // 오른쪽 화살표
-	//					SendDirectionKey(2);
-	//					break;
-	//				}
-	//			}
-	//			else 
-	//			{
-	//				printf("게임이 시작되지 않았습니다. 상대방을 기다려주세요.\n");
-	//			}
-	//		}
-
-	//		else if (key == VK_SPACE)
-	//		{
-	//			SendDirectionKey(4);
-	//		}
-	//		// ESC 키
-	//		else if (key == VK_ESCAPE)
-	//		{
-	//			printf("종료 요청...\n");
-	//			sendTMCP((unsigned int)clientSocket, TMCP_DISCONNECT_REQ, NULL, 0);
-	//			break;
-	//		}
-	//	}
-
-	//	Sleep(10);  // CPU 사용률 조절
-	//}
-	#pragma endregion
-
 	Game::GetInstance().StartMultiPlayer();
-
-	#pragma region Lagacy
-		// === 정리 ===
-		//isConnected = false;
-
-		//if (receiveHandle) {
-		//	WaitForSingleObject(receiveHandle, 2000);  // 2초 대기
-		//	CloseHandle(receiveHandle);
-		//}
-
-		//if (clientSocket != INVALID_SOCKET) {
-		//	closesocket(clientSocket);
-		//}
-
-		//WSACleanup();
-	#pragma endregion
 
 	return 0;
 }
