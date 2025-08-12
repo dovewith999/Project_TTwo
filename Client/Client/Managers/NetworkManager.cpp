@@ -142,14 +142,13 @@ void NetworkManager::Disconnect()
 	WSACleanup();
 }
 
-void NetworkManager::SendInput(TetrisBlock* block, int input, bool isFixed)
+void NetworkManager::SendInput(TetrisBlock* block, bool isFixed)
 {	
 	TMCPBlockData blockData;
 
 	// 방향에 따라 블록 데이터 설정
 	blockData.blockType = static_cast<int>(block->GetBlockType()) - 1;  // 2~8인 값을 1~7로 보정
 	blockData.rotation = block->GetRotation();
-	blockData.direction = input;
 	blockData.posX = block->GetGridPosition().x;
 	blockData.posY = block->GetGridPosition().y;
 	blockData.action = 0;
@@ -158,28 +157,6 @@ void NetworkManager::SendInput(TetrisBlock* block, int input, bool isFixed)
 	{
 		blockData.action = 2;
 	}
-
-	// TODO : 지금 입력값이 필요가 없음
-	//switch (input) 
-	//{
-	//case VK_LEFT: // 왼쪽
-	//	blockData.action = 0;     // 이동
-	//	break;
-	//case VK_RIGHT: // 오른쪽  
-	//	blockData.action = 0;     // 이동
-	//	break;
-	//case VK_DOWN: // 아래
-	//	blockData.action = 0;     // 이동
-	//	break;
-	//case VK_UP: // 위 (회전으로 처리)
-	//	blockData.action = 1;     // 이동
-	//	break;
-	//case VK_SPACE:
-	//	blockData.action = 3;
-	//	break;
-	//default:
-	//	break;
-	//}
 
 	blockData.timestamp = (u_int)time(NULL);
 

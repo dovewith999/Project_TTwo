@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Actor/Actor.h"
+#include "Core.h"
+#include "Math/Vector2.h"
 #include "Math/Color.h"
 
 /// <summary>
@@ -23,18 +24,12 @@ enum class EBlockState
 };
 
 class TetrisLevel;
-class TetrisBlock final : public Actor
+class TetrisBlock
 {
-	RTTI_DECLARATIONS(TetrisBlock, Actor)
 
 public:
 	explicit TetrisBlock(EBlockType type = EBlockType::None, const Vector2& position = Vector2{ 0, 0 }, EBlockState state = EBlockState::Falling, Color color = Color::White);
-	virtual ~TetrisBlock();
-
-public:
-	virtual void BeginPlay() override;
-	virtual void Tick(float deltaTime) override;
-	virtual void Render() override;
+	~TetrisBlock();
 
 public: /* Getter & Setter */
 	FORCEINLINE EBlockType GetBlockType() const { return type; }
@@ -43,19 +38,20 @@ public: /* Getter & Setter */
 	FORCEINLINE int GetRotation() const { return rotation; }
 	FORCEINLINE float GetDropSpeed() const { return dropSpeed; }
 	FORCEINLINE int GetBoardMarker() const { return boardMarker; }
+	FORCEINLINE Color GetColor() const { return color; }
 
 	FORCEINLINE void SetGridPosition(const Vector2& pos) { gridPosition = pos; }
 	FORCEINLINE void SetRotation(int rot) { rotation = rot % 4; }
 	FORCEINLINE void SetBlockType(EBlockType newType) { type = newType; }
 
 private:
-	EBlockType type = EBlockType::None;
-	EBlockState state = EBlockState::Falling;
-	Vector2 gridPosition;
 	int rotation = 0;
+	int boardMarker = 0;
 	float dropTimer = 0.0f;
 	float dropSpeed = 1.0f;
-
-	int boardMarker = 0;
+	Vector2 gridPosition;
+	Color color = Color::White;
+	EBlockType type = EBlockType::None;
+	EBlockState state = EBlockState::Falling;
 
 };

@@ -18,7 +18,7 @@ public:
 	virtual ~NetworkManager();
 
 public:
-	void SendInput(class TetrisBlock* block, int input, bool isFixed = false); // 입력을 서버로 보내는 함수
+	void SendInput(class TetrisBlock* block, bool isFixed = false); // 입력을 서버로 보내는 함수
 	void SendPacket(int pktMsg); // TODO : short로 받아도 될 것 같다.
 	void SendAttackLines(const TMCPAttackData& attackData);
 	void SendScore(int score);

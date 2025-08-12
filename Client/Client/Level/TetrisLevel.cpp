@@ -32,7 +32,7 @@ void TetrisLevel::BeginPlay()
 {
 	super::BeginPlay();
 
- 	if (calledBeginPlay == true)
+	if (calledBeginPlay == true)
 	{
 		return;
 	}
@@ -66,8 +66,10 @@ void TetrisLevel::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
-	if (!isGameStarted || isGamePaused || isGameOver)
+	if (!isGameStarted || isGameOver)
+	{
 		return;
+	}
 
 	// 입력 처리
 	controller->ControllBlock();
@@ -86,7 +88,7 @@ void TetrisLevel::Tick(float deltaTime)
 				currentBlock->SetGridPosition(newPos);
 				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
 				{
-					NetworkManager::GetInstance()->SendInput(currentBlock, VK_DOWN);
+					NetworkManager::GetInstance()->SendInput(currentBlock);
 				}
 			}
 			else
@@ -95,7 +97,7 @@ void TetrisLevel::Tick(float deltaTime)
 				PlaceBlockOnBoard(currentBlock);
 				if (LevelManager::GetInstance()->GetCurrentLevel()->As<TetrisMultiLevel>() != nullptr)
 				{
-					NetworkManager::GetInstance()->SendInput(currentBlock, VK_DOWN, true);
+					NetworkManager::GetInstance()->SendInput(currentBlock, true);
 				}
 				ProcessCompletedLines();
 				SpawnNewBlock();
@@ -145,7 +147,6 @@ void TetrisLevel::StartGame()
 	SoundManager::GetInstance()->PlaySoundW(L"BGM_INGAME.wav", Define::ESoundChannelID::BGM, 3.f);
 
 	isGameStarted = true;
-	isGamePaused = false;
 	isGameOver = false;
 	isWaitingForGameResult = false;
 
@@ -169,35 +170,26 @@ void TetrisLevel::StartGame()
 	SpawnNewBlock();
 }
 
-void TetrisLevel::PauseGame()
-{
-	isGamePaused = !isGamePaused;
-	std::cout << (isGamePaused ? "[TetrisLevel] 일시정지" : "[TetrisLevel] 재개") << "\n";
-}
-
-void TetrisLevel::ResumeGame()
-{
-	isGamePaused = false;
-}
-
 void TetrisLevel::EndGame()
 {
-	if (!isMultiplayLevel)
+	if (isMultiplayLevel)
 	{
-		isGameStarted = false;
-		isGameOver = true;
-		Exit();
-
-		SafeDelete(currentBlock);
-		SafeDelete(shadowBlock);
-		system("cls");
-
-		std::cout << "[TetrisLevel] 게임 종료! 최종 점수: " << score << "\n";
-
-		Sleep(3000);
-		system("cls");
-		LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
+		return;
 	}
+	isGameStarted = false;
+	isGameOver = true;
+	Exit();
+
+	SafeDelete(currentBlock);
+	SafeDelete(shadowBlock);
+	system("cls");
+
+	std::cout << "[TetrisLevel] 게임 종료! 최종 점수: " << score << "\n";
+
+	Sleep(3000);
+	system("cls");
+	LevelManager::GetInstance()->ChangeLevel(Define::ELevel::TITLE);
+
 }
 
 void TetrisLevel::SpawnNewBlock()
@@ -234,10 +226,6 @@ void TetrisLevel::SpawnNewBlock()
 	shadowBlock = new TetrisBlock(newBlockType, spawnPos, EBlockState::Shadow);
 
 	controller->SetCurrentBlock(currentBlock);
-
-	//// 블록 시작
-	currentBlock->BeginPlay();
-	shadowBlock->BeginPlay();
 
 	// 게임 오버 체크 (스폰 위치에 이미 블록이 있으면)
 	if (!CanBlockMoveTo(spawnPos, newBlockType, 0))
@@ -764,7 +752,7 @@ void TetrisLevel::ProcessCompletedLines()
 		int lineScore = 0;
 		switch (cleared)
 		{
-		case 1: 
+		case 1:
 			lineScore = 100;
 			SoundManager::GetInstance()->PlaySoundW(L"SINGLE.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
 			break;  // 1줄 클리어
@@ -772,12 +760,12 @@ void TetrisLevel::ProcessCompletedLines()
 			lineScore = 300;
 			SoundManager::GetInstance()->PlaySoundW(L"DOUBLE.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
 			break;  // 2줄 클리어  
-		case 3: 
-			lineScore = 500; 
+		case 3:
+			lineScore = 500;
 			SoundManager::GetInstance()->PlaySoundW(L"TRIPLE.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
 			break;  // 3줄 클리어
-		case 4: 
-			lineScore = 800; 
+		case 4:
+			lineScore = 800;
 			SoundManager::GetInstance()->PlaySoundW(L"TETRIS.wav", Define::ESoundChannelID::SUBEFFECT, 10.f);
 			break;  // 4줄 클리어(Tetris)
 		}
@@ -822,7 +810,7 @@ void TetrisLevel::SwitchBlock()
 		shadowBlock = new TetrisBlock(saveBlockType, GetSpawnPosition(), EBlockState::Shadow);
 
 		controller->SetCurrentBlock(currentBlock);
-		
+
 		saveBlockType = tempBlockType;
 	}
 

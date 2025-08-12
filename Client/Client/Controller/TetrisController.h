@@ -19,7 +19,7 @@ public:
 
 private:
 	bool IsMultiplayerMode() const;
-	void SendInput(int input, bool isFixed = false);
+	void SendInput(bool isFixed = false);
 
 private:
 	TetrisBlock* currentControlBlock = nullptr; // 현재 컨트롤하는 블럭

@@ -30,8 +30,6 @@ public:
 
 	// 게임 상태 관리
 	void StartGame();
-	void PauseGame();
-	void ResumeGame();
 	virtual void EndGame();
 
 	// 블록 관리
@@ -65,7 +63,6 @@ protected:
 protected:
 	// 게임 상태
 	bool isGameStarted = false;
-	bool isGamePaused = false;
 	bool isGameOver = false;
 
 	// 게임 시간 관리

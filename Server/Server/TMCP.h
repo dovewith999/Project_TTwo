@@ -82,7 +82,6 @@ typedef struct TMCPBlockData_t {
     u_char blockType;        // 블록 타입 (I, O, T, S, Z, J, L = 1~7)
     u_char rotation;         // 회전 상태 (0~3)
     u_char action;           // 동작 (0:이동, 1:회전, 2:고정, 3:즉시낙하)
-    u_char direction;        // 이동 방향 (0:정지, 1:좌, 2:우, 3:아래)
     u_short posX;            // X 좌표 (확장 가능, 큰 보드 지원)
     u_short posY;            // Y 좌표 (확장 가능, 큰 보드 지원)
     u_int timestamp;         // 타임스탬프 (동기화용)
