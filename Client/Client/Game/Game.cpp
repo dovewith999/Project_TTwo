@@ -51,7 +51,6 @@ Game& Game::GetInstance()
 
 void Game::InitializeLevels()
 {
-
     // 레벨들을 미리 생성하고 등록
     LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TITLE, new TitleLevel());
     LevelManager::GetInstance()->RegisterLevel(Define::ELevel::TETRIS_SINGLE, new TetrisLevel());

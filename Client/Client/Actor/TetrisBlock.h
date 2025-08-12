@@ -29,7 +29,7 @@ class TetrisBlock
 
 public:
 	explicit TetrisBlock(EBlockType type = EBlockType::None, const Vector2& position = Vector2{ 0, 0 }, EBlockState state = EBlockState::Falling, Color color = Color::White);
-	~TetrisBlock();
+	~TetrisBlock() = default;
 
 public: /* Getter & Setter */
 	FORCEINLINE EBlockType GetBlockType() const { return type; }

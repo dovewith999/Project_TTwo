@@ -4,8 +4,6 @@
 #include "Utils/Define.h"
 
 using namespace Define;
-
-
 /// <summary>
 /// 파일을 입출력해오는 기능을 담당하는 매니저 클래스
 /// 작성자 : 임희섭

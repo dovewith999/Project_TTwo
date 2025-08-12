@@ -11,7 +11,3 @@ TetrisBlock::TetrisBlock(EBlockType type, const Vector2& position, EBlockState s
 	dropSpeed = 1.0f; // 1초마다 한 칸씩 떨어짐
 	boardMarker = static_cast<int>(type);
 }
-
-TetrisBlock::~TetrisBlock()
-{
-}
